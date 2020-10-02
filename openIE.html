@@ -4,23 +4,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>OpenIE - Annotation platform</title>
-        <link rel="icon" href="img/logo-dummy.png">
-
-        <!-- Icons -->
-        <!--<script src="https://kit.fontawesome.com/1269d23fc6.js" crossorigin="anonymous"></script> -->
+        <link rel="icon" href="img/favicon.png">
 
         <!--Bootstrap-->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+        <!-- Icons -->
+        <script src="https://kit.fontawesome.com/1269d23fc6.js" crossorigin="anonymous"></script>
+
     </head>
-    <body>
+    <body id="body">
 
         <!--Navigation bar on top-->
         <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
             <div class="container-fluid">
-                <a class="navbar-brand" href="openIE.html"> <img src="img/logo-dummy.png" width="30" height="30"> OpenIE Annotator Platform </a>  
+                <a class="navbar-brand" href="openIE.html"> <img src="img/logo.jpg" width="30" height="30"> OpenIE Annotator Platform </a>  
                 <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarResponsive">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -42,14 +42,11 @@
 
         <div class="container mt-5 bg-dark text-light py-2 rounded" id="input-area">
             <a class="lead text-white">Copy your text here:</a>
-            <div class="input-group mb-2">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">With textarea</span>
-                </div>
+            <div class="input-group my-2">
                 <textarea class="form-control" aria-label="With textarea"></textarea>
             </div>
             <a class="lead text-white">Or upload your document here:</a>
-            <div class="input-group mb-3">
+            <div class="input-group my-2">
                 <div class="custom-file">
                     <input type="file" class="custom-file-input" id="inputGroupFile02">
                     <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose file</label>
@@ -58,40 +55,140 @@
                     <span class="input-group-text" id="inputGroupFileAddon02">Upload</span>
                 </div>
             </div>
-            <button class="btn btn-primary">Start</button>
+            <button class="btn btn-primary btn-lg mt-1">Start</button>
         </div>
 
         <!--Do the Magic-->
 
+        <div class="container mt-3 bg-dark text-light py-2 rounded" id="content-area" hidden>
+            <div class="card mt-2 mb-3">
+                <div class="card-body text-dark">
+                    <h5 class="card-title">The best defense is a good defense</h5>
+                    <p id="content-1">After the stock-market bloodbath of the past few years, why would any
+defensive investor put a dime into stocks?
+First, remember Graham’s insistence that how defensive you should
+be depends less on your tolerance for risk than on your willingness to
+put time and energy into your portfolio. And if you go about it the right
+way, investing in stocks is just as easy as parking your money in bonds
+and cash. Amidst the bear market that began in 2000, it’s understandable if
+you feel burned—and if, in turn, that feeling makes you determined
+never to buy another stock again. As an old Turkish proverb says,
+“After you burn your mouth on hot milk, you blow on your yogurt”.
+Because the crash of 2000–2002 was so terrible, many investors
+now view stocks as scaldingly risky; but, paradoxically, the very act of
+crashing has taken much of the risk out of the stock market. It was hot
+milk before, but it is room-temperature yogurt now.
+Viewed logically, the decision of whether to own stocks today has
+nothing to do with how much money you might have lost by owning
+them a few years ago. When stocks are priced reasonably enough to
+give you future growth, then you should own them, regardless of the
+losses they may have cost you in the recent past. That’s all the more
+true when bond yields are low, reducing the future returns on incomeproducing
+investments. As we have seen in Chapter 3, stocks are (as of early 2003) only
+mildly overpriced by historical standards. Meanwhile, at recent prices,
+bonds offer such low yields that an investor who buys them for their
+supposed safety is like a smoker who thinks he can protect himself
+against lung cancer by smoking low-tar cigarettes. No matter how
+defensive an investor you are—in Graham’s sense of low maintenance,
+or in the contemporary sense of low risk—today’s values mean that you
+must keep at least some of your money in stocks.
+Fortunately, it’s never been easier for a defensive investor to buy
+stocks. And a permanent autopilot portfolio, which effortlessly puts a
+little bit of your money to work every month in predetermined investments,
+can defend you against the need to dedicate a large part of
+your life to stock picking.
+But first, let’s look at something the defensive investor must always
+defend against: the belief that you can pick stocks without doing any
+homework. In the 1980s and early 1990s, one of the most popular
+investing slogans was “buy what you know.” Peter Lynch—who from
+1977 through 1990 piloted Fidelity Magellan to the best track record
+ever compiled by a mutual fund—was the most charismatic preacher of
+this gospel. Lynch argued that amateur investors have an advantage
+that professional investors have forgotten how to use: “the power of
+common knowledge.” If you discover a great new restaurant, car,
+toothpaste, or jeans—or if you notice that the parking lot at a nearby
+business is always full or that people are still working at a company’s
+headquarters long after Jay Leno goes off the air—then you have a personal
+insight into a stock that a professional analyst or portfolio manager
+might never pick up on. As Lynch put it, “During a lifetime of
+buying cars or cameras, you develop a sense of what’s good and
+what’s bad, what sells and what doesn’t... and the most important
+part is, you know it before Wall Street knows it.”
+                    </p>  
+                </div>
+
+            </div>
+        </div>
+
+
         <div class="container mt-3 bg-dark text-light py-2 rounded" id="main-area">
-            <div class="row">
-                <div class="col-12 col-md d-flex justify-content-center">
-                    <button type="button" class="btn btn-secondary">Jump to First</button>
-                </div>
-                <div class="col-12 col-md d-flex justify-content-center">
-                    <button type="button" class="btn btn-secondary">Previous</button>
-                </div>
-                <div class="col-12 col-md d-flex justify-content-center">
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="..." aria-label="GoTo" aria-describedby="button-addon2">
-                        <div class="input-group-append">
-                          <button class="btn btn-secondary" type="button" id="button-addon2">Go To</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md d-flex justify-content-center">
-                    <button type="button" class="btn btn-secondary">Next</button>
-                </div>
-                <div class="col-12 col-md d-flex justify-content-center">
-                    <button type="button" class="btn btn-secondary">Jump to Last</button>
+            <div class="card mt-2 mb-3">
+                <div class="card-body text-dark" id="insert-here">
+
                 </div>
             </div>
+
+
+            <!--Navigation on Bottom-->
+
+            <div class="container">
+
+                <div class="row mb-3">
+                    <div class="col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-primary btn-lg" id="confirm-button">Confirm</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="jump-first-button">Jump to First</button>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="previous-button">Previous</button>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="..." aria-label="GoTo" aria-describedby="button-addon2">
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="number-of-phrases"></span>
+                                <button class="btn btn-secondary" type="button" id="button-addon2">Go To</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="next-button">Next</button>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="jump-last-button">Jump to Last</button>
+                    </div>
+                </div>
+            </div>
+            
         </div>
 
 
         <!--Output Download-->
         
         <div class="container mt-3 bg-dark text-light py-2 rounded" id="download-area">
+            
+            <!--Current Output-->
+            <div class="card mt-2 mb-5 mb-3">
+                <div class="card-body text-dark" id="output-area">
+                    
+                </div>
+            </div>
+
+            <div class="row my-3">
+                <div class="col">
+                    <h5 class="card-title">Download results</h5>
+                </div>
+                <div class="col">
+                    <input type="image" src="img/download.png" height="50" width="50" id="download1"></input>
+                </div>
+                
+            </div>
+            
+            
         </div>
         
         
@@ -129,5 +226,7 @@
                 </ul>
             </div>
         </footer>
+
+    <script src="app.js"></script>
     </body>
 </html>
