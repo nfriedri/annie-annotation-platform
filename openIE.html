@@ -1,0 +1,133 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>OpenIE - Annotation platform</title>
+        <link rel="icon" href="img/logo-dummy.png">
+
+        <!-- Icons -->
+        <!--<script src="https://kit.fontawesome.com/1269d23fc6.js" crossorigin="anonymous"></script> -->
+
+        <!--Bootstrap-->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    </head>
+    <body>
+
+        <!--Navigation bar on top-->
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="openIE.html"> <img src="img/logo-dummy.png" width="30" height="30"> OpenIE Annotator Platform </a>  
+                <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarResponsive">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="openIE.html">Home</a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">About</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!--Input Selections-->
+
+        <div class="container mt-5 bg-dark text-light py-2 rounded" id="input-area">
+            <a class="lead text-white">Copy your text here:</a>
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">With textarea</span>
+                </div>
+                <textarea class="form-control" aria-label="With textarea"></textarea>
+            </div>
+            <a class="lead text-white">Or upload your document here:</a>
+            <div class="input-group mb-3">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="inputGroupFile02">
+                    <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose file</label>
+                </div>
+                <div class="input-group-append">
+                    <span class="input-group-text" id="inputGroupFileAddon02">Upload</span>
+                </div>
+            </div>
+            <button class="btn btn-primary">Start</button>
+        </div>
+
+        <!--Do the Magic-->
+
+        <div class="container mt-3 bg-dark text-light py-2 rounded" id="main-area">
+            <div class="row">
+                <div class="col-12 col-md d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary">Jump to First</button>
+                </div>
+                <div class="col-12 col-md d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary">Previous</button>
+                </div>
+                <div class="col-12 col-md d-flex justify-content-center">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="..." aria-label="GoTo" aria-describedby="button-addon2">
+                        <div class="input-group-append">
+                          <button class="btn btn-secondary" type="button" id="button-addon2">Go To</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary">Next</button>
+                </div>
+                <div class="col-12 col-md d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary">Jump to Last</button>
+                </div>
+            </div>
+        </div>
+
+
+        <!--Output Download-->
+        
+        <div class="container mt-3 bg-dark text-light py-2 rounded" id="download-area">
+        </div>
+        
+        
+        <!--Footer-->
+
+        <footer class="bg-light text-dark">
+            <hr class="mb-5" style="border-color: black;">
+            <div class="row">
+            <div class="col-12 col-md">
+                    <img src="img/logo.png" width="40%">
+                <li class="list-unstyled text-small"><a class="text-muted ml-4" target="_blank" href="https://www.uni-mannheim.de">University of Mannheim</a></li>
+                <small class="d-block mb-3 ml-4 text-muted">&copy; 2020</small>
+            </div>
+            <div class="col-6 col-md">
+                <h5 class="text-primary">About</h5>
+                <ul class="list-unstyled text-small">
+                    <li><a class="text-muted" target="_blank" href="###">Info 1</a></li>
+                    <li><a class="text-muted" target="_blank" href="###">Info 2</a></li>
+                    <li><a class="text-muted" target="_blank" href="###">Info 3</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md">
+                <h5 class="text-primary">Related Work</h5>
+                <ul class="list-unstyled text-small">
+                    <li><a class="text-muted" target="_blank" href="###">Paper 1</a></li>
+                    <li><a class="text-muted" target="_blank" href="###">Paper 2</a></li>
+                    <li><a class="text-muted" target="_blank" href="###">Paper 3</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md">
+                <h5 class="text-primary">Impressum</h5>
+                <ul class="list-unstyled text-small">
+                    <li><a class="text-muted" target="_blank" href="https://www.uni-mannheim.de/dws/">Data and Web Science Group</a></li>
+                    <li><a class="text-muted" target="_blank" href="https://www.uni-mannheim.de">University of Mannheim</a></li>
+                </ul>
+            </div>
+        </footer>
+    </body>
+</html>
