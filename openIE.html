@@ -42,20 +42,18 @@
 
         <div class="container mt-5 bg-dark text-light py-2 rounded" id="input-area">
             <a class="lead text-white">Copy your text here:</a>
-            <div class="input-group my-2">
-                <textarea class="form-control" aria-label="With textarea"></textarea>
+            <div class="d-flex input-group my-2">
+                <textarea class="form-control" aria-label="With textarea" id="input-text"></textarea>
+                <button class="btn btn-primary btn-lg ml-3" id="start-input-text">Start</button>
             </div>
             <a class="lead text-white">Or upload your document here:</a>
-            <div class="input-group my-2">
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="inputGroupFile02">
-                    <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose file</label>
+            <div class="input-group mt-2 mb-3">
+                <div class="custom-file mt-1">
+                    <input type="file" class="custom-file-input" id="input-file" oninput="fileUpload()">
+                    <label class="custom-file-label" for="input-file" id="input-file-label">Choose file</label>
                 </div>
-                <div class="input-group-append">
-                    <span class="input-group-text" id="inputGroupFileAddon02">Upload</span>
-                </div>
+                <button class="btn btn-primary btn-lg ml-3" id="start-input-file">Start</button>
             </div>
-            <button class="btn btn-primary btn-lg mt-1">Start</button>
         </div>
 
         <!--Do the Magic-->
@@ -113,8 +111,7 @@ insight into a stock that a professional analyst or portfolio manager
 might never pick up on. As Lynch put it, “During a lifetime of
 buying cars or cameras, you develop a sense of what’s good and
 what’s bad, what sells and what doesn’t... and the most important
-part is, you know it before Wall Street knows it.”
-                    </p>  
+part is, you know it before Wall Street knows it.”</p>  
                 </div>
 
             </div>

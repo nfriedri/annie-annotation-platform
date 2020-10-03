@@ -1,9 +1,18 @@
 // --- Initialization ---
 
-var dummyInput = document.getElementById('content-1').innerHTML;
+//var dummyInput = document.getElementById('content-1').innerHTML;
+
 var numberOfPhrases = document.getElementById('number-of-phrases');
+var inputTextArea = document.getElementById('input-text');
+var inputUpload = document.getElementById('input-file');
+
+var inputData = "";
+var currentPhrase = 0;
+var phrases = [];
 
 //Buttons
+var startInputText = document.getElementById('start-input-text');
+var startInputFile = document.getElementById('start-input-file');
 var confirmButton = document.getElementById('confirm-button');
 var nextButton = document.getElementById('next-button');
 var previousButton = document.getElementById('previous-button');
@@ -11,13 +20,56 @@ var jumpFirstButton = document.getElementById('jump-first-button');
 var jumpLastButton = document.getElementById('jump-last-button');
 
 
+// --- Data Input ---
+async function getTextfromTextArea() {
+    if (inputTextArea.value != ""){
+        inputData = await inputTextArea.value;
+        console.log(inputData);
+        initializeText();
+    }
+}
+
+function fileUpload() {
+    document.getElementById('input-file-label').innerHTML = inputUpload.files[0].name;
+    var fileToLoad = inputUpload.files[0];
+    var fileReader = new FileReader();
+    let text = ""
+    fileReader.onload = function(fileLoadedEvent) {
+            var textFromFileLoaded = fileLoadedEvent.target.result;
+            console.log(textFromFileLoaded);
+            inputData = textFromFileLoaded;
+    };
+    fileReader.readAsText(fileToLoad, "UTF-8");
+}
+
+function startWithUploadedFile() {
+    if (inputUpload.files[0] != undefined) {
+        initializeText ()
+    }
+}
+
+function initializeText() {
+    console.log(inputData);
+    phrases = splitInputToPhrases(inputData)
+    console.log(phrases);
+    numberOfPhrases.innerText = '/' + phrases.length
+    var phraseOne = phrases[0];
+    var tokens = tokenizePhrase(phraseOne);
+    createClickableText(tokens);
+}
+
 // --- Tokenization Process ---
 
 //Tokenizes the input data
 //Creates a multidimensional array, ordered by phrases with tokens
 function splitInputToPhrases(inputData) {
-    var cleanedInput = inputData.replace(/(\r\n|\n|\r|\t|,)/gm, " ");
-    var phrases = cleanedInput.split(/(\?|\!|\.)/);
+    var cleanedInput = inputData.replace(/(\r\n|\n|\r|\t|"|,)/gm, " ");
+    try {
+        phrases = cleanedInput.split(/(\?|\!|\.)/);
+    }
+    catch (err) {
+        console.log('TypeError - No sentences inserted')
+    }
     var output = [];
     for (var i = 0; i < phrases.length - 1; i++) {
         if (phrases[i] !== "." && phrases[i] !== "?" && phrases[i] !== "!") {
@@ -30,7 +82,8 @@ function splitInputToPhrases(inputData) {
 //Creates an array of tokens out of a phrase
 function tokenizePhrase(phrase) {
     var tokens = [];
-    var token = phrase.split(" ");
+    console.log(phrase);
+    token = phrase.split(" ");
     for (var i = 0; i < token.length; i++) {
         if (token[i] !== "") {
             tokens.push(token[i]);
@@ -67,12 +120,11 @@ function highlightWords(identifier) {
 
 //Copies highlighted elements into the text output field
 function takeOverText() {
-    console.log('here');
     var elements = document.getElementsByClassName("btn btn-danger ml-1 mb-1");
     var target = document.getElementById("output-area");
     var output = '';
-    output += `<div class="container" id="output-${currentPhrase}">`;
-    output += `<i class="fas fa-times-circle" type="button" onClick="removeSelection("output-0")"> </i> <a class="ml-1"> Phrase ${currentPhrase + 1}: </a>`;
+    output += `<div class="container">`;
+    output += `<i class="fas fa-times-circle" type="button" onClick="removeSelection(this.id)" id="output-${currentPhrase}"> </i> <a class="ml-1"> Phrase ${currentPhrase + 1}: </a>`;
     for (var i = 0; i < elements.length; i++) {
         output += `<button class="btn btn-secondary ml-1 mb-1" >${elements[i].innerHTML}</button>`;
     }
@@ -83,7 +135,7 @@ function takeOverText() {
 function removeSelection(identifier) {
     console.log(identifier);
     var ele = document.getElementById(identifier);
-    ele.remove();
+    ele.parentNode.remove();
 }
 
 
@@ -122,16 +174,9 @@ function jumpLast() {
 
 // --- Process Steering ---
 
-var currentPhrase = 0;
 
-var phrases = splitInputToPhrases(dummyInput);
-numberOfPhrases.innerText = '/' + phrases.length
-var phraseOne = phrases[0];
-var tokens = tokenizePhrase(phraseOne);
-createClickableText(tokens);
-
-
-
+startInputText.addEventListener("click", function() { getTextfromTextArea() });
+startInputFile.addEventListener("click", function() { startWithUploadedFile() })
 confirmButton.addEventListener("click", function () { takeOverText() });
 nextButton.addEventListener("click", function () { nextPhrase() });
 previousButton.addEventListener("click", function () { previousPhrase() });
