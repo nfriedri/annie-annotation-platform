@@ -12,11 +12,12 @@ var inputTextArea = document.getElementById('input-text');
 var inputUpload = document.getElementById('input-file');
 var inputFileLabel = document.getElementById('input-file-label');
 var contentInsert = document.getElementById("content-insert");
+var currentSentenceDisplay = document.getElementById('current-sentence');
 
 // Containers
 var inputArea = document.getElementById('input-area');
 var outputArea = document.getElementById('output-area');
-var contentMainArea = document.getElementById('content-main-area');
+var contentMainArea = document.getElementById('content-area');
 var downloadArea = document.getElementById('download-area');
 
 // Buttons
@@ -34,8 +35,17 @@ var downloadButton = document.getElementById('download-button')
 
 // Retrieves text input from textarea
 // TODO: Add Paste button ?
+
+// Pastes text from clipboard into textArea
+async function pasteText() {
+    const text = await navigator.clipboard.readText();
+    console.log(text);
+    inputTextArea.value = text;
+}
+
+// Starts text init process with textarea input
 async function getTextfromTextArea() {
-    if (inputTextArea.value != ""){
+    if (inputTextArea.value != "") {
         inputData = await inputTextArea.value;
         console.log(inputData);
         fileUploadFlag = false;
@@ -48,10 +58,10 @@ function fileUpload() {
     inputFileLabel.innerHTML = inputUpload.files[0].name;
     var fileToLoad = inputUpload.files[0];
     var fileReader = new FileReader();
-    fileReader.onload = function(fileLoadedEvent) {
-            var textFromFileLoaded = fileLoadedEvent.target.result;
-            console.log(textFromFileLoaded);
-            inputData = textFromFileLoaded;
+    fileReader.onload = function (fileLoadedEvent) {
+        var textFromFileLoaded = fileLoadedEvent.target.result;
+        console.log(textFromFileLoaded);
+        inputData = textFromFileLoaded;
     };
     fileReader.readAsText(fileToLoad, "UTF-8");
 }
@@ -60,7 +70,7 @@ function fileUpload() {
 function startWithUploadedFile() {
     if (inputUpload.files[0] != undefined) {
         fileUploadFlag = true;
-        initializeText ()
+        initializeText()
     }
 }
 
@@ -69,7 +79,8 @@ function initializeText() {
     console.log(inputData);
     phrases = splitInputToPhrases(inputData)
     console.log(phrases);
-    numberOfPhrases.innerText = '/' + phrases.length
+    numberOfPhrases.innerText = '/ ' + phrases.length;
+    currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
     var phraseOne = phrases[0];
     var tokens = tokenizePhrase(phraseOne);
     createClickableText(tokens);
@@ -148,7 +159,6 @@ function takeOverText() {
     }
     output += '</div>';
     outputArea.innerHTML += output;
-    downloadOutput();
 }
 
 // Removes an annotated element from the output box
@@ -158,33 +168,31 @@ function removeSelection(identifier) {
     ele.parentNode.remove();
 }
 
+// Output download steering
 function downloadOutput() {
     if (outputArea.innerHTML != "") {
         //downloadButton.setAttribute('disabled', false);
         content = outputArea.getElementsByClassName("btn btn-secondary ml-1 mb-1");
+        console.log(content);
         var outputContent = "";
-        for (var i=0; i<content.length; i++){
+        for (var i = 0; i < content.length; i++) {
             outputContent += content[i].innerHTML + ',';
         }
-        filename = inputUpload.files[0].name;
-        if (filename.includes('.txt')){
-            filename = filename.replace('.txt', '');
+        if (!fileUploadFlag) {
+            download('pastedText', outputContent);
         }
-        if (!fileUploadFlag){
-            downloadButton.addEventListener("click", function() {
-                download('pastedText', outputContent);
-            })
-        }
-        else{
-            downloadButton.addEventListener("click", function () {
-                download(filename, outputContent);
-            })
+        else {
+            filename = inputUpload.files[0].name;
+            if (filename.includes('.txt')) {
+                filename = filename.replace('.txt', '');
+            }
+            download(filename, outputContent);
         }
     }
 }
 
 // Create downloadable File
-function download(filename, content){
+function download(filename, content) {
     console.log('function download with ' + filename + ' ' + content);
     var element = document.createElement('a');
     element.style.display = 'none';
@@ -208,6 +216,7 @@ function backToInput() {
 function previousPhrase() {
     if (currentPhrase > 0) {
         currentPhrase -= 1;
+        currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
         tokens = tokenizePhrase(phrases[currentPhrase]);
         createClickableText(tokens);
     }
@@ -216,7 +225,9 @@ function previousPhrase() {
 // Reads in the last Phrase
 function nextPhrase() {
     if (currentPhrase < phrases.length - 1) {
+        takeOverText();
         currentPhrase += 1;
+        currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
         tokens = tokenizePhrase(phrases[currentPhrase]);
         createClickableText(tokens);
     }
@@ -225,25 +236,40 @@ function nextPhrase() {
 // Jumps to the first sentence
 function jumpFirst() {
     currentPhrase = 0;
+    currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
     tokens = tokenizePhrase(phrases[currentPhrase]);
     createClickableText(tokens);
 }
 
-// Jumps to the las sentence
+// Jumps to the last sentence
 function jumpLast() {
     currentPhrase = phrases.length - 1;
+    currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
     tokens = tokenizePhrase(phrases[currentPhrase]);
     createClickableText(tokens);
 }
 
+// Jumps to the selected sentence number
+function goToPhraseX() {
+    console.log('here1')
+    var number = parseInt(currentSentenceDisplay.value);
+    if (number > 0 && number <= phrases.length) {
+        console.log('here2')
+        currentPhrase = number - 1;
+        console.log(currentPhrase);
+        tokens = tokenizePhrase(phrases[currentPhrase]);
+        createClickableText(tokens);
+    }
+}
 
-// --- Process Steering ---
 
+// --- Button EventListeners ---
 
-startInputText.addEventListener("click", function() { getTextfromTextArea() });
-startInputFile.addEventListener("click", function() { startWithUploadedFile() })
+startInputText.addEventListener("click", function () { getTextfromTextArea() });
+startInputFile.addEventListener("click", function () { startWithUploadedFile() })
 confirmButton.addEventListener("click", function () { takeOverText() });
 nextButton.addEventListener("click", function () { nextPhrase() });
 previousButton.addEventListener("click", function () { previousPhrase() });
 jumpFirstButton.addEventListener("click", function () { jumpFirst() });
 jumpLastButton.addEventListener("click", function () { jumpLast() })
+downloadButton.addEventListener("click", function () { downloadOutput() });

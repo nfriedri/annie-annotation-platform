@@ -1,0 +1,448 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>OpenIE - Annotation platform</title>
+        <link rel="icon" href="img/favicon.png">
+
+        <!--Bootstrap-->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+        <!-- Icons -->
+        <script src="https://kit.fontawesome.com/1269d23fc6.js" crossorigin="anonymous"></script>
+
+    </head>
+    <body id="body">
+
+        <!--Navigation bar on top-->
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="openIE.html"> <img src="img/logo.jpg" width="30" height="30"> OpenIE Annotator Platform </a>
+                <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarResponsive">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="openIE.html">Home</a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">About</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!--Input Selections-->
+
+        <div class="container mt-5 bg-dark text-light py-2 rounded" id="input-area">
+            <a class="lead text-white">Copy your text here:</a>
+            <div class="d-flex input-group my-2">
+                <textarea class="form-control" aria-label="With textarea" id="input-text"></textarea>
+                <div class="input-group-append">
+                    <button class="btn btn-light btn-outline-secondary" type="button" id="paste-button" onclick="pasteText()">Paste</button>
+                </div>
+                <button class="btn btn-primary btn-lg ml-3" id="start-input-text">Start</button>
+            </div>
+            <a class="lead text-white">Or upload your document here:</a>
+            <div class="input-group mt-2 mb-3">
+                <div class="custom-file mt-1">
+                    <input type="file" class="custom-file-input" id="input-file" oninput="fileUpload()">
+                    <label class="custom-file-label" for="input-file" id="input-file-label">Choose file</label>
+                </div>
+                <button class="btn btn-primary btn-lg ml-3" id="start-input-file">Start</button>
+            </div>
+        </div>
+
+        <!--Do the Magic-->
+
+        <div class="container mt-3 bg-dark text-light py-2 rounded" id="content-area">
+            <button class="btn btn-secondary btn-lg" onclick="backToInput()" hidden>Back to Input</button>
+            <a class="lead text-white">Select words:</a>
+            <div class="card mt-2 mb-3">
+                <div class="card-body text-dark" id="content-insert">
+
+                </div>
+            </div>
+
+
+            <!--Navigation on Bottom-->
+
+            <div class="container">
+
+                <div class="row mb-3">
+                    <div class="col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-primary btn-lg" id="confirm-button">Confirm</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="jump-first-button">Jump to First</button>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="previous-button">Previous</button>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <div class="input-group mb-3">
+                            <input type="number" class="form-control" placeholder="..." aria-label="GoTo" aria-describedby="go-to-button" id="current-sentence">
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="number-of-phrases"></span>
+                                <button class="btn btn-secondary" type="button" id="go-to-button" onclick="goToPhraseX()">Go To</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="next-button">Next</button>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="jump-last-button">Jump to Last</button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+
+        <!--Output Download-->
+        
+        <div class="container mt-3 bg-dark text-light py-2 rounded" id="download-area">
+            
+            <!--Current Output-->
+            <a class="lead text-white">Currently selected words: </a>
+            <div class="card mt-2 mb-5 mb-3">
+                <div class="card-body text-dark" id="output-area">
+                    
+                </div>
+            </div>
+
+            <div class="container d-flex">
+                <a class="lead text-white mr-5">Download results: </a>
+                <input type="image" src="img/download.png" height="50" width="50" id="download-button"></input>
+            </div>
+        </div>
+        
+        
+        <!--Footer-->
+
+        <footer class="bg-light text-dark">
+            <hr class="mb-5" style="border-color: black;">
+            <div class="row">
+            <div class="col-12 col-md">
+                    <img src="img/logo.png" width="40%">
+                <li class="list-unstyled text-small"><a class="text-muted ml-4" target="_blank" href="https://www.uni-mannheim.de">University of Mannheim</a></li>
+                <small class="d-block mb-3 ml-4 text-muted">&copy; 2020</small>
+            </div>
+            <div class="col-6 col-md">
+                <h5 class="text-primary">About</h5>
+                <ul class="list-unstyled text-small">
+                    <li><a class="text-muted" target="_blank" href="###">Info 1</a></li>
+                    <li><a class="text-muted" target="_blank" href="###">Info 2</a></li>
+                    <li><a class="text-muted" target="_blank" href="###">Info 3</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md">
+                <h5 class="text-primary">Related Work</h5>
+                <ul class="list-unstyled text-small">
+                    <li><a class="text-muted" target="_blank" href="###">Paper 1</a></li>
+                    <li><a class="text-muted" target="_blank" href="###">Paper 2</a></li>
+                    <li><a class="text-muted" target="_blank" href="###">Paper 3</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md">
+                <h5 class="text-primary">Impressum</h5>
+                <ul class="list-unstyled text-small">
+                    <li><a class="text-muted" target="_blank" href="https://www.uni-mannheim.de/dws/">Data and Web Science Group</a></li>
+                    <li><a class="text-muted" target="_blank" href="https://www.uni-mannheim.de">University of Mannheim</a></li>
+                </ul>
+            </div>
+        </footer>
+
+    <script>
+
+// --- Initialization ---
+
+//var dummyInput = document.getElementById('content-1').innerHTML;
+var inputData = "";
+var currentPhrase = 0;
+var phrases = [];
+var fileUploadFlag = false;
+
+// Elements
+var numberOfPhrases = document.getElementById('number-of-phrases');
+var inputTextArea = document.getElementById('input-text');
+var inputUpload = document.getElementById('input-file');
+var inputFileLabel = document.getElementById('input-file-label');
+var contentInsert = document.getElementById("content-insert");
+var currentSentenceDisplay = document.getElementById('current-sentence');
+
+// Containers
+var inputArea = document.getElementById('input-area');
+var outputArea = document.getElementById('output-area');
+var contentMainArea = document.getElementById('content-area');
+var downloadArea = document.getElementById('download-area');
+
+// Buttons
+var startInputText = document.getElementById('start-input-text');
+var startInputFile = document.getElementById('start-input-file');
+var confirmButton = document.getElementById('confirm-button');
+var nextButton = document.getElementById('next-button');
+var previousButton = document.getElementById('previous-button');
+var jumpFirstButton = document.getElementById('jump-first-button');
+var jumpLastButton = document.getElementById('jump-last-button');
+var downloadButton = document.getElementById('download-button')
+
+
+// --- Data Input ---
+
+// Retrieves text input from textarea
+// TODO: Add Paste button ?
+
+// Pastes text from clipboard into textArea
+async function pasteText() {
+    const text = await navigator.clipboard.readText();
+    console.log(text);
+    inputTextArea.value = text;
+}
+
+// Starts text init process with textarea input
+async function getTextfromTextArea() {
+    if (inputTextArea.value != "") {
+        inputData = await inputTextArea.value;
+        console.log(inputData);
+        fileUploadFlag = false;
+        initializeText();
+    }
+}
+
+// Upload a file to the system
+function fileUpload() {
+    inputFileLabel.innerHTML = inputUpload.files[0].name;
+    var fileToLoad = inputUpload.files[0];
+    var fileReader = new FileReader();
+    fileReader.onload = function (fileLoadedEvent) {
+        var textFromFileLoaded = fileLoadedEvent.target.result;
+        console.log(textFromFileLoaded);
+        inputData = textFromFileLoaded;
+    };
+    fileReader.readAsText(fileToLoad, "UTF-8");
+}
+
+// Start tokenization process with uploaded text file
+function startWithUploadedFile() {
+    if (inputUpload.files[0] != undefined) {
+        fileUploadFlag = true;
+        initializeText()
+    }
+}
+
+// Initializes text data by starting tokenization process
+function initializeText() {
+    console.log(inputData);
+    phrases = splitInputToPhrases(inputData)
+    console.log(phrases);
+    numberOfPhrases.innerText = '/ ' + phrases.length;
+    currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
+    var phraseOne = phrases[0];
+    var tokens = tokenizePhrase(phraseOne);
+    createClickableText(tokens);
+}
+
+
+// --- Tokenization Process ---
+
+// Creates a multidimensional array, ordered by phrases with tokens
+function splitInputToPhrases(inputData) {
+    var cleanedInput = inputData.replace(/(\r\n|\n|\r|\t|"|,)/gm, " ");
+    try {
+        phrases = cleanedInput.split(/(\?|\!|\.)/);
+    }
+    catch (err) {
+        console.log('TypeError - No sentences inserted')
+    }
+    var output = [];
+    for (var i = 0; i < phrases.length - 1; i++) {
+        if (phrases[i] !== "." && phrases[i] !== "?" && phrases[i] !== "!") {
+            output.push(phrases[i]);
+        }
+    }
+    return output;
+}
+
+// Creates an array of tokens out of a phrase
+function tokenizePhrase(phrase) {
+    var tokens = [];
+    console.log(phrase);
+    token = phrase.split(" ");
+    for (var i = 0; i < token.length; i++) {
+        if (token[i] !== "") {
+            tokens.push(token[i]);
+        }
+    }
+    //console.log(tokens);
+    return tokens;
+}
+
+// Creates a clickable Button for each token
+function createClickableText(tokens) {
+    var output = "";
+    for (var i = 0; i < tokens.length; i++) {
+        if (tokens[i] !== "" && tokens[i] !== "?" && tokens[i] !== "." && tokens[i] !== "!") {
+            output += `<button class="btn btn-secondary ml-1 mb-1" id="token-${i}" onClick="highlightWords(this.id)">${tokens[i]}</button>`;
+        }
+    }
+    contentInsert.innerHTML = output;
+}
+
+// Changes the color of an word by clicking on it
+function highlightWords(identifier) {
+    //console.log(identifier);
+    ele = document.getElementById(identifier);
+    if (ele.className.includes("btn-secondary")) {
+        ele.className = ele.className.replace("btn-secondary", "btn-danger");
+    }
+    else {
+        ele.className = ele.className.replace("btn-danger", "btn-secondary");
+    }
+
+}
+
+
+// --- Data Output functions ---
+
+// Copies highlighted elements into the text output field
+function takeOverText() {
+    var elements = document.getElementsByClassName("btn btn-danger ml-1 mb-1");
+    var output = '';
+    output += `<div class="container">`;
+    output += `<i class="fas fa-times-circle" type="button" onClick="removeSelection(this.id)" id="output-${currentPhrase}"> </i> <a class="ml-1"> Phrase ${currentPhrase + 1}: </a>`;
+    for (var i = 0; i < elements.length; i++) {
+        output += `<button class="btn btn-secondary ml-1 mb-1" >${elements[i].innerHTML}</button>`;
+    }
+    output += '</div>';
+    outputArea.innerHTML += output;
+}
+
+// Removes an annotated element from the output box
+function removeSelection(identifier) {
+    console.log(identifier);
+    var ele = document.getElementById(identifier);
+    ele.parentNode.remove();
+}
+
+// Output download steering
+function downloadOutput() {
+    if (outputArea.innerHTML != "") {
+        //downloadButton.setAttribute('disabled', false);
+        content = outputArea.getElementsByClassName("btn btn-secondary ml-1 mb-1");
+        console.log(content);
+        var outputContent = "";
+        for (var i = 0; i < content.length; i++) {
+            outputContent += content[i].innerHTML + ',';
+        }
+        if (!fileUploadFlag) {
+            download('pastedText', outputContent);
+        }
+        else {
+            filename = inputUpload.files[0].name;
+            if (filename.includes('.txt')) {
+                filename = filename.replace('.txt', '');
+            }
+            download(filename, outputContent);
+        }
+    }
+}
+
+// Create downloadable File
+function download(filename, content) {
+    console.log('function download with ' + filename + ' ' + content);
+    var element = document.createElement('a');
+    element.style.display = 'none';
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('download', filename + '-annotated.txt');
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    console.log('Download successful')
+}
+
+
+// --- Navigation Functions ---
+
+// Go back to input options
+function backToInput() {
+    console.log('back To Input');
+}
+
+// Reads in the next phrase
+function previousPhrase() {
+    if (currentPhrase > 0) {
+        currentPhrase -= 1;
+        currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
+        tokens = tokenizePhrase(phrases[currentPhrase]);
+        createClickableText(tokens);
+    }
+}
+
+// Reads in the last Phrase
+function nextPhrase() {
+    if (currentPhrase < phrases.length - 1) {
+        takeOverText();
+        currentPhrase += 1;
+        currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
+        tokens = tokenizePhrase(phrases[currentPhrase]);
+        createClickableText(tokens);
+    }
+}
+
+// Jumps to the first sentence
+function jumpFirst() {
+    currentPhrase = 0;
+    currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
+    tokens = tokenizePhrase(phrases[currentPhrase]);
+    createClickableText(tokens);
+}
+
+// Jumps to the last sentence
+function jumpLast() {
+    currentPhrase = phrases.length - 1;
+    currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
+    tokens = tokenizePhrase(phrases[currentPhrase]);
+    createClickableText(tokens);
+}
+
+// Jumps to the selected sentence number
+function goToPhraseX() {
+    console.log('here1')
+    var number = parseInt(currentSentenceDisplay.value);
+    if (number > 0 && number <= phrases.length) {
+        console.log('here2')
+        currentPhrase = number - 1;
+        console.log(currentPhrase);
+        tokens = tokenizePhrase(phrases[currentPhrase]);
+        createClickableText(tokens);
+    }
+}
+
+
+// --- Button EventListeners ---
+
+startInputText.addEventListener("click", function () { getTextfromTextArea() });
+startInputFile.addEventListener("click", function () { startWithUploadedFile() })
+confirmButton.addEventListener("click", function () { takeOverText() });
+nextButton.addEventListener("click", function () { nextPhrase() });
+previousButton.addEventListener("click", function () { previousPhrase() });
+jumpFirstButton.addEventListener("click", function () { jumpFirst() });
+jumpLastButton.addEventListener("click", function () { jumpLast() })
+downloadButton.addEventListener("click", function () { downloadOutput() });
+
+
+
+    </script>
+    </body>
+</html>
