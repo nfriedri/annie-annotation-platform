@@ -134,27 +134,33 @@
             <hr class="mb-5" style="border-color: black;">
             <div class="row">
             <div class="col-12 col-md">
-                <img class="ml-3" src="https://www.uni-mannheim.de/typo3conf/ext/uma_site/Resources/Public/Images/Icons/logo-universitaet-mannheim.svg" width="40%">
+                <img class="ml-3" src="https://www.uni-mannheim.de/typo3conf/ext/uma_site/Resources/Public/Images/Icons/logo-universitaet-mannheim.svg" width="160" height="80">
                 <li class="list-unstyled text-small"><a class="text-muted ml-4" target="_blank" href="https://www.uni-mannheim.de">University of Mannheim</a></li>
                 <small class="d-block mb-3 ml-4 text-muted">&copy; 2020</small>
             </div>
+            
             <div class="col-6 col-md">
+                <!--
                 <h5 class="text-primary">About</h5>
                 <ul class="list-unstyled text-small">
                     <li><a class="text-muted" target="_blank" href="###">Info 1</a></li>
                     <li><a class="text-muted" target="_blank" href="###">Info 2</a></li>
                     <li><a class="text-muted" target="_blank" href="###">Info 3</a></li>
                 </ul>
+                -->
             </div>
             <div class="col-6 col-md">
+                <!--
                 <h5 class="text-primary">Related Work</h5>
                 <ul class="list-unstyled text-small">
                     <li><a class="text-muted" target="_blank" href="###">Paper 1</a></li>
                     <li><a class="text-muted" target="_blank" href="###">Paper 2</a></li>
                     <li><a class="text-muted" target="_blank" href="###">Paper 3</a></li>
-                </ul>
+                </ul> 
+                -->
             </div>
-            <div class="col-6 col-md">
+           
+            <div class="col-6 col-md ml-auto">
                 <h5 class="text-primary">Impressum</h5>
                 <ul class="list-unstyled text-small">
                     <li><a class="text-muted" target="_blank" href="https://www.uni-mannheim.de/dws/">Data and Web Science Group</a></li>
@@ -322,7 +328,7 @@ function takeOverText() {
     output += `<div class="container">`;
     output += `<i class="fas fa-times-circle" type="button" onClick="removeSelection(this.id)" id="output-${currentPhrase}"> </i> <a class="ml-1"> Phrase ${currentPhrase + 1}: </a>`;
     for (var i = 0; i < elements.length; i++) {
-        output += `<button class="btn btn-secondary ml-1 mb-1" >${elements[i].innerHTML}</button>`;
+        output += `<button class="btn btn-secondary ml-1 mb-1">${elements[i].innerHTML}</button>`;
     }
     output += '</div>';
     outputArea.innerHTML += output;
@@ -344,6 +350,11 @@ function downloadOutput() {
         var outputContent = "";
         for (var i = 0; i < content.length; i++) {
             outputContent += content[i].innerHTML + ',';
+            if (i+1 < content.length) {
+                if (content[i].parentNode != content[i+1].parentNode){
+                    outputContent += '\n';
+                }
+            }
         }
         if (!fileUploadFlag) {
             download('pastedText', outputContent);
@@ -392,7 +403,7 @@ function previousPhrase() {
 // Reads in the last Phrase
 function nextPhrase() {
     if (currentPhrase < phrases.length - 1) {
-        takeOverText();
+        //takeOverText();
         currentPhrase += 1;
         currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
         tokens = tokenizePhrase(phrases[currentPhrase]);
@@ -418,10 +429,8 @@ function jumpLast() {
 
 // Jumps to the selected sentence number
 function goToPhraseX() {
-    console.log('here1')
     var number = parseInt(currentSentenceDisplay.value);
     if (number > 0 && number <= phrases.length) {
-        console.log('here2')
         currentPhrase = number - 1;
         console.log(currentPhrase);
         tokens = tokenizePhrase(phrases[currentPhrase]);
