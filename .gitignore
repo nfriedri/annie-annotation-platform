@@ -114,3 +114,5 @@ uploads/
 
 # stanford data
 stanford-corenlp-full-2018/
+*.props
+*.tmp
