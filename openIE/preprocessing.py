@@ -1,4 +1,9 @@
 
+def tokenizer(sentence: str):
+    sentence = sentence.replace('.', '').replace('?', '')
+    tokens = sentence.rsplit(' ')
+    return tokens
+
 
 class Preprocessor:
 

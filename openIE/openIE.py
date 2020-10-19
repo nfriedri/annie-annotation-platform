@@ -1,10 +1,9 @@
 import os
-import tempfile
-from subprocess import Popen
-from sys import stderr
 
-import wget
 
+# IMPORTANT: Torch needs to be installed
+# => pip install torch===1.4.0 torchvision===0.5.0 -f https://download.pytorch.org/whl/torch_stable.html
+# IMPORTANT: stanford_openie module needs to be installed by pip! => pip install stanford_openie
 
 class StanfordOpenIE:
 

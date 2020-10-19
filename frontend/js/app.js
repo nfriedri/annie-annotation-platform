@@ -6,6 +6,8 @@ var currentPhrase = 0;
 var phrases = [];
 var fileUploadFlag = false;
 
+const url = 'http://127.0.0.1:5000/';
+
 // Elements
 var numberOfPhrases = document.getElementById('number-of-phrases');
 var inputTextArea = document.getElementById('input-text');
@@ -84,6 +86,7 @@ function initializeText() {
     var phraseOne = phrases[0];
     var tokens = tokenizePhrase(phraseOne);
     createClickableText(tokens);
+    getClusters(phraseOne);
 }
 
 
@@ -142,7 +145,34 @@ function highlightWords(identifier) {
     else {
         ele.className = ele.className.replace("btn-danger", "btn-secondary");
     }
+}
 
+// Call to Back-End retrieving clustering information
+async function getClusters(content) {
+    endpoint = url + 'clusters';
+    content = JSON.stringify({ data: content });
+    console.log(content)
+
+    var result = null;
+    try {
+        await fetch(endpoint, {
+            method: 'POST',
+            body: content,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then((res) => {
+                return res.json();
+            })
+            .then((data) => {
+                console.log(data);
+                result = data;
+            })
+    } catch (error) {
+        console.error(error);
+    }
+    return result;
 }
 
 
@@ -265,7 +295,6 @@ function goToPhraseX() {
 
 // --- Button EventListeners ---
 
-startInputText.addEventListener("click", function () { getTextfromTextArea() });
 startInputFile.addEventListener("click", function () { startWithUploadedFile() })
 confirmButton.addEventListener("click", function () { takeOverText() });
 nextButton.addEventListener("click", function () { nextPhrase() });

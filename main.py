@@ -1,5 +1,5 @@
-from openIE import StanfordOpenIE
-from Preprocessor import Preprocessor
+from openIE.openIE import StanfordOpenIE
+from openIE.preprocessing import Preprocessor
 
 import numpy
 

@@ -4,7 +4,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>OpenIE - Annotation platform</title>
-        <link rel="icon" href="{{url_for('static', filename='img/favicon.png')}}">
+        <link rel="icon" href="img/favicon.png">
 
         <!--Bootstrap-->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
@@ -20,36 +20,14 @@
         <!--Navigation bar on top-->
         <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
             <div class="container-fluid">
-                <a class="navbar-brand" href="openIE.html"> <img src="{{url_for('static', filename='img/logo.jpg')}}" width="30" height="30"> OpenIE Annotator Platform </a>
-                <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarResponsive">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="openIE.html">Home</a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
-                        </li>
-                    </ul>
-                </div>
+                <a class="navbar-brand" href="index.html"> <img src="img/logo.jpg" width="30" height="30"> OpenIE Annotator Platform </a>
             </div>
         </nav>
 
         <!--Input Selections-->
 
         <div class="container mt-5 bg-dark text-light py-2 rounded" id="input-area">
-            <a class="lead text-white">Copy your text here:</a>
-            <div class="d-flex input-group my-2">
-                <textarea class="form-control" aria-label="With textarea" id="input-text"></textarea>
-                <div class="input-group-append">
-                    <button class="btn btn-light btn-outline-secondary" type="button" id="paste-button" onclick="pasteText()">Paste</button>
-                </div>
-                <button class="btn btn-primary btn-lg ml-3" id="start-input-text">Start</button>
-            </div>
-            <a class="lead text-white">Or upload your document here:</a>
+            <a class="lead text-white">Upload your document here:</a>
             <div class="input-group mt-2 mb-3">
                 <div class="custom-file mt-1">
                     <input type="file" class="custom-file-input" id="input-file" oninput="fileUpload()">
@@ -63,10 +41,17 @@
 
         <div class="container mt-3 bg-dark text-light py-2 rounded" id="content-area">
             <button class="btn btn-secondary btn-lg" onclick="backToInput()" hidden>Back to Input</button>
-            <a class="lead text-white">Select words:</a>
+            <a class="lead text-white" id="sentence-number">Sentence #XX:</a>
             <div class="card mt-2 mb-3">
                 <div class="card-body text-dark" id="content-insert">
 
+                </div>
+            </div>
+
+            <a class="lead text-white">Currently selected words: </a>
+            <div class="card mt-2 mb-5 mb-3">
+                <div class="card-body text-dark" id="output-area">
+                    
                 </div>
             </div>
 
@@ -114,12 +99,7 @@
         <div class="container mt-3 bg-dark text-light py-2 rounded" id="download-area">
             
             <!--Current Output-->
-            <a class="lead text-white">Currently selected words: </a>
-            <div class="card mt-2 mb-5 mb-3">
-                <div class="card-body text-dark" id="output-area">
-                    
-                </div>
-            </div>
+            
 
             <div class="container d-flex">
                 <a class="lead text-white mr-5">Download results: </a>
@@ -134,7 +114,7 @@
             <hr class="mb-5" style="border-color: black;">
             <div class="row">
             <div class="col-12 col-md">
-                    <img src="{{url_for('static', filename='img/logo.png')}}" width="40%">
+                    <img src="img/logo.png" width="40%">
                 <li class="list-unstyled text-small"><a class="text-muted ml-4" target="_blank" href="https://www.uni-mannheim.de">University of Mannheim</a></li>
                 <small class="d-block mb-3 ml-4 text-muted">&copy; 2020</small>
             </div>
