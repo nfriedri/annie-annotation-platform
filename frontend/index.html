@@ -40,7 +40,6 @@
         <!--Do the Magic-->
 
         <div class="container mt-3 bg-dark text-light py-2 rounded" id="content-area">
-            <button class="btn btn-secondary btn-lg" onclick="backToInput()" hidden>Back to Input</button>
             <a class="lead text-white" id="sentence-number">Sentence #:</a>
             <div class="card mt-2 mb-3">
                 <div class="card-body text-dark" id="content-insert">
@@ -121,9 +120,13 @@
         <div class="container mt-3 bg-dark text-light py-2 rounded" id="download-area">
             
             <!--Current Output-->
-            
-
-            <div class="container d-flex">
+            <a class="lead text-white">Output:</a>
+            <div class="card mt-2">
+                <textarea class="form-control" id="current-output" rows="1"></textarea>
+            </div>
+            <button class="btn btn-secondary mt-2 mb-3" id="save-changes-button">Save output changes</button>
+            <div id="div-saved-changes"></div>
+            <div class="container d-flex mt-2">
                 <a class="lead text-white mr-5">Download results: </a>
                 <i class="fas fa-file-download fa-5x" type="button" id="download-button"></i>
             </div>

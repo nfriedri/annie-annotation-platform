@@ -49,6 +49,6 @@ def exit_on_close():
 '''
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
 
 # ui.run()

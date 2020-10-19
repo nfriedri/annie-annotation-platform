@@ -6,7 +6,9 @@ var currentPhrase = 0;
 var phrases = [];
 var fileUploadFlag = false;
 var clusterNumber = 1;
+var data = [];
 var savedData = [];
+var outputText = '';
 
 const url = 'http://127.0.0.1:5000/';
 
@@ -17,6 +19,7 @@ var inputUpload = document.getElementById('input-file');
 var inputFileLabel = document.getElementById('input-file-label');
 var contentInsert = document.getElementById("content-insert");
 var currentSentenceDisplay = document.getElementById('current-sentence');
+var currentOutput = document.getElementById('current-output');
 
 // Containers
 var inputArea = document.getElementById('input-area');
@@ -37,7 +40,18 @@ var jumpLastButton = document.getElementById('jump-last-button');
 var downloadButton = document.getElementById('download-button');
 var buttonGroup = document.getElementById('button-group');
 var addClusterButton = document.getElementById('add-cluster-button');
+var saveChangesButton = document.getElementById('save-changes-button');
 
+
+class Cluster {
+    constructor(sentenceNumber, subject, predicate, object, optionals) {
+        this.sentenceNumber = sentenceNumber;
+        this.subject = subject;
+        this.predicate = predicate;
+        this.object = object;
+        this.optionals = optionals;
+    }
+}
 
 // --- Data Input ---
 
@@ -196,22 +210,22 @@ async function getClusters(content) {
     return result;
 }
 
-async function showClusters(clusters) {
+async function createClusters(clusters) {
     clustersGenerated.removeAttribute('hidden');
     let output = '';
     for (var i = 0; i < clusters.length; i++) {
-        output += `<div><i class="fas fa-times-circle" type="button" onClick="removeSelection(this.id)" id="output-${currentPhrase}-${clusterNumber}"> </i> <a class="ml-1"> Cluster ${i + 1}: </a>`;
-        output += `  <button class="btn btn-success ml-1 mb-1" disabled>${clusters[i]['subject']} </button>
-                        <button class="btn btn-warning text-light ml-1 mb-1" disabled> ${clusters[i]['predicate']} </button>
-                        <button class="btn btn-info ml-1 mb-1" disabled> ${clusters[i]['object']} </button> </div>`;
-        clusterNumber += 1;
+        var cl = new Cluster(currentPhrase, clusters[i]['subject'], clusters[i]['predicate'], clusters[i]['object'], null);
+        data.push(cl);
     }
+
+
     clustersGenerated.innerHTML += output;
 }
 
 async function performClusterCall() {
     var clusters = await getClusters(phrases[currentPhrase]);
-    showClusters(clusters);
+    createClusters(clusters);
+    showClusterData();
 }
 
 
@@ -219,27 +233,53 @@ async function performClusterCall() {
 
 // Copies highlighted elements into the text output field
 function takeOverText() {
-    var subjects = contentInsert.getElementsByClassName("btn-success");
-    var predicates = contentInsert.getElementsByClassName("btn-warning");
-    var objects = contentInsert.getElementsByClassName("btn-info");
-    var optionals = contentInsert.getElementsByClassName("btn-light");
-    var output = '';
-    output += `<div><i class="fas fa-times-circle" type="button" onClick="removeSelection(this.id)" id="output-${currentPhrase}-${clusterNumber}"> </i> <a class="ml-1"> Cluster ${clusterNumber}: </a>`;
-    for (var i = 0; i < subjects.length; i++) {
-        output += `<button class="btn btn-success ml-1 mb-1" disabled>${subjects[i].innerHTML} </button>`
+    var subjectsBtns = contentInsert.getElementsByClassName("btn-success");
+    var predicatesBtns = contentInsert.getElementsByClassName("btn-warning");
+    var objectsBtns = contentInsert.getElementsByClassName("btn-info");
+    var optionalsBtns = contentInsert.getElementsByClassName("btn-light");
+    var subject = '';
+    var predicate = '';
+    var object = '';
+    var optional = '';
+    for (var i = 0; i < subjectsBtns.length; i++) {
+        subject += subjectsBtns[i].innerHTML + ' ';
     }
-    for (var i = 0; i < predicates.length; i++) {
-        output += `<button class="btn btn-warning text-light ml-1 mb-1" disabled> ${predicates[i].innerHTML} </button>`;
+    for (var i = 0; i < predicatesBtns.length; i++) {
+        predicate += predicatesBtns[i].innerHTML + ' ';
     }
-    for (var i = 0; i < objects.length; i++) {
-        output += `<button class="btn btn-info ml-1 mb-1" disabled> ${objects[i].innerHTML} </button>`;
+    for (var i = 0; i < objectsBtns.length; i++) {
+        object += objectsBtns[i].innerHTML + ' ';
     }
-    for (var i = 0; i < optionals.length; i++) {
-        output += `<button class="btn btn-light ml-1 mb-1" disabled> ${objects[i].innerHTML} </button>`;
+    for (var i = 0; i < optionalsBtns.length; i++) {
+        optional += optionalsBtns[i].innerHTML + ' ';
     }
-    output += '</div>';
+    var cl = new Cluster(currentPhrase, subject, predicate, object, optional);
+    data.push(cl);
     clusterNumber += 1;
-    clustersGenerated.innerHTML += output;
+    showClusterData();
+}
+
+function showClusterData() {
+    clusterNumber = 1;
+    let output = '';
+    for (var i = 0; i < data.length; i++) {
+        output += `<div><i class="fas fa-times-circle" type="button" onClick="removeSelection(this.id)" id="output-${currentPhrase}-${clusterNumber}"> </i> <a class="ml-1"> Cluster ${i + 1}: </a>`;
+        if (data[i].subject != null) {
+            output += `<button class="btn btn-success ml-1 mb-1" disabled>${data[i].subject} </button>`;
+        }
+        if (data[i].predicate != null) {
+            output += `<button class="btn btn-warning text-light ml-1 mb-1" disabled> ${data[i].predicate} </button>`;
+        }
+        if (data[i].object != null) {
+            output += `<button class="btn btn-info ml-1 mb-1" disabled> ${data[i].object} </button>`;
+        }
+        if (data[i].optional != null) {
+            output += `<button class="btn btn-light ml-1 mb-1" disabled> ${data[i].optional} </button>`;
+        }
+        output += `</div>`;
+        clusterNumber += 1;
+    }
+    clustersGenerated.innerHTML = output;
 }
 
 // Removes an annotated element from the output box
@@ -251,24 +291,21 @@ function removeSelection(identifier) {
 
 // Output download steering
 function downloadOutput() {
-    if (outputArea.innerHTML != "") {
-        //downloadButton.setAttribute('disabled', false);
-        content = outputArea.getElementsByClassName("btn btn-secondary ml-1 mb-1");
+    if (currentOutput.innerHTML != "") {
+        console.log('Here2')
         console.log(content);
-        var outputContent = "";
-        for (var i = 0; i < content.length; i++) {
-            outputContent += content[i].innerHTML + ',';
+        filename = inputUpload.files[0].name;
+        if (filename.includes('.txt')) {
+            filename = filename.replace('.txt', '');
         }
-        if (!fileUploadFlag) {
-            download('pastedText', outputContent);
-        }
-        else {
-            filename = inputUpload.files[0].name;
-            if (filename.includes('.txt')) {
-                filename = filename.replace('.txt', '');
-            }
-            download(filename, outputContent);
-        }
+        download(filename, outputText);
+    }
+    else {
+        console.log('Here2')
+        downloadArea.innerHTML += `<div class="alert alert-danger mt-3" role="alert" id="download-alert">
+                                    Nothing there yet to download :)
+                                    </div>`;
+        setTimeout(function () { document.getElementById('download-alert').remove() }, 4000);
     }
 }
 
@@ -347,26 +384,44 @@ function updateSentenceNumber() {
     document.getElementById('sentence-number').innerHTML = 'Sentence #' + number + ':';
 }
 
+function updateOutput() {
+    currentOutput.innerHTML += '';
+}
+
 function saveClusters() {
-    for (var i = 1; i <= clusterNumber; i++) {
-        data = {}
-        var ele = document.getElementById('output-' + currentPhrase + '-' + i).parentNode;
-        data['subject'] = 
-
+    savedData[currentPhrase] = data.slice();
+    let output = '';
+    for (var i = 0; i < phrases.length; i++) {
+        output += phrases[i] + '\n';
+        for (var j = 0; j < data.length; j++) {
+            if (data[j].sentenceNumber == i) {
+                output += i + '-->Cluster ' + j + ': ' + data[j].subject + ' ' + data[j].predicate + ' ' + data[j].object + ' [' + data[j].optional + '] ';
+                output += '-->' + data[j].subject + '-->' + data[j].predicate + '-->' + data[j].object + '-->' + data[j].optional + '\n';
+            }
+        }
     }
-    clustersGenerated
-
+    currentOutput.setAttribute('rows', '10');
+    currentOutput.innerHTML = output;
     clusterNumber = 1;
+}
+
+function saveChangesInOutputArea() {
+    outputText = currentOutput.innerHTML;
+    document.getElementById('div-saved-changes').innerHTML += `<div class="alert alert-success" id="alert-saved-changes" role="alert">
+                                                                    Saved changes successfully!
+                                                                </div>`;
+    setTimeout(function () { document.getElementById('alert-saved-changes').remove() }, 3000);
 }
 
 // --- Button EventListeners ---
 
 startInputFile.addEventListener("click", function () { startWithUploadedFile() })
 generateClustersButton.addEventListener("click", function () { performClusterCall() })
-saveButton.addEventListener("click", function () { takeOverText() });
+saveButton.addEventListener("click", function () { saveClusters() });
 nextButton.addEventListener("click", function () { nextPhrase() });
 previousButton.addEventListener("click", function () { previousPhrase() });
 jumpFirstButton.addEventListener("click", function () { jumpFirst() });
 jumpLastButton.addEventListener("click", function () { jumpLast() })
 downloadButton.addEventListener("click", function () { downloadOutput() });
 addClusterButton.addEventListener("click", function () { takeOverText() })
+saveChangesButton.addEventListener("click", function () { saveChangesInOutputArea() })
