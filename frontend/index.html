@@ -41,19 +41,41 @@
 
         <div class="container mt-3 bg-dark text-light py-2 rounded" id="content-area">
             <button class="btn btn-secondary btn-lg" onclick="backToInput()" hidden>Back to Input</button>
-            <a class="lead text-white" id="sentence-number">Sentence #XX:</a>
+            <a class="lead text-white" id="sentence-number">Sentence #:</a>
             <div class="card mt-2 mb-3">
                 <div class="card-body text-dark" id="content-insert">
 
                 </div>
             </div>
 
-            <a class="lead text-white">Currently selected words: </a>
-            <div class="card mt-2 mb-5 mb-3">
-                <div class="card-body text-dark" id="output-area">
-                    
+            <div>
+                <div class="btn-group btn-group-toggle my-2" data-toggle="buttons" id="button-group">
+                    <label class="btn btn-success active" id="subject-btn">
+                        <input type="radio" name="options" checked> Select subject(s)
+                    </label>
+                    <label class="btn btn-warning text-light" id="predicate-btn">
+                        <input type="radio" name="options" >Select predicate(s)
+                    </label>
+                    <label class="btn btn-info" id="object-btn">
+                        <input type="radio" name="options" >Select object(s)
+                    </label>
+                    <label class="btn btn-light" id="optional-btn">
+                        <input type="radio" name="options" >Select optional word(s)
+                    </label>
+                </div>
+                <button class="btn btn-danger my-2 ml-auto" style="float: right;" id="add-cluster-button">Add manual cluster</button>
+                <!--<button class="btn btn-secondary my-2 mr-2" style="float: right;">Reset</button>-->
+            </div>
+
+            <button class="btn btn-lg btn-primary mt-3 mb-2" id="generate-clusters-button">Generate Clusters</button>
+            
+            <div class="card mt-2 mb-3">
+                <div class="card-body text-dark" id="clusters-generated">
+
                 </div>
             </div>
+
+            
 
 
             <!--Navigation on Bottom-->
@@ -62,7 +84,7 @@
 
                 <div class="row mb-3">
                     <div class="col-md d-flex justify-content-center">
-                        <button type="button" class="btn btn-primary btn-lg" id="confirm-button">Confirm</button>
+                        <button type="button" class="btn btn-primary btn-lg" id="save-button">Save</button>
                     </div>
                 </div>
 

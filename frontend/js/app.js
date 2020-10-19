@@ -5,6 +5,8 @@ var inputData = "";
 var currentPhrase = 0;
 var phrases = [];
 var fileUploadFlag = false;
+var clusterNumber = 1;
+var savedData = [];
 
 const url = 'http://127.0.0.1:5000/';
 
@@ -21,16 +23,20 @@ var inputArea = document.getElementById('input-area');
 var outputArea = document.getElementById('output-area');
 var contentMainArea = document.getElementById('content-area');
 var downloadArea = document.getElementById('download-area');
+var clustersGenerated = document.getElementById('clusters-generated');
 
 // Buttons
 var startInputText = document.getElementById('start-input-text');
 var startInputFile = document.getElementById('start-input-file');
-var confirmButton = document.getElementById('confirm-button');
+var generateClustersButton = document.getElementById('generate-clusters-button');
+var saveButton = document.getElementById('save-button');
 var nextButton = document.getElementById('next-button');
 var previousButton = document.getElementById('previous-button');
 var jumpFirstButton = document.getElementById('jump-first-button');
 var jumpLastButton = document.getElementById('jump-last-button');
-var downloadButton = document.getElementById('download-button')
+var downloadButton = document.getElementById('download-button');
+var buttonGroup = document.getElementById('button-group');
+var addClusterButton = document.getElementById('add-cluster-button');
 
 
 // --- Data Input ---
@@ -77,7 +83,7 @@ function startWithUploadedFile() {
 }
 
 // Initializes text data by starting tokenization process
-function initializeText() {
+async function initializeText() {
     console.log(inputData);
     phrases = splitInputToPhrases(inputData)
     console.log(phrases);
@@ -86,7 +92,8 @@ function initializeText() {
     var phraseOne = phrases[0];
     var tokens = tokenizePhrase(phraseOne);
     createClickableText(tokens);
-    getClusters(phraseOne);
+    //var clusters = await getClusters(phraseOne);
+    //showClusters(clusters);
 }
 
 
@@ -133,19 +140,33 @@ function createClickableText(tokens) {
         }
     }
     contentInsert.innerHTML = output;
+    updateSentenceNumber()
 }
 
 // Changes the color of an word by clicking on it
 function highlightWords(identifier) {
-    //console.log(identifier);
     ele = document.getElementById(identifier);
     if (ele.className.includes("btn-secondary")) {
-        ele.className = ele.className.replace("btn-secondary", "btn-danger");
+        if (buttonGroup.getElementsByClassName('active')[0].id == 'subject-btn') {
+            ele.className = ele.className.replace("btn-secondary", "btn-success");
+        }
+        if (buttonGroup.getElementsByClassName('active')[0].id == 'predicate-btn') {
+            ele.className = ele.className.replace("btn-secondary", "btn-warning");
+        }
+        if (buttonGroup.getElementsByClassName('active')[0].id == 'object-btn') {
+            ele.className = ele.className.replace("btn-secondary", "btn-info");
+        }
+        if (buttonGroup.getElementsByClassName('active')[0].id == 'optional-btn') {
+            ele.className = ele.className.replace("btn-secondary", "btn-light");
+        }
     }
     else {
-        ele.className = ele.className.replace("btn-danger", "btn-secondary");
+        ele.className = ele.className.replace("btn-success", "btn-secondary");
+        ele.className = ele.className.replace("btn-warning", "btn-secondary");
+        ele.className = ele.className.replace("btn-info", "btn-secondary");
     }
 }
+
 
 // Call to Back-End retrieving clustering information
 async function getClusters(content) {
@@ -175,20 +196,50 @@ async function getClusters(content) {
     return result;
 }
 
+async function showClusters(clusters) {
+    clustersGenerated.removeAttribute('hidden');
+    let output = '';
+    for (var i = 0; i < clusters.length; i++) {
+        output += `<div><i class="fas fa-times-circle" type="button" onClick="removeSelection(this.id)" id="output-${currentPhrase}-${clusterNumber}"> </i> <a class="ml-1"> Cluster ${i + 1}: </a>`;
+        output += `  <button class="btn btn-success ml-1 mb-1" disabled>${clusters[i]['subject']} </button>
+                        <button class="btn btn-warning text-light ml-1 mb-1" disabled> ${clusters[i]['predicate']} </button>
+                        <button class="btn btn-info ml-1 mb-1" disabled> ${clusters[i]['object']} </button> </div>`;
+        clusterNumber += 1;
+    }
+    clustersGenerated.innerHTML += output;
+}
+
+async function performClusterCall() {
+    var clusters = await getClusters(phrases[currentPhrase]);
+    showClusters(clusters);
+}
+
 
 // --- Data Output functions ---
 
 // Copies highlighted elements into the text output field
 function takeOverText() {
-    var elements = document.getElementsByClassName("btn btn-danger ml-1 mb-1");
+    var subjects = contentInsert.getElementsByClassName("btn-success");
+    var predicates = contentInsert.getElementsByClassName("btn-warning");
+    var objects = contentInsert.getElementsByClassName("btn-info");
+    var optionals = contentInsert.getElementsByClassName("btn-light");
     var output = '';
-    output += `<div class="container">`;
-    output += `<i class="fas fa-times-circle" type="button" onClick="removeSelection(this.id)" id="output-${currentPhrase}"> </i> <a class="ml-1"> Phrase ${currentPhrase + 1}: </a>`;
-    for (var i = 0; i < elements.length; i++) {
-        output += `<button class="btn btn-secondary ml-1 mb-1" >${elements[i].innerHTML}</button>`;
+    output += `<div><i class="fas fa-times-circle" type="button" onClick="removeSelection(this.id)" id="output-${currentPhrase}-${clusterNumber}"> </i> <a class="ml-1"> Cluster ${clusterNumber}: </a>`;
+    for (var i = 0; i < subjects.length; i++) {
+        output += `<button class="btn btn-success ml-1 mb-1" disabled>${subjects[i].innerHTML} </button>`
+    }
+    for (var i = 0; i < predicates.length; i++) {
+        output += `<button class="btn btn-warning text-light ml-1 mb-1" disabled> ${predicates[i].innerHTML} </button>`;
+    }
+    for (var i = 0; i < objects.length; i++) {
+        output += `<button class="btn btn-info ml-1 mb-1" disabled> ${objects[i].innerHTML} </button>`;
+    }
+    for (var i = 0; i < optionals.length; i++) {
+        output += `<button class="btn btn-light ml-1 mb-1" disabled> ${objects[i].innerHTML} </button>`;
     }
     output += '</div>';
-    outputArea.innerHTML += output;
+    clusterNumber += 1;
+    clustersGenerated.innerHTML += output;
 }
 
 // Removes an annotated element from the output box
@@ -255,7 +306,6 @@ function previousPhrase() {
 // Reads in the last Phrase
 function nextPhrase() {
     if (currentPhrase < phrases.length - 1) {
-        takeOverText();
         currentPhrase += 1;
         currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
         tokens = tokenizePhrase(phrases[currentPhrase]);
@@ -292,13 +342,31 @@ function goToPhraseX() {
     }
 }
 
+function updateSentenceNumber() {
+    var number = currentPhrase + 1;
+    document.getElementById('sentence-number').innerHTML = 'Sentence #' + number + ':';
+}
+
+function saveClusters() {
+    for (var i = 1; i <= clusterNumber; i++) {
+        data = {}
+        var ele = document.getElementById('output-' + currentPhrase + '-' + i).parentNode;
+        data['subject'] = 
+
+    }
+    clustersGenerated
+
+    clusterNumber = 1;
+}
 
 // --- Button EventListeners ---
 
 startInputFile.addEventListener("click", function () { startWithUploadedFile() })
-confirmButton.addEventListener("click", function () { takeOverText() });
+generateClustersButton.addEventListener("click", function () { performClusterCall() })
+saveButton.addEventListener("click", function () { takeOverText() });
 nextButton.addEventListener("click", function () { nextPhrase() });
 previousButton.addEventListener("click", function () { previousPhrase() });
 jumpFirstButton.addEventListener("click", function () { jumpFirst() });
 jumpLastButton.addEventListener("click", function () { jumpLast() })
 downloadButton.addEventListener("click", function () { downloadOutput() });
+addClusterButton.addEventListener("click", function () { takeOverText() })
