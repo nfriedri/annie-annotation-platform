@@ -1,4 +1,5 @@
 torch>=1.4.0
+# pip install torch===1.4.0 torchvision===0.5.0 -f https://download.pytorch.org/whl/torch_stable.html
 numpy>=1.19.2
 six>=1.15.0
 setuptools>=50.3.1
