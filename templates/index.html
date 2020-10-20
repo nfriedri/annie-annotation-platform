@@ -1,0 +1,186 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>OpenIE - Annotation platform</title>
+        <link rel="icon" href="{{url_for('static', filename='img/favicon.png')}}">
+
+        <!--Bootstrap-->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+        <!-- Icons -->
+        <script src="https://kit.fontawesome.com/1269d23fc6.js" crossorigin="anonymous"></script>
+
+    </head>
+    <body id="body">
+
+        <!--Navigation bar on top-->
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="index.html"> <img src="{{url_for('static', filename='img/logo.jpg')}}" width="30" height="30"> OpenIE Annotator Platform </a>
+                <!--<button class="btn btn-danger ml-auto" style="float:right;" id="exit-button">EXIT</button>-->
+            </div>
+        </nav>
+
+        <!--Input Selections-->
+
+        <div class="container mt-5 bg-dark text-light py-2 rounded" id="input-area">
+            <a class="lead text-white">Upload your document here:</a>
+            <div class="input-group mt-2 mb-3">
+                <div class="custom-file mt-1">
+                    <input type="file" class="custom-file-input" id="input-file" oninput="fileUpload()">
+                    <label class="custom-file-label" for="input-file" id="input-file-label">Choose file</label>
+                </div>
+                <button class="btn btn-primary btn-lg ml-3" id="start-input-file">Start</button>
+            </div>
+        </div>
+
+        <!--Do the Magic-->
+
+        <div class="container mt-3 bg-dark text-light py-2 rounded" id="content-area">
+            <p class="lead text-white" id="sentence-number">Sentence #:</p>
+            <div class="card mt-2 mb-3">
+                <div class="card-body text-dark" id="content-insert">
+
+                </div>
+            </div>
+
+            <button class="btn btn-danger my-2" id="add-cluster-button">Add to cluster</button>
+            
+            <p class="lead text-white" id="sentence-number">Cluster #:</p>
+            <div class="card mt-2 mb-3">
+                <div class="card-body text-dark" id="cluster-insert">
+
+                </div>
+            </div>
+
+
+
+            <div>
+                <div class="btn-group btn-group-toggle my-2" data-toggle="buttons" id="button-group">
+                    <label class="btn btn-success active" id="subject-btn">
+                        <input type="radio" name="options" checked> Select subject(s)
+                    </label>
+                    <label class="btn btn-warning text-light" id="predicate-btn">
+                        <input type="radio" name="options" >Select predicate(s)
+                    </label>
+                    <label class="btn btn-info" id="object-btn">
+                        <input type="radio" name="options" >Select object(s)
+                    </label>
+                </div>
+
+                <button class="btn btn-secondary" data-toggle="buttons" id="optional-button" style="text-decoration: underline;">Optional</button>
+                <button class="btn btn-danger my-2 ml-auto" style="float: right;" id="add-triples-button">Add triples to cluster</button>
+                <!--<button class="btn btn-secondary my-2 mr-2" style="float: right;">Reset</button>-->
+            </div>
+
+            <button class="btn btn-lg btn-primary mt-3 mb-2" id="generate-clusters-button">Generate Clusters</button>
+            
+            <div class="card mt-2 mb-3">
+                <div class="card-body text-dark" id="clusters-generated">
+
+                </div>
+            </div>
+
+            
+
+
+            <!--Navigation on Bottom-->
+
+            <div class="container">
+
+                <div class="row mb-3">
+                    <div class="col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-primary btn-lg" id="save-button">Save</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="jump-first-button">Jump to First</button>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="previous-button">Previous</button>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <div class="input-group mb-3">
+                            <input type="number" class="form-control" placeholder="..." aria-label="GoTo" aria-describedby="go-to-button" id="current-sentence">
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="number-of-phrases"></span>
+                                <button class="btn btn-secondary" type="button" id="go-to-button" onclick="goToPhraseX()">Go To</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="next-button">Next</button>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="jump-last-button">Jump to Last</button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+
+        <!--Output Download-->
+        
+        <div class="container mt-3 bg-dark text-light py-2 rounded" id="download-area">
+            
+            <!--Current Output-->
+            <a class="lead text-white">Output:</a>
+            <div class="card mt-2">
+                <textarea class="form-control" id="current-output" rows="1"></textarea>
+            </div>
+            <button class="btn btn-secondary mt-2 mb-3" id="save-changes-button">Save output changes</button>
+            <div id="div-saved-changes"></div>
+            <div class="container d-flex mt-2">
+                <a class="lead text-white mr-5">Download results: </a>
+                <i class="fas fa-file-download fa-5x" type="button" id="download-button"></i>
+            </div>
+        </div>
+        
+        
+        <!--Footer-->
+
+        <footer class="bg-light text-dark">
+            <hr class="mb-5" style="border-color: black;">
+            <div class="row">
+            <div class="col-12 col-md">
+                    <img src="{{url_for('static', filename='img/logo.png')}}" width="40%">
+                <li class="list-unstyled text-small"><a class="text-muted ml-4" target="_blank" href="https://www.uni-mannheim.de">University of Mannheim</a></li>
+                <small class="d-block mb-3 ml-4 text-muted">&copy; 2020</small>
+            </div>
+            <!--
+            <div class="col-6 col-md">
+                <h5 class="text-primary">About</h5>
+                <ul class="list-unstyled text-small">
+                    <li><a class="text-muted" target="_blank" href="###">Info 1</a></li>
+                    <li><a class="text-muted" target="_blank" href="###">Info 2</a></li>
+                    <li><a class="text-muted" target="_blank" href="###">Info 3</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md">
+                <h5 class="text-primary">Related Work</h5>
+                <ul class="list-unstyled text-small">
+                    <li><a class="text-muted" target="_blank" href="###">Paper 1</a></li>
+                    <li><a class="text-muted" target="_blank" href="###">Paper 2</a></li>
+                    <li><a class="text-muted" target="_blank" href="###">Paper 3</a></li>
+                </ul>
+            </div>
+        -->
+            <div class="col-6 col-md ml-auto">
+                <h5 class="text-primary">Impressum</h5>
+                <ul class="list-unstyled text-small">
+                    <li><a class="text-muted" target="_blank" href="https://www.uni-mannheim.de/dws/">Data and Web Science Group</a></li>
+                    <li><a class="text-muted" target="_blank" href="https://www.uni-mannheim.de">University of Mannheim</a></li>
+                </ul>
+            </div>
+        </footer>
+
+    <script src="{{url_for('static', filename='js/appNew.js')}}"></script>
+    </body>
+</html>

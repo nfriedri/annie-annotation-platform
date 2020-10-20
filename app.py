@@ -12,14 +12,13 @@ openIE.annotate('Get this here started.')
 
 app = Flask(__name__)
 CORS(app)
-# ui = FlaskUI(app, maximized=True, width=1920, height=1080)
-
-
+ui = FlaskUI(app, maximized=True, width=1920, height=1080)
 
 
 @app.route('/', methods= ['GET'])
 def index():
     print('APP IS RUNNING')
+    return render_template('index.html')
 
 
 @app.route('/clusters', methods=['POST'])
@@ -42,14 +41,16 @@ def index():
     tokens = tokenizer(sentences[1])
     return render_template('index.html', sentence=sentence, tokens=tokens)
 
+'''
+
 
 @app.route('/stop', methods=['GET'])
 def exit_on_close():
     print('exit_on_close')
     exit()
-'''
 
-if __name__ == '__main__':
-    app.run()
 
-# ui.run()
+# if __name__ == '__main__':
+#    app.run()
+
+ui.run()
