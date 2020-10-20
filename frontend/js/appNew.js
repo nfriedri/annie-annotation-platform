@@ -39,6 +39,7 @@ var jumpLastButton = document.getElementById('jump-last-button');
 var downloadButton = document.getElementById('download-button');
 var buttonGroup = document.getElementById('button-group');
 var addClusterButton = document.getElementById('add-cluster-button');
+var addTriplesButton = document.getElementById('add-triples-button');
 var saveChangesButton = document.getElementById('save-changes-button');
 var optionalButton = document.getElementById('optional-button');
 
@@ -52,7 +53,7 @@ class Cluster {
 }
 
 class Word {
-    constructor(text, type, optional){
+    constructor(text, type, optional) {
         this.text = text; // wordtext
         this.type = type; // subject, predicate or object
         this.optional = optional // Boolean true or false
@@ -142,29 +143,33 @@ function createClickableText(tokens) {
 
 function highlightCluster(identifier) {
     ele = document.getElementById(identifier);
-    ele.className = ele.className.replace('btn-secondary', 'btn-primary');
+    if (ele.className.includes("btn-secondary")) {
+        ele.className = ele.className.replace('btn-secondary', 'btn-primary');
+    }
+    else {
+        ele.className = ele.className.replace('btn-primary', 'btn-secondary');
+    }
+
 }
 
 function highlightType(identifier) {
+    ele = document.getElementById(identifier);
     if (ele.className.includes("btn-secondary")) {
         if (buttonGroup.getElementsByClassName('active')[0].id == 'subject-btn') {
             ele.className = ele.className.replace("btn-secondary", "btn-success");
-            if (optionalButton.hasAttribute('active')){
-                console.log('Now underlining')
+            if (optionalButton.className.includes('active')) {
                 ele.setAttribute('style', "text-decoration: underline;");
             }
         }
         if (buttonGroup.getElementsByClassName('active')[0].id == 'predicate-btn') {
-            ele.className = ele.className.replace("btn-secondary", "btn-warning");
-            if (optionalButton.hasAttribute('active')){
-                console.log('Now underlining')
+            ele.className = ele.className.replace("btn-secondary", "btn-warning text-light");
+            if (optionalButton.className.includes('active')) {
                 ele.setAttribute('style', "text-decoration: underline;");
             }
         }
         if (buttonGroup.getElementsByClassName('active')[0].id == 'object-btn') {
             ele.className = ele.className.replace("btn-secondary", "btn-info");
-            if (optionalButton.hasAttribute('active')){
-                console.log('Now underlining')
+            if (optionalButton.className.includes('active')) {
                 ele.setAttribute('style', "text-decoration: underline;");
             }
         }
@@ -180,10 +185,10 @@ function highlightType(identifier) {
 // --- Data Output functions ---
 
 // Copies highlighted elements into the text output field
-function copyMarkedWordsToCluster(){
+function copyMarkedWordsToCluster() {
     var elements = contentInsert.getElementsByClassName('btn-primary');
     let output = '';
-    for (var i=0;  i<elements.length; i++){
+    for (var i = 0; i < elements.length; i++) {
         output += `<button class="btn btn-secondary ml-1 mt-1" id="cluster-word-${i}" onClick="highlightType(this.id)">${elements[i].innerHTML}</button>`;
     }
     clusterInsert.innerHTML = output;
@@ -192,56 +197,80 @@ function copyMarkedWordsToCluster(){
 function storeMarkedWords() {
     var elements = clusterInsert.getElementsByClassName("btn");
     wordArray = [];
-    for (var i=0; i< elements.length;i++){
+    for (var i = 0; i < elements.length; i++) {
         text = elements[i].innerHTML;
         type = '';
         optional = false;
-        if (elements[i].className.includes('btn-success')){
-            type = 'subject'
-            if (elements[i].hasAttribute('style')){
+
+        if (elements[i].className.includes('btn-success')) {
+            type = 'subject';
+            console.log(elements[i].hasAttribute('style'));
+            if (elements[i].hasAttribute('style')) {
+                console.log('Compare works')
                 optional = true;
             }
         }
-        if (elements[i].className.includes('btn-warning')){
-            type = 'predicate'
-            if (elements[i].hasAttribute('style')){
+        if (elements[i].className.includes('btn-warning text-light')) {
+            type = 'predicate';
+            if (elements[i].hasAttribute('style')) {
+                console.log('Compare works')
                 optional = true;
             }
         }
-        if (elements[i].className.includes('btn-info')){
-            type = 'object'
-            if (elements[i].hasAttribute('style')){
+        if (elements[i].className.includes('btn-info')) {
+            type = 'object';
+            if (elements[i].hasAttribute('style')) {
+                console.log('Compare works')
                 optional = true;
             }
         }
+
         word = new Word(text, type, optional);
         wordArray.push(word);
     }
     cl = new Cluster(currentPhrase, clusterNumber, wordArray);
     data.push(cl);
-
-    output += `<div><i class="fas fa-times-circle" type="button" onClick="removeSelection(this.id)" id="output-${currentPhrase}-${clusterNumber}"> </i> <a class="ml-1"> Cluster ${i + 1}: </a>`;
+    clusterNumber++;
+    showClusterData();
 }
 
 function showClusterData() {
-    clusterNumber = 1;
     let output = '';
     for (var i = 0; i < data.length; i++) {
-        output += `<div><i class="fas fa-times-circle" type="button" onClick="removeSelection(this.id)" id="output-${currentPhrase}-${clusterNumber}"> </i> <a class="ml-1"> Cluster ${i + 1}: </a>`;
-        if (data[i].subject != null) {
-            output += `<button class="btn btn-success ml-1 mb-1" disabled>${data[i].subject} </button>`;
+        if (data[i].sentenceNumber == currentPhrase) {
+            output += `<div><i class="fas fa-times-circle" type="button" onClick="removeSelection(this.id)" id="output-${data[i].sentenceNumber}-${data[i].clusterNumber}"> </i> <a class="ml-1"> Cluster ${data[i].clusterNumber}: </a>`;
+            var wordArray = data[i].words;
+            for (var j = 0; j < wordArray.length; j++) {
+                if (wordArray[j].type == 'subject') {
+                    output += `<button class="btn btn-success ml-1 mb-1" disabled`
+                    if (wordArray[j].optional) {
+                        output += ` style="text-decoration: underline;">${wordArray[j].text} </button>`;
+                    }
+                    else {
+                        output += `>${wordArray[j].text} </button>`;
+                    }
+                }
+                if (wordArray[j].type == 'predicate') {
+                    output += `<button class="btn btn-warning text-light ml-1 mb-1" disabled`
+                    if (wordArray[j].optional) {
+                        output += ` style="text-decoration: underline;">${wordArray[j].text} </button>`;
+                    }
+                    else {
+                        output += `> ${wordArray[j].text} </button>`;
+                    }
+                }
+                if (wordArray[j].type == 'object') {
+                    output += `<button class="btn btn-info ml-1 mb-1" disabled`
+                    if (wordArray[j].optional) {
+                        output += ` style="text-decoration: underline;">${wordArray[j].text} </button>`;
+                    }
+                    else {
+                        output += `> ${wordArray[j].text} </button>`;
+                    }
+                }
+            }
+            output += `</div>`;
         }
-        if (data[i].predicate != null) {
-            output += `<button class="btn btn-warning text-light ml-1 mb-1" disabled> ${data[i].predicate} </button>`;
-        }
-        if (data[i].object != null) {
-            output += `<button class="btn btn-info ml-1 mb-1" disabled> ${data[i].object} </button>`;
-        }
-        if (data[i].optional != null) {
-            output += `<button class="btn btn-light ml-1 mb-1" disabled> ${data[i].optional} </button>`;
-        }
-        output += `</div>`;
-        clusterNumber += 1;
     }
     clustersGenerated.innerHTML = output;
 }
@@ -275,13 +304,20 @@ async function getClusters(content) {
 }
 
 async function createClusters(clusters) {
-    clustersGenerated.removeAttribute('hidden');
-    let output = '';
+    //clustersGenerated.removeAttribute('hidden');
     for (var i = 0; i < clusters.length; i++) {
-        var cl = new Cluster(currentPhrase, clusters[i]['subject'], clusters[i]['predicate'], clusters[i]['object'], null);
+        subject = new Word(clusters[i]['subject'], 'subject', false);
+        predicate = new Word(clusters[i]['predicate'], 'predicate', false);
+        object = new Word(clusters[i]['object'], 'object', false);
+        words = []
+        words.push(subject);
+        words.push(predicate);
+        words.push(object);
+        var cl = new Cluster(currentPhrase, clusterNumber, words);
         data.push(cl);
+        clusterNumber++;
     }
-    clustersGenerated.innerHTML += output;
+    //clustersGenerated.innerHTML += output;
 }
 
 async function performClusterCall() {
@@ -294,14 +330,21 @@ async function performClusterCall() {
 function removeSelection(identifier) {
     console.log(identifier);
     var ele = document.getElementById(identifier);
+    var clNumber = parseInt(identifier.substring(9));
+    data.forEach(ele => {
+        if (ele.sentenceNumber == currentPhrase) {
+            if (ele.clusterNumber == clNumber) {
+                data.pop(ele);
+                console.log('Removed ele')
+            }
+        }
+    });
     ele.parentNode.remove();
 }
 
 // Output download steering
 function downloadOutput() {
     if (currentOutput.innerHTML != "") {
-        console.log('Here2')
-        console.log(content);
         filename = inputUpload.files[0].name;
         if (filename.includes('.txt')) {
             filename = filename.replace('.txt', '');
@@ -345,6 +388,8 @@ function previousPhrase() {
         currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
         tokens = tokenizePhrase(phrases[currentPhrase]);
         createClickableText(tokens);
+        resetClusterView();
+        showClusterData();
     }
 }
 
@@ -355,6 +400,7 @@ function nextPhrase() {
         currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
         tokens = tokenizePhrase(phrases[currentPhrase]);
         createClickableText(tokens);
+        resetClusterView();
     }
 }
 
@@ -364,6 +410,7 @@ function jumpFirst() {
     currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
     tokens = tokenizePhrase(phrases[currentPhrase]);
     createClickableText(tokens);
+    resetClusterView();
 }
 
 // Jumps to the last sentence
@@ -372,6 +419,7 @@ function jumpLast() {
     currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
     tokens = tokenizePhrase(phrases[currentPhrase]);
     createClickableText(tokens);
+    resetClusterView();
 }
 
 // Jumps to the selected sentence number
@@ -384,6 +432,7 @@ function goToPhraseX() {
         console.log(currentPhrase);
         tokens = tokenizePhrase(phrases[currentPhrase]);
         createClickableText(tokens);
+        resetClusterView();
     }
 }
 
@@ -399,17 +448,56 @@ function updateOutput() {
 function saveClusters() {
     savedData[currentPhrase] = data.slice();
     let output = '';
-    for (var i = 0; i < phrases.length; i++) {
-        output += phrases[i] + '\n';
-        for (var j = 0; j < data.length; j++) {
-            if (data[j].sentenceNumber == i) {
-                output += i + '-->Cluster ' + j + ': ' + data[j].subject + ' ' + data[j].predicate + ' ' + data[j].object + ' [' + data[j].optional + '] ';
-                output += '-->' + data[j].subject + '-->' + data[j].predicate + '-->' + data[j].object + '-->' + data[j].optional + '\n';
-            }
+    var sentenceNumber = 0;
+    for (var i = 0; i < data.length; i++) {
+        if (sentenceNumber == data[i].sentenceNumber) {
+            output += phrases[data[i].sentenceNumber] + '\n';
+            sentenceNumber++;
         }
+        //output += phrases[data[i].sentenceNumber] + '\n';
+        output += (data[i].sentenceNumber + 1) + ' -->Cluster ' + data[i].clusterNumber + ': ';
+        let clusterArray = data[i].words;
+        for (var j = 0; j < clusterArray.length; j++) {
+            output += clusterArray[j].text + ' ';
+        }
+        output += '-->';
+        clusterArray.forEach(ele => {
+            if (ele.type == 'subject') {
+                if (ele.optional) {
+                    output += '[' + ele.text + '] ';
+                }
+                else {
+                    output += ele.text + ' ';
+                }
+            }
+        });
+        output += '-->';
+        clusterArray.forEach(ele => {
+            if (ele.type == 'predicate') {
+                if (ele.optional) {
+                    output += '[' + ele.text + '] ';
+                }
+                else {
+                    output += ele.text + ' ';
+                }
+            }
+        });
+        output += '-->';
+        clusterArray.forEach(ele => {
+            if (ele.type == 'object') {
+                if (ele.optional) {
+                    output += '[' + ele.text + '] ';
+                }
+                else {
+                    output += ele.text + ' ';
+                }
+            }
+        });
+        output += '\n';
     }
     currentOutput.setAttribute('rows', '10');
     currentOutput.innerHTML = output;
+    outputText = output;
     clusterNumber = 1;
 }
 
@@ -419,6 +507,11 @@ function saveChangesInOutputArea() {
                                                                     Saved changes successfully!
                                                                 </div>`;
     setTimeout(function () { document.getElementById('alert-saved-changes').remove() }, 3000);
+}
+
+function resetClusterView() {
+    clusterInsert.innerHTML = '';
+    clustersGenerated.innerHTML = '';
 }
 
 // --- Button EventListeners ---
@@ -431,5 +524,6 @@ previousButton.addEventListener("click", function () { previousPhrase() });
 jumpFirstButton.addEventListener("click", function () { jumpFirst() });
 jumpLastButton.addEventListener("click", function () { jumpLast() })
 downloadButton.addEventListener("click", function () { downloadOutput() });
-addClusterButton.addEventListener("click", function () { copyMarkedWordsToCluster() })
+addClusterButton.addEventListener("click", function () { copyMarkedWordsToCluster() });
+addTriplesButton.addEventListener("click", function () { storeMarkedWords() });
 saveChangesButton.addEventListener("click", function () { saveChangesInOutputArea() })

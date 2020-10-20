@@ -29,6 +29,7 @@ def get_clustering():
     data = content['data']
     print(data)
     response = openIE.annotate(str(data))
+    print(response)
     return jsonify(response)
 
 
