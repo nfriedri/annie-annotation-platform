@@ -1,0 +1,73 @@
+.active {
+  background-color: white;
+}
+.btn-subject {
+  color: white;
+  background-color: #0ab60a;
+  border-color: #0ab60a;
+  touch-action: manipulation;
+}
+.btn-subject:hover {
+  color: white;
+  background-color: #03a003cc;
+  border-color: #03a003cc;
+}
+.btn-subject:active {
+  color: black;
+  background-color: black;
+}
+
+.btn-predicate {
+  color: white;
+  background-color: #ffbf00;
+  border-color: #ffbf00;
+}
+
+.btn-object {
+  color: white;
+  background-color: #0101df;
+  border-color: #0101df;
+}
+
+.btn-noun {
+  color: white;
+  background-color: #00b0e6;
+  border-color: #00b0e6;
+  opacity: 0.5;
+}
+.btn-noun:hover,
+.btn-noun:focus {
+  color: white;
+  background-color: #0085ad;
+  border-color: #0085ad;
+}
+
+.btn-verb {
+  color: white;
+  background-color: #fe2e9a;
+  border-color: #fe2e9a;
+  opacity: 0.5;
+}
+.btn-verb:hover,
+.btn-verb:focus {
+  color: white;
+  background-color: #aa0259;
+  border-color: #aa0259;
+}
+
+.btn-adjective {
+  color: white;
+  background-color: #01df01;
+  border-color: #01df01;
+  opacity: 0.5;
+}
+.btn-adjective:hover,
+.btn-adjective:focus {
+  color: white;
+  background-color: #008800;
+  border-color: #008800;
+}
+
+pos {
+  font-size: x-small;
+}

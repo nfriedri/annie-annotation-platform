@@ -4,6 +4,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>OpenIE - Annotation platform</title>
+        <!--<link rel="icon" href="{{url_for('static', filename='img/favicon.png')}}">-->
         <link rel="icon" href="img/favicon.png">
 
         <!--Bootstrap-->
@@ -14,13 +15,19 @@
         <!-- Icons -->
         <script src="https://kit.fontawesome.com/1269d23fc6.js" crossorigin="anonymous"></script>
 
+        <link rel="stylesheet" href="style.css">
+        <script type="module" src="js/App.js"></script>
+        <script src="js/highlighter.js"></script>
+
     </head>
     <body id="body">
 
         <!--Navigation bar on top-->
         <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
             <div class="container-fluid">
+                <!--<a class="navbar-brand" href="index.html"> <img src="{{url_for('static', filename='img/logo.jpg')}}" width="30" height="30"> OpenIE Annotator Platform </a>-->
                 <a class="navbar-brand" href="index.html"> <img src="img/logo.jpg" width="30" height="30"> OpenIE Annotator Platform </a>
+                <!--<button class="btn btn-danger ml-auto" style="float:right;" id="exit-button">EXIT</button>-->
             </div>
         </nav>
 
@@ -30,7 +37,7 @@
             <a class="lead text-white">Upload your document here:</a>
             <div class="input-group mt-2 mb-3">
                 <div class="custom-file mt-1">
-                    <input type="file" class="custom-file-input" id="input-file" oninput="fileUpload()">
+                    <input type="file" class="custom-file-input" id="input-file">
                     <label class="custom-file-label" for="input-file" id="input-file-label">Choose file</label>
                 </div>
                 <button class="btn btn-primary btn-lg ml-3" id="start-input-file">Start</button>
@@ -43,40 +50,34 @@
             <p class="lead text-white" id="sentence-number">Sentence #:</p>
             <div class="card mt-2 mb-3">
                 <div class="card-body text-dark" id="content-insert">
-
+                   
                 </div>
             </div>
-
-            <button class="btn btn-danger my-2" id="add-cluster-button">Add to cluster</button>
             
+            <div>
+                <div class="btn-group btn-group-toggle my-2" data-toggle="buttons" id="button-group">
+                    <label class="btn btn-subject active" id="subject-btn">
+                        <input type="radio" name="options" checked> Select subject(s)
+                    </label>
+                    <label class="btn btn-predicate text-light" id="predicate-btn">
+                        <input type="radio" name="options" >Select predicate(s)
+                    </label>
+                    <label class="btn btn-object" id="object-btn">
+                        <input type="radio" name="options" >Select object(s)
+                    </label>
+                </div>
+
+                <button class="btn btn-optional ml-3" data-toggle="buttons" id="optional-button" style="text-decoration: underline;">Optional</button>
+                <button class="btn btn-danger my-2 ml-auto" style="float: right;" id="add-triples-button">Add triple to current cluster</button>
+                
+                <!--<button class="btn btn-secondary my-2 mr-2" style="float: right;">Reset</button>-->
+            </div>
             <p class="lead text-white" id="sentence-number">Cluster #:</p>
             <div class="card mt-2 mb-3">
                 <div class="card-body text-dark" id="cluster-insert">
 
                 </div>
             </div>
-
-
-
-            <div>
-                <div class="btn-group btn-group-toggle my-2" data-toggle="buttons" id="button-group">
-                    <label class="btn btn-success active" id="subject-btn">
-                        <input type="radio" name="options" checked> Select subject(s)
-                    </label>
-                    <label class="btn btn-warning text-light" id="predicate-btn">
-                        <input type="radio" name="options" >Select predicate(s)
-                    </label>
-                    <label class="btn btn-info" id="object-btn">
-                        <input type="radio" name="options" >Select object(s)
-                    </label>
-                </div>
-
-                <button class="btn btn-secondary" data-toggle="buttons" id="optional-button" style="text-decoration: underline;">Optional</button>
-                <button class="btn btn-danger my-2 ml-auto" style="float: right;" id="add-triples-button">Add triples to cluster</button>
-                <!--<button class="btn btn-secondary my-2 mr-2" style="float: right;">Reset</button>-->
-            </div>
-
-            <button class="btn btn-lg btn-primary mt-3 mb-2" id="generate-clusters-button">Generate Clusters</button>
             
             <div class="card mt-2 mb-3">
                 <div class="card-body text-dark" id="clusters-generated">
@@ -149,6 +150,7 @@
             <hr class="mb-5" style="border-color: black;">
             <div class="row">
             <div class="col-12 col-md">
+                    <!--<img src="{{url_for('static', filename='img/logo.png')}}" width="40%">-->
                     <img src="img/logo.png" width="40%">
                 <li class="list-unstyled text-small"><a class="text-muted ml-4" target="_blank" href="https://www.uni-mannheim.de">University of Mannheim</a></li>
                 <small class="d-block mb-3 ml-4 text-muted">&copy; 2020</small>
@@ -180,6 +182,7 @@
             </div>
         </footer>
 
-    <script src="js/appNew.js"></script>
+    <!--<script src="{{url_for('static', filename='js/appNew.js')}}"></script>-->
+    
     </body>
 </html>
