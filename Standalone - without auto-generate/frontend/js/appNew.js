@@ -366,7 +366,7 @@ function download(filename, content) {
     var element = document.createElement('a');
     element.style.display = 'none';
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
-    element.setAttribute('download', filename + '-annotated.txt');
+    element.setAttribute('download', filename + '-annotated.tsv');
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);

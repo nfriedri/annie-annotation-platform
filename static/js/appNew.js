@@ -352,7 +352,6 @@ function downloadOutput() {
         download(filename, outputText);
     }
     else {
-        console.log('Here2')
         downloadArea.innerHTML += `<div class="alert alert-danger mt-3" role="alert" id="download-alert">
                                     Nothing there yet to download :)
                                     </div>`;
@@ -366,7 +365,7 @@ function download(filename, content) {
     var element = document.createElement('a');
     element.style.display = 'none';
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
-    element.setAttribute('download', filename + '-annotated.txt');
+    element.setAttribute('download', filename + '-annotated.tsv');
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
