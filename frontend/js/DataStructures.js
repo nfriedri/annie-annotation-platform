@@ -1,7 +1,17 @@
 // Upload a file to the system
 
+export class Annotation {
+    constructor() {
+        this.name = "";
+        this.clusters = [];
+        this.textFile = null;
+    }
+}
+
+
 export class TextFile {
     constructor() {
+        this.name = "";
         this.text = "";
         this.sentences = [];
     }
@@ -16,10 +26,10 @@ export class Sentence {
 }
 
 export class Cluster {
-    constructor(sentenceNumber, clusterNumber, triples) {
+    constructor(sentenceNumber, clusterNumber) {
         this.sentenceNumber = sentenceNumber;    //Number of Sentence the cluster is generated from
         this.clusterNumber = clusterNumber;      // Number of the cluster within a sentence
-        this.triples = triples;                  //Array of type Triple
+        this.triples = [];                  //Array of type Triple
     }
 }
 

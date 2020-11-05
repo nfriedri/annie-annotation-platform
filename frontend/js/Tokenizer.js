@@ -1,4 +1,4 @@
-import { Sentence, Word } from './TextFile.js';
+import { Sentence, Word } from './DataStructures.js';
 
 //SPLIT INTO TOKENS, POS-TAGGING
 
