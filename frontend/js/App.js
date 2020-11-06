@@ -1,7 +1,8 @@
 //IMPORTS
 import { Tokenizer } from './Tokenizer.js';
 import { TextFile, Annotation, Sentence, Triple, Word, Cluster } from './DataStructures.js';
-import { updateSentenceNumber, createTaggedContent, addHighlighters, getSelectionAsTriple, displayClusters } from './GraphicInterface.js';
+import { updateSentenceNumber, createTaggedContent, addHighlighters, getSelectionAsTriple, displayClusters, copyToSelection } from './GraphicInterface.js';
+import { createOutputPreview } from './Output.js'
 
 const url = 'http://127.0.0.1:5000/';
 
@@ -13,15 +14,17 @@ const url = 'http://127.0.0.1:5000/';
 var file = new TextFile();
 var annotate = new Annotation();
 var sentenceNumber = 0;
-var clusterNumber = 1;
+var clusterNumber = 0;
 var clusters = annotate.clusters;
 
 var inputUpload = document.getElementById('input-file');
 var inputFileLabel = document.getElementById('input-file-label');
 
 var startInputFile = document.getElementById('start-input-file');
-var addClusterButton = document.getElementById('add-cluster-button');
-var addTriplesButton = document.getElementById('add-triples-button');
+var addTripleButton = document.getElementById('add-triple-button');
+var addNewCLusterBtn = document.getElementById('new-cluster-btn');
+var addActiveClusterBtn = document.getElementById('active-cluster-btn');
+var saveButton = document.getElementById('save-button');
 
 file.text = 'After the stock-market bloodbath of the past few years, why would any defensive investor put a dime into stocks?';
 var sentence = null //Points to current sentence element
@@ -90,14 +93,25 @@ function findCluster() {
 }
 
 function createNewCluster() {
+    clusterNumber += 1;
     console.log(clusterNumber);
     var cl = new Cluster(sentenceNumber, clusterNumber);
     annotate.clusters.push(cl);
     return cl;
 }
 
+function saveAnnotationProgress() {
+    var output = createOutputPreview();
+    document.getElementById('current-output').innerText = output;
+    document.getElementById('current-output').setAttribute('rows', '10');
+}
+
 function getClusters() {
     return clusters;
+}
+
+function getAnnotation() {
+    return annotate;
 }
 
 
@@ -108,6 +122,10 @@ function getClusters() {
 
 startInputFile.addEventListener("click", function () { startAnnotation(); });
 inputUpload.addEventListener("input", function () { fileUpload(); });
-addTriplesButton.addEventListener('click', function () { addTripleToCluster(); displayClusters() })
+addTripleButton.addEventListener('click', function () { copyToSelection() })
+addActiveClusterBtn.addEventListener('click', function () { addTripleToCluster(); displayClusters(); });
+addNewCLusterBtn.addEventListener("click", function () { createNewCluster(); addTripleToCluster(); displayClusters(); });
+saveButton.addEventListener("click", function () { saveAnnotationProgress() });
 
-export { changeWordType, getClusters };
+
+export { changeWordType, getClusters, getAnnotation };

@@ -64,7 +64,7 @@ export class Tokenizer {
         var arrayOfWords = [];
         for (var i = 0; i < Object.keys(content).length; i++) {
             var label = content[i].split(' ');
-            var word = new Word(label[0], i);
+            var word = new Word(label[0], i + 1);
             word.posLabel = label[1];
             arrayOfWords.push(word);
         }

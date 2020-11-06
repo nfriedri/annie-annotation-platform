@@ -8,9 +8,11 @@ var inputTextArea = document.getElementById('input-text');
 var inputUpload = document.getElementById('input-file');
 var inputFileLabel = document.getElementById('input-file-label');
 var contentInsert = document.getElementById("content-insert");
+var selectionInsert = document.getElementById("selection-insert");
 var clusterInsert = document.getElementById("cluster-insert");
 var currentSentenceDisplay = document.getElementById('current-sentence');
 var currentOutput = document.getElementById('current-output');
+
 
 // Containers
 var inputArea = document.getElementById('input-area');
@@ -31,6 +33,7 @@ function createTaggedContent(words) {
         let labelText = words[i].text;
         let labelPos = words[i].posLabel;
         let type = words[i].type;
+        let index = words[i].index;
         if (type == '') {
             switch (labelPos) {
                 case 'NOUN':
@@ -46,7 +49,7 @@ function createTaggedContent(words) {
                     output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${i}">`;
                     break;
             }
-            output += `<text>${labelText}</text> <span class="badge badge-secondary">${i}</span><br/><pos>${labelPos}</pos></button>`;
+            output += `<text>${labelText}</text> <span class="badge badge-secondary">${index}</span><br/><pos>${labelPos}</pos></button>`;
         }
         else {
             switch (type) {
@@ -63,7 +66,7 @@ function createTaggedContent(words) {
                     output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${i}">`;
                     break;
             }
-            output += `${labelText} <span class="badge badge-secondary">${i}</span><br/><pos>${labelPos}</pos></button>`;
+            output += `${labelText} <span class="badge badge-secondary">${index}</span><br/><pos>${labelPos}</pos></button>`;
         }
     }
     contentInsert.innerHTML = output;
@@ -76,13 +79,13 @@ function highlightTriples(identifier) {
     var tripleType = getActiveTripleBtnID();
     switch (tripleType) {
         case 'subject-btn':
-            targetElement.className = 'btn btn-subject marked-subject';
+            targetElement.className = 'btn btn-subject mk marked-subject';
             break;
         case 'predicate-btn':
-            targetElement.className = 'btn btn-predicate marked-predicate';
+            targetElement.className = 'btn btn-predicate mk marked-predicate';
             break;
         case 'object-btn':
-            targetElement.className = 'btn btn-object marked-object';
+            targetElement.className = 'btn btn-object mk marked-object';
             break;
         default:
             break;
@@ -121,17 +124,24 @@ function addHighlighters() {
     }
 }
 
-
 function getSelectionAsTriple() {
-    var subjectElements = contentInsert.getElementsByClassName('marked-subject')
-    var predicateElements = contentInsert.getElementsByClassName('marked-predicate');
-    var objectElements = contentInsert.getElementsByClassName('marked-object');
+    var subjectElements = selectionInsert.getElementsByClassName('marked-subject')
+    var predicateElements = selectionInsert.getElementsByClassName('marked-predicate');
+    var objectElements = selectionInsert.getElementsByClassName('marked-object');
     var subjects = elementsToWords(subjectElements, 'subject');
     var predicates = elementsToWords(predicateElements, 'predicate');
     var objects = elementsToWords(objectElements, 'object');
     var triple = new Triple(subjects, predicates, objects);
     //console.log(triple);
     return triple;
+}
+
+function copyToSelection() {
+    var markedElements = contentInsert.getElementsByClassName('mk');
+    for (var i = 0; i < markedElements.length; i++) {
+        var element = markedElements[i].cloneNode(true);
+        selectionInsert.appendChild(element);
+    }
 }
 
 function elementsToWords(elements, type) {
@@ -181,21 +191,21 @@ function displayClusters() {
             let objects = triples[j].objects;
             for (var k = 0; k < subjects.length; k++) {
                 output += `
-                <button class="btn btn-subject ml-1 mb-1">${subjects.text}
+                <button class="btn btn-subject ml-1 mb-1">${subjects[k].text}
                 <span class="badge badge-secondary">${subjects[k].index}</span><br/>
                 <pos>${subjects[k].posLabel}</pos></button>
                 `;
             }
             for (var k = 0; k < predicates.length; k++) {
                 output += `
-                <button class="btn btn-subject ml-1 mb-1">${predicates.text}
+                <button class="btn btn-predicate ml-1 mb-1">${predicates[k].text}
                 <span class="badge badge-secondary">${predicates[k].index}</span><br/>
                 <pos>${predicates[k].posLabel}</pos></button>
                 `;
             }
             for (var k = 0; k < objects.length; k++) {
                 output += `
-                <button class="btn btn-subject ml-1 mb-1">${objects.text}
+                <button class="btn btn-object ml-1 mb-1">${objects[k].text}
                 <span class="badge badge-secondary">${objects[k].index}</span><br/>
                 <pos>${objects[k].posLabel}</pos></button>
                 `;
@@ -205,7 +215,7 @@ function displayClusters() {
             </div>
             `;
         }
-        output += '</div>';
+        output += '</div> </div>';
     }
     output += '</div';
     clusterInsert.innerHTML = output;
@@ -216,6 +226,7 @@ function displayClusters() {
 export { updateSentenceNumber }
 export { createTaggedContent }
 export { addHighlighters }
+export { copyToSelection }
 export { getSelectionAsTriple }
 export { displayClusters }
 
