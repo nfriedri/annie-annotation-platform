@@ -1,5 +1,7 @@
 // Upload a file to the system
 
+var tripleIdentifier = 0;
+
 export class Annotation {
     constructor() {
         this.name = "";
@@ -35,6 +37,8 @@ export class Cluster {
 
 export class Triple {
     constructor(subjects, predicates, objects) {
+        this.tripleID = tripleIdentifier;
+        tripleIdentifier++;
         this.subjects = subjects;               //Array of type Word 
         this.predicates = predicates;           //Array of type Word
         this.objects = objects;                 //Array of type Word

@@ -55,15 +55,14 @@
                 
 
                 <div class="btn-group btn-group-toggle my-2" data-toggle="buttons" id="button-group">
-                    <a class="btn btn-subject down" id="subject-btn" onclick="tripleButton(this.id)"> Select subject(s) 2 </a>
+                    <a class="btn btn-subject down" id="subject-btn" onclick="tripleButton(this.id)"> Select subject(s) </a>
                     <a class="btn btn-predicate down" id="predicate-btn" onclick="tripleButton(this.id)"> Select predicate(s) </a>
                     <a class="btn btn-object down" id="object-btn" onclick="tripleButton(this.id)"> Select object(s) </a>
                 </div>
                
 
                 <button class="btn btn-optional ml-3 down" id="optional-btn" style="text-decoration: underline;" onclick="optionalButton()">Optional</button>
-                <button class="btn btn-light ml-2" id="clear-selection">Clear</button>
-                <button class="btn btn-danger my-2 ml-auto" style="float: right;" id="add-triple-button">Add triple</button>
+                <button class="btn btn-light ml-2" id="clear-btn">Clear</button>
                 
                 <!--<button class="btn btn-secondary my-2 mr-2" style="float: right;">Reset</button>-->
             </div>
@@ -77,11 +76,10 @@
                 <button class="btn btn-info mb-2 mr-2" id="new-cluster-btn">Add to new Cluster</button>
                     
                 <div class="d-flex justify-content-center">
-                    <div class="input-group mb-3">
-                        <input type="number" class="form-control" placeholder="..." aria-label="Add to Cluster" aria-describedby="go-to-button" id="current-sentence">
+                    <div class="input-group mb-3 mr-2">
+                        <input type="number" class="form-control" placeholder="..." aria-label="Add to Cluster" aria-describedby="go-to-button" id="add-to-cluster-number">
                         <div class="input-group-append">
-                            <span class="input-group-text" id="number-of-phrases"></span>
-                            <button class="btn btn-secondary" type="button" id="go-to-button" onclick="">Add To</button>
+                            <button class="btn btn-secondary" type="button" id="add-to-btn" onclick="">Add To</button>
                         </div>
                     </div>
                 </div>
@@ -108,25 +106,24 @@
 
                 <div class="row">
                     <div class="col-12 col-md d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" id="jump-first-button">Jump to First</button>
+                        <button type="button" class="btn btn-secondary" id="jump-first-btn">Jump to First</button>
                     </div>
                     <div class="col-12 col-md d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" id="previous-button">Previous</button>
+                        <button type="button" class="btn btn-secondary" id="previous-btn">Previous</button>
                     </div>
                     <div class="col-12 col-md d-flex justify-content-center">
                         <div class="input-group mb-3">
                             <input type="number" class="form-control" placeholder="..." aria-label="GoTo" aria-describedby="go-to-button" id="current-sentence">
                             <div class="input-group-append">
-                                <span class="input-group-text" id="number-of-phrases"></span>
-                                <button class="btn btn-secondary" type="button" id="go-to-button" onclick="goToPhraseX()">Go To</button>
+                                <button class="btn btn-secondary" type="button" id="go-to-btn" onclick="goToPhraseX()">Go To</button>
                             </div>
                         </div>
                     </div>
                     <div class="col-12 col-md d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" id="next-button">Next</button>
+                        <button type="button" class="btn btn-secondary" id="next-btn">Next</button>
                     </div>
                     <div class="col-12 col-md d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" id="jump-last-button">Jump to Last</button>
+                        <button type="button" class="btn btn-secondary" id="jump-last-btn">Jump to Last</button>
                     </div>
                 </div>
             </div>
@@ -143,11 +140,9 @@
             <div class="card mt-2">
                 <textarea class="form-control" id="current-output" rows="1"></textarea>
             </div>
-            <button class="btn btn-secondary mt-2 mb-3" id="save-changes-button">Save output changes</button>
-            <div id="div-saved-changes"></div>
             <div class="container d-flex mt-2">
                 <a class="lead text-white mr-5">Download results: </a>
-                <i class="fas fa-file-download fa-5x" type="button" id="download-button"></i>
+                <i class="fas fa-file-download fa-5x" type="button" id="download-btn"></i>
             </div>
         </div>
         

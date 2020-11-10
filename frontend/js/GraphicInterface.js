@@ -1,5 +1,5 @@
 // GUI Methods
-import { changeWordType, getClusters } from './App.js';
+import { changeWordType, getClusters, deleteCluster, deleteTriple } from './App.js';
 import { TextFile, Sentence, Triple, Word } from './DataStructures.js';
 
 // Elements
@@ -22,6 +22,7 @@ var downloadArea = document.getElementById('download-area');
 
 function updateSentenceNumber(sentenceNumber) {
     var number = sentenceNumber + 1;
+    console.log(number)
     document.getElementById('sentence-number').innerHTML = 'Sentence #' + number + ':';
 }
 
@@ -37,16 +38,16 @@ function createTaggedContent(words) {
         if (type == '') {
             switch (labelPos) {
                 case 'NOUN':
-                    output += `<button class="btn btn-noun ml-1 mb-1" id="posLabel-${i}"> `;
+                    output += `<button class="btn btn-noun ml-1 mb-1" id="posLabel-${index}"> `;
                     break;
                 case 'VERB':
-                    output += `<button class="btn btn-verb ml-1 mb-1" id="posLabel-${i}">`;
+                    output += `<button class="btn btn-verb ml-1 mb-1" id="posLabel-${index}">`;
                     break;
                 case 'ADJ':
-                    output += `<button class="btn btn-adjective ml-1 mb-1" id="posLabel-${i}">`;
+                    output += `<button class="btn btn-adjective ml-1 mb-1" id="posLabel-${index}">`;
                     break;
                 default:
-                    output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${i}">`;
+                    output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${index}">`;
                     break;
             }
             output += `<text>${labelText}</text> <span class="badge badge-secondary">${index}</span><br/><pos>${labelPos}</pos></button>`;
@@ -54,16 +55,16 @@ function createTaggedContent(words) {
         else {
             switch (type) {
                 case 'subject':
-                    output += `<button class="btn btn-subject ml-1 mb-1" id="posLabel-${i}"> `;
+                    output += `<button class="btn btn-subject ml-1 mb-1" id="posLabel-${index}"> `;
                     break;
                 case 'predicate':
-                    output += `<button class="btn btn-predicate ml-1 mb-1" id="posLabel-${i}">`;
+                    output += `<button class="btn btn-predicate ml-1 mb-1" id="posLabel-${index}">`;
                     break;
                 case 'object':
-                    output += `<button class="btn btn-object ml-1 mb-1" id="posLabel-${i}">`;
+                    output += `<button class="btn btn-object ml-1 mb-1" id="posLabel-${index}">`;
                     break;
                 default:
-                    output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${i}">`;
+                    output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${index}">`;
                     break;
             }
             output += `${labelText} <span class="badge badge-secondary">${index}</span><br/><pos>${labelPos}</pos></button>`;
@@ -79,29 +80,46 @@ function highlightTriples(identifier) {
     var tripleType = getActiveTripleBtnID();
     switch (tripleType) {
         case 'subject-btn':
-            targetElement.className = 'btn btn-subject mk marked-subject';
+            targetElement.className = 'btn btn-subject ml-1 mb-1 mk marked-subject';
             break;
         case 'predicate-btn':
-            targetElement.className = 'btn btn-predicate mk marked-predicate';
+            targetElement.className = 'btn btn-predicate ml-1 mb-1 mk marked-predicate';
             break;
         case 'object-btn':
-            targetElement.className = 'btn btn-object mk marked-object';
+            targetElement.className = 'btn btn-object mk ml-1 mb-1 marked-object';
             break;
         default:
+            var posLabel = targetElement.getElementsByTagName('pos')[0].innerHTML;
+            switch (posLabel) {
+                case 'NOUN':
+                    targetElement.className = "btn btn-noun ml-1 mb-1";
+                    break;
+                case 'VERB':
+                    targetElement.className = "btn btn-verb ml-1 mb-1";
+                    break;
+                case 'ADJ':
+                    targetElement.className = "btn btn-adjective ml-1 mb-1";
+                    break;
+                default:
+                    targetElement.className = "btn btn-secondary ml-1 mb-1";
+                    break;
+            }
             break;
     }
     if (isOptionalActive()) {
         targetElement.className += 'marked-optional';
         targetElement.setAttribute('style', 'text-decoration: underline;')
     }
-
+    copyToSelection(identifier);
 }
 
 function getActiveTripleBtnID() {
     var btnGroup = document.getElementById('button-group');
     var activeBtn = btnGroup.getElementsByClassName('up')[0];
-    //console.log(activeBtn.id);
-    return activeBtn.id;
+    if (activeBtn != undefined) {
+        return activeBtn.id;
+    }
+    return 'no'
 }
 
 function isOptionalActive() {
@@ -136,11 +154,15 @@ function getSelectionAsTriple() {
     return triple;
 }
 
-function copyToSelection() {
-    var markedElements = contentInsert.getElementsByClassName('mk');
-    for (var i = 0; i < markedElements.length; i++) {
-        var element = markedElements[i].cloneNode(true);
-        selectionInsert.appendChild(element);
+function copyToSelection(id) {
+    var element = document.getElementById(id)
+    if (element.className.includes('mk')) {
+        var copy = element.cloneNode(true);
+        copy.id = copy.id + '-copy';
+        copy.addEventListener("click", function () { removeButton(this.id) })
+        if (document.getElementById(id + '-copy') == undefined) {
+            selectionInsert.appendChild(copy);
+        }
     }
 }
 
@@ -163,63 +185,91 @@ function elementsToWords(elements, type) {
     return array;
 }
 
-function displayClusters() {
+function displayClusters(sentenceNumber) {
     var clusters = getClusters();
     let output = '';
     for (var i = 0; i < clusters.length; i++) {
-        output += `
-        <div class="container bg-dark py-3 mt-2" style="border-radius: 5px;">
-            <div class="d-flex" >
-                <i class="fas fa-times-circle mr-3" type="button"></i>
-                <h6 class="card-title">Cluster ${clusters[i].clusterNumber}</h6>
-            </div>
-            <div class="card-deck">
-        `;
-        let triples = clusters[i].triples;
-        for (var j = 0; j < triples.length; j++) {
+        if (clusters[i].sentenceNumber == sentenceNumber) {
             output += `
-            <div class="card bg-secondary text-light">
-                <div class="card-body">
-                    <i class="fas fa-times-circle mr-3" type="button"></i>
-                    <a>Triple ${j + 1}</a></br>
-            `
-            //TODO Include if not undefined then: !!!!!!!!!!!
-            //TODO Add underlining for optionals
-
-            let subjects = triples[j].subjects;
-            let predicates = triples[j].predicates;
-            let objects = triples[j].objects;
-            for (var k = 0; k < subjects.length; k++) {
-                output += `
-                <button class="btn btn-subject ml-1 mb-1">${subjects[k].text}
-                <span class="badge badge-secondary">${subjects[k].index}</span><br/>
-                <pos>${subjects[k].posLabel}</pos></button>
-                `;
-            }
-            for (var k = 0; k < predicates.length; k++) {
-                output += `
-                <button class="btn btn-predicate ml-1 mb-1">${predicates[k].text}
-                <span class="badge badge-secondary">${predicates[k].index}</span><br/>
-                <pos>${predicates[k].posLabel}</pos></button>
-                `;
-            }
-            for (var k = 0; k < objects.length; k++) {
-                output += `
-                <button class="btn btn-object ml-1 mb-1">${objects[k].text}
-                <span class="badge badge-secondary">${objects[k].index}</span><br/>
-                <pos>${objects[k].posLabel}</pos></button>
-                `;
-            }
-            output += `
+            <div class="container bg-dark py-3 mt-2" style="border-radius: 5px;">
+                <div class="d-flex" >
+                    <i class="fas fa-times-circle mr-3 cluster" type="button" id="cluster-${clusters[i].sentenceNumber}-${clusters[i].clusterNumber}"></i>
+                    <h6 class="card-title">Cluster ${clusters[i].clusterNumber}</h6>
                 </div>
-            </div>
+                <div class="card-deck">
             `;
-        }
-        output += '</div> </div>';
-    }
-    output += '</div';
-    clusterInsert.innerHTML = output;
+            let triples = clusters[i].triples;
+            for (var j = 0; j < triples.length; j++) {
+                output += `
+                <div class="card bg-secondary text-light">
+                    <div class="card-body">
+                        <i class="fas fa-times-circle mr-3 triple" type="button" id="tripleID-${clusters[i].clusterNumber}-${triples[j].tripleID}"></i>
+                        <a>Triple ${j + 1}</a></br>
+                `
+                //TODO Include if not undefined then: !!!!!!!!!!!
+                //TODO Add underlining for optionals
 
+                let subjects = triples[j].subjects;
+                let predicates = triples[j].predicates;
+                let objects = triples[j].objects;
+                for (var k = 0; k < subjects.length; k++) {
+                    output += `
+                    <button class="btn btn-subject ml-1 mb-1">${subjects[k].text}
+                    <span class="badge badge-secondary">${subjects[k].index}</span><br/>
+                    <pos>${subjects[k].posLabel}</pos></button>
+                    `;
+                }
+                for (var k = 0; k < predicates.length; k++) {
+                    output += `
+                    <button class="btn btn-predicate ml-1 mb-1">${predicates[k].text}
+                    <span class="badge badge-secondary">${predicates[k].index}</span><br/>
+                    <pos>${predicates[k].posLabel}</pos></button>
+                    `;
+                }
+                for (var k = 0; k < objects.length; k++) {
+                    output += `
+                    <button class="btn btn-object ml-1 mb-1">${objects[k].text}
+                    <span class="badge badge-secondary">${objects[k].index}</span><br/>
+                    <pos>${objects[k].posLabel}</pos></button>
+                    `;
+                }
+                output += `
+                    </div>
+                </div>
+                `;
+            }
+            output += '</div></div>';
+
+        }
+    }
+
+    clusterInsert.innerHTML = output;
+    addRemoveListenersCluster();
+}
+
+function addRemoveListenersCluster() {
+    var clusterEle = clusterInsert.getElementsByClassName('cluster');
+    //console.log(elements);
+    for (var i = 0; i < clusterEle.length; i++) {
+        clusterEle[i].addEventListener("click", function () { deleteCluster(this.id) })
+    }
+
+    var tripleEle = clusterInsert.getElementsByClassName('triple');
+    for (var i = 0; i < tripleEle.length; i++) {
+        tripleEle[i].addEventListener("click", function () { deleteTriple(this.id) })
+    }
+
+}
+
+function removeButton(identifier) {
+    var element = document.getElementById(identifier);
+    selectionInsert.removeChild(element);
+    //var contentID = identifier.replace("-copy", "");
+
+}
+
+function clearSelection() {
+    selectionInsert.innerHTML = '';
 }
 
 
@@ -229,4 +279,4 @@ export { addHighlighters }
 export { copyToSelection }
 export { getSelectionAsTriple }
 export { displayClusters }
-
+export { clearSelection }
