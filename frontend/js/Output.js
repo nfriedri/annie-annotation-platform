@@ -60,17 +60,29 @@ function createOutputPreview() {
     return output;
 }
 
-function saveChangesInOutputArea() {
-    outputText = currentOutput.innerHTML;
-    document.getElementById('div-saved-changes').innerHTML += `<div class="alert alert-success" id="alert-saved-changes" role="alert">
-                                                                    Saved changes successfully!
-                                                                </div>`;
-    setTimeout(function () { document.getElementById('alert-saved-changes').remove() }, 3000);
+// Output download steering
+function downloadOutput() {
+    if (document.getElementById('current-output').innerHTML != "") {
+        var filename = inputUpload.files[0].name;
+        if (filename.includes('.txt')) {
+            filename = filename.replace('.txt', '');
+        }
+        download(filename);
+    }
+    else {
+        document.getElementById('download-area').innerHTML += `<div class="alert alert-danger mt-3" role="alert" id="download-alert">
+                                    Nothing there yet to download :)
+                                    </div>`;
+        setTimeout(function () { document.getElementById('download-alert').remove() }, 4000);
+    }
 }
 
-function download(filename, content) {
-    console.log('function download with ' + filename + ' ' + content);
+// Create downloadable File
+function download(filename) {
+    console.log('function download with ' + filename);
     var element = document.createElement('a');
+    var content = document.getElementById('current-output').value;
+    content = content.replace('\n', '\r\n');
     element.style.display = 'none';
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
     element.setAttribute('download', filename + '-annotated.tsv');
@@ -81,4 +93,4 @@ function download(filename, content) {
 }
 
 export { createOutputPreview }
-export { download }
+export { downloadOutput }

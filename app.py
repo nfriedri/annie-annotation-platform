@@ -33,6 +33,24 @@ def input_tagger():
     return output
 
 
+@app.route('/save', methods=['POST'])
+def save_file():
+    data = request.get_json()
+    new_file = open('data/' + data['name']+'.json', 'w')
+    new_file.write(json.dumps(data))
+    new_file.close()
+    return 'OK'
+
+
+@app.route('/load', methods=['GET'])
+def load_file():
+    bar = request.args.to_dict()
+    file_name = 'data/' + bar['name'] + '.json'
+    file = open(file_name, "r")
+    data = json.load(file)
+    return json.dumps(data)
+
+
 @app.route('/stop', methods=['GET'])
 def exit_on_close():
     print('exit_on_close')

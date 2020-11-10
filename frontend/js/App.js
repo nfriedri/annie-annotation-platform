@@ -2,7 +2,8 @@
 import { Tokenizer } from './Tokenizer.js';
 import { TextFile, Annotation, Sentence, Triple, Word, Cluster } from './DataStructures.js';
 import { updateSentenceNumber, createTaggedContent, addHighlighters, getSelectionAsTriple, displayClusters, clearSelection } from './GraphicInterface.js';
-import { createOutputPreview } from './Output.js'
+import { createOutputPreview, downloadOutput } from './Output.js'
+import { save, load } from './LoadSave.js';
 
 const url = 'http://127.0.0.1:5000/';
 
@@ -210,6 +211,10 @@ function getAnnotation() {
     return annotate;
 }
 
+function getFile() {
+    return file;
+}
+
 // Reads in the next phrase
 function previousSentence() {
     if (sentenceNumber > 0) {
@@ -248,37 +253,7 @@ function goToPhraseX() {
     }
 }
 
-// Output download steering
-function downloadOutput() {
-    if (document.getElementById('current-output').innerHTML != "") {
-        var filename = inputUpload.files[0].name;
-        if (filename.includes('.txt')) {
-            filename = filename.replace('.txt', '');
-        }
-        download(filename);
-    }
-    else {
-        document.getElementById('download-area').innerHTML += `<div class="alert alert-danger mt-3" role="alert" id="download-alert">
-                                    Nothing there yet to download :)
-                                    </div>`;
-        setTimeout(function () { document.getElementById('download-alert').remove() }, 4000);
-    }
-}
 
-// Create downloadable File
-function download(filename) {
-    console.log('function download with ' + filename);
-    var element = document.createElement('a');
-    var content = document.getElementById('current-output').value;
-    content = content.replace('\n', '\r\n');
-    element.style.display = 'none';
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
-    element.setAttribute('download', filename + '-annotated.tsv');
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-    console.log('Download successful')
-}
 
 startInputFile.addEventListener("click", function () { startAnnotation(); });
 inputUpload.addEventListener("input", function () { fileUpload(); });
@@ -297,5 +272,8 @@ lastBtn.addEventListener("click", function () { jumpLast() });
 goToBtn.addEventListener("click", function () { goToPhraseX() });
 downloadBtn.addEventListener("click", function () { downloadOutput() });
 
+document.getElementById('test-save-btn').addEventListener("click", function () { save(url) });
+document.getElementById('test-load-btn').addEventListener("click", function () { load(url) });
 
-export { changeWordType, getClusters, getAnnotation, deleteCluster, deleteTriple };
+
+export { changeWordType, getClusters, getAnnotation, deleteCluster, deleteTriple, getFile };
