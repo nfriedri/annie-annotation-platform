@@ -54,7 +54,7 @@ function saveData() {
             }
             var predicates = triples[j].predicates;
             var predicateArray = [];
-            for (var k = 0; k < subjects.length; k++) {
+            for (var k = 0; k < predicates.length; k++) {
                 var predicateData = {}
                 predicateData['text'] = predicates[k].text;
                 predicateData['posLabel'] = predicates[k].posLabel;
@@ -119,10 +119,11 @@ function save(url) {
     }
 }
 
-function load(url) {
-    var endpoint = url + 'load?name=1605032578710';
+async function requestLoad(url, fileName) {
+    var endpoint = url + 'load?name=' + fileName;
+    var results = {};
     try {
-        fetch(endpoint, {
+        await fetch(endpoint, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -132,17 +133,19 @@ function load(url) {
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
-                loadData(data);
+                results = data;
             })
     } catch (error) {
         console.error(error);
     }
+    //console.log(results);
+    return results;
 }
 
 
-function loadData(content) {
-    var jsonTextFile = content['textFile']
+async function loadData(content) {
+    console.log(content);
+    var jsonTextFile = content['textFile'];
     var textFile = new TextFile();
     textFile.name = jsonTextFile["name"];
     textFile.text = jsonTextFile["text"];
@@ -170,18 +173,67 @@ function loadData(content) {
     }
     textFile.sentences = sentencesArray;
 
+    var jsonClusters = content["clusters"];
     var clusters = []
-    for (var i = 0; i < clusters.length; i++) {
-        var activeJsonCl = clusters[i]
+    for (var i = 0; i < jsonClusters.length; i++) {
+        var activeJsonCl = jsonClusters[i]
         var cluster = new Cluster(activeJsonCl["sentenceNumber"], activeJsonCl["clusterNumber"]);
         var jsonTriples = activeJsonCl["triples"];
+        var tripleArray = []
+        //console.log(jsonTriples);
         for (var j = 0; j < jsonTriples.length; j++) {
-            var jsonSubjects = jsonTriples[j]
-            var subjects = []
-
+            var activeJsonTriple = jsonTriples[j];
+            var jsonSubjects = activeJsonTriple["subjects"];
+            var subjects = [];
+            var predicates = [];
+            var objects = [];
+            for (var k = 0; k < jsonSubjects.length; k++) {
+                var activeJsonWord = jsonSubjects[k];
+                var word = new Word(activeJsonWord["text"], activeJsonWord["index"]);
+                word.posLabel = activeJsonWord["posLabel"];
+                word.type = activeJsonWord["type"];
+                word.optional = activeJsonWord["optional"];
+                subjects.push(word);
+            }
+            var jsonPredicates = activeJsonTriple["predicates"];
+            var predicates = []
+            for (var k = 0; k < jsonPredicates.length; k++) {
+                var activeJsonWord = jsonPredicates[k];
+                var word = new Word(activeJsonWord["text"], activeJsonWord["index"]);
+                word.posLabel = activeJsonWord["posLabel"];
+                word.type = activeJsonWord["type"];
+                word.optional = activeJsonWord["optional"];
+                predicates.push(word);
+            }
+            var jsonObjects = activeJsonTriple["objects"];
+            console.log(jsonObjects)
+            var objects = []
+            for (var k = 0; k < jsonObjects.length; k++) {
+                var activeJsonWord = jsonObjects[k];
+                var word = new Word(activeJsonWord["text"], activeJsonWord["index"]);
+                word.posLabel = activeJsonWord["posLabel"];
+                word.type = activeJsonWord["type"];
+                word.optional = activeJsonWord["optional"];
+                //objects.push(word);
+            }
+            var triple = new Triple(subjects, predicates, objects);
+            tripleArray.push(triple);
         }
+        cluster.triples = tripleArray
+        clusters.push(cluster);
     }
+    var annotate = new Annotation();
+    annotate.name = textFile.name;
+    annotate.textFile = textFile;
+    annotate.clusters = clusters;
+    //console.log(annotate);
+    return annotate
+}
 
+async function load(url, fileName) {
+    var data = await requestLoad(url, fileName);
+    var results = await (loadData(data))
+    return results;
 }
 
 export { save, load }

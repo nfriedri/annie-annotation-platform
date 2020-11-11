@@ -12,14 +12,18 @@ const url = 'http://127.0.0.1:5000/';
 //GUI-STEERING
 
 // --- Initialization ---
-var file = new TextFile();
+//var file = new TextFile();
 var annotate = new Annotation();
+//console.log(annotate);
+
 var sentenceNumber = 0;
 var clusterNumber = 0;
-var clusters = annotate.clusters;
+//var clusters = annotate.clusters;
 
 var inputUpload = document.getElementById('input-file');
+var inputLoad = document.getElementById('input-memory-file');
 var inputFileLabel = document.getElementById('input-file-label');
+var inputLoadLabel = document.getElementById('input-memory-file-label');
 
 var startInputFile = document.getElementById('start-input-file');
 var clearBtn = document.getElementById('clear-btn');
@@ -34,14 +38,15 @@ var lastBtn = document.getElementById('jump-last-btn');
 var goToBtn = document.getElementById('go-to-btn');
 var downloadBtn = document.getElementById('download-btn')
 
-file.text = 'After the stock-market bloodbath of the past few years, why would any defensive investor put a dime into stocks?';
+//file.text = 'After the stock-market bloodbath of the past few years, why would any defensive investor put a dime into stocks?';
 var sentence = null //Points to current sentence element
-annotate.textFile = file;
+//annotate.textFile = file;
 
 // --- File Upload ---
 
 
 function fileUpload() {
+    var file = new TextFile();
     var fileName = inputUpload.files[0].name;
     inputFileLabel.innerHTML = fileName;
     file.name = fileName;
@@ -52,21 +57,27 @@ function fileUpload() {
         file.text = textFromFileLoaded;
     };
     fileReader.readAsText(fileToLoad, "UTF-8");
+    annotate.textFile = file;
 }
 
 async function getPOStagging() {
     var tagger = new Tokenizer(sentence.text)
-    var taggedElements = tagger.getPOStaggedWords(url);
+    var taggedElements = await tagger.getPOStaggedWords(url);
     console.log(taggedElements);
     return taggedElements;
 }
 
 async function tokenizeFile() {
+    var file = annotate.textFile;
     var tokenizer = new Tokenizer(file.text);
     return tokenizer.splitIntoSentences();
 }
 
 async function startAnnotation() {
+    sentenceNumber = 0;
+    console.log(annotate);
+    console.log(file);
+    var file = annotate.textFile;
     file.sentences = await tokenizeFile();
     sentence = file.sentences[sentenceNumber];
     sentence.words = await getPOStagging();
@@ -74,9 +85,12 @@ async function startAnnotation() {
     updateSentenceNumber(sentenceNumber)
     createTaggedContent(sentence.words);
     addHighlighters();
+    displayClusters(sentenceNumber);
 }
 
 async function newSentenceAnnotation() {
+    var file = annotate.textFile;
+    console.log(file);
     sentence = file.sentences[sentenceNumber];
     sentence.words = await getPOStagging();
     updateSentenceNumber(sentenceNumber)
@@ -96,7 +110,7 @@ function addTripleToCluster() {
     var triple = getSelectionAsTriple();
     var cl = findCluster();
     cl.triples.push(triple);
-    console.log(clusters);
+    //console.log(annotate.clusters);
 }
 
 function addTripleToClusterNumber() {
@@ -113,6 +127,7 @@ function addTripleToClusterNumber() {
 }
 
 function findCluster() {
+    var clusters = annotate.clusters;
     for (var i = 0; i < clusters.length; i++) {
         if (clusters[i].sentenceNumber == sentenceNumber) {
             if (clusters[i].clusterNumber == clusterNumber) {
@@ -124,6 +139,7 @@ function findCluster() {
 }
 
 function findSpecificCluster(clNumber) {
+    var clusters = annotate.clusters;
     for (var i = 0; i < clusters.length; i++) {
         if (clusters[i].sentenceNumber == sentenceNumber) {
             if (clusters[i].clusterNumber == clNumber) {
@@ -148,11 +164,12 @@ function deleteTriple(identifier) {
     var tripleNumber = parseInt(array[2]);
     removeTriple(clNumber, tripleNumber);
     displayClusters(sentenceNumber);
-    console.log(clusters);
-    console.log('Removed Triple');
+    //console.log(clusters);
+    //console.log('Removed Triple');
 }
 
 function removeTriple(clNumber, tripleID) {
+    var clusters = annotate.clusters;
     var activeTriples = null;
     for (var i = 0; i < clusters.length; i++) {
         if (clusters[i].sentenceNumber == sentenceNumber) {
@@ -186,6 +203,7 @@ function deleteCluster(identifier) {
 }
 
 function removeCluster(clNumber) {
+    var clusters = annotate.clusters;
     for (var i = 0; i < clusters.length; i++) {
         if (clusters[i].sentenceNumber == sentenceNumber) {
             if (clusters[i].clusterNumber == clNumber) {
@@ -204,6 +222,7 @@ function saveAnnotationProgress() {
 }
 
 function getClusters() {
+    var clusters = annotate.clusters;
     return clusters;
 }
 
@@ -225,7 +244,9 @@ function previousSentence() {
 
 // Reads in the last Phrase
 function nextSentence() {
+    var file = annotate.textFile;
     if (sentenceNumber < file.sentences.length - 1) {
+        var file = annotate.textFile;
         sentenceNumber += 1;
         newSentenceAnnotation();
     }
@@ -239,12 +260,14 @@ function jumpFirst() {
 
 // Jumps to the last sentence
 function jumpLast() {
+    var file = annotate.textFile;
     sentenceNumber = file.sentences.length - 1;
     newSentenceAnnotation();
 }
 
 // Jumps to the selected sentence number
 function goToPhraseX() {
+    var file = annotate.textFile;
     var number = parseInt(document.getElementById('current-sentence').value);
     if (number > 0 && number <= file.sentences.length) {
         console.log('here2')
@@ -253,6 +276,16 @@ function goToPhraseX() {
     }
 }
 
+async function loadAsynchronous() {
+    var fileName = 'last';
+    if (inputLoad.files[0] != undefined) {
+        fileName = inputLoad.files[0].name;
+    }
+    load(url, fileName).then(response => {
+        annotate = response;
+        console.log(annotate);
+    })
+}
 
 
 startInputFile.addEventListener("click", function () { startAnnotation(); });
@@ -260,7 +293,7 @@ inputUpload.addEventListener("input", function () { fileUpload(); });
 addActiveClusterBtn.addEventListener('click', function () { addTripleToCluster(); displayClusters(sentenceNumber); });
 addNewCLusterBtn.addEventListener("click", function () { createNewCluster(); addTripleToCluster(); displayClusters(sentenceNumber); });
 addToButton.addEventListener("click", function () { addTripleToClusterNumber(); displayClusters(sentenceNumber); })
-saveButton.addEventListener("click", function () { saveAnnotationProgress() });
+saveButton.addEventListener("click", function () { saveAnnotationProgress(); save(url) });
 clearBtn.addEventListener("click", function () {
     clearSelection(); createTaggedContent(sentence.words);
     addHighlighters();
@@ -272,8 +305,11 @@ lastBtn.addEventListener("click", function () { jumpLast() });
 goToBtn.addEventListener("click", function () { goToPhraseX() });
 downloadBtn.addEventListener("click", function () { downloadOutput() });
 
-document.getElementById('test-save-btn').addEventListener("click", function () { save(url) });
-document.getElementById('test-load-btn').addEventListener("click", function () { load(url) });
+//document.getElementById('test-save-btn').addEventListener("click", function () { save(url) });
+document.getElementById('load-selected-btn').addEventListener("click", function () { loadAsynchronous() });
+document.getElementById('load-last-btn').addEventListener("click", function () { loadAsynchronous() });
+
+
 
 
 export { changeWordType, getClusters, getAnnotation, deleteCluster, deleteTriple, getFile };

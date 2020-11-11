@@ -32,14 +32,25 @@
         <!--Input Selections-->
 
         <div class="container mt-5 bg-dark text-light py-2 rounded" id="input-area">
-            <a class="lead text-white">Upload your document here:</a>
+            <a class="lead text-white">Upload new document here:</a>
             <div class="input-group mt-2 mb-3">
                 <div class="custom-file mt-1">
                     <input type="file" class="custom-file-input" id="input-file">
                     <label class="custom-file-label" for="input-file" id="input-file-label">Choose file</label>
-                </div>
-                <button class="btn btn-primary btn-lg ml-3" id="start-input-file">Start</button>
+                    
+                </div>    
             </div>
+            <a class="lead text-white">Resume previous work?</a>
+            <div class="input-group mt-2 mb-3">
+                <div class="custom-file mt-1">
+                    <input type="file" class="custom-file-input" id="input-memory-file">
+                    <label class="custom-file-label" for="input-memory-file" id="input-memory-file-label">Choose file</label>  
+                </div>
+                <button class="btn btn-secondary btn-sm mx-2" id="load-selected-btn">Load Selected File  </button>
+                <button class="btn btn-secondary btn-sm" id="load-last-btn"> Load Last Used </button>   
+            </div>
+            <button class="btn btn-primary btn-lg btn-block mt-5 mb-2" id="start-input-file">Start</button>
+            
         </div>
 
         <!--Do the Magic-->
@@ -146,8 +157,7 @@
             </div>
         </div>
 
-        <button class="btn btn-lg btn-danger ml-5 mt-5" id="test-save-btn"> TEST SAVE </button>
-        <button class="btn btn-lg btn-warning ml-5 mt-5" id="test-load-btn"> TEST LOAD </button>
+       
         
         
         <!--Footer-->

@@ -1,4 +1,6 @@
+import glob
 import json
+import os
 
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
@@ -45,7 +47,11 @@ def save_file():
 @app.route('/load', methods=['GET'])
 def load_file():
     bar = request.args.to_dict()
-    file_name = 'data/' + bar['name'] + '.json'
+    file_name = ''
+    if bar['name'] != 'last':
+        file_name = 'data/' + bar['name'] + '.json'
+    else:
+        file_name = find_last_created_file()
     file = open(file_name, "r")
     data = json.load(file)
     return json.dumps(data)
@@ -55,6 +61,14 @@ def load_file():
 def exit_on_close():
     print('exit_on_close')
     exit()
+
+
+def find_last_created_file():
+    list_of_files = glob.glob('data/*')
+    print(list_of_files)
+    latest_file = max(list_of_files, key=os.path.getctime)
+    print(latest_file.title())
+    return latest_file.title()
 
 
 if __name__ == '__main__':
