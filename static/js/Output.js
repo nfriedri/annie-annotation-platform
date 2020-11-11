@@ -63,7 +63,9 @@ function createOutputPreview() {
 // Output download steering
 function downloadOutput() {
     if (document.getElementById('current-output').innerHTML != "") {
-        var filename = document.getElementById('input-file').files[0].name;
+        var annotation = getAnnotation();
+        var textFile = annotation.textFile;
+        var filename = textFile.name;
         if (filename.includes('.txt')) {
             filename = filename.replace('.txt', '');
         }
