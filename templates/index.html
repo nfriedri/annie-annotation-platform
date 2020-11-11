@@ -5,14 +5,18 @@
 
         <title>OpenIE - Annotation platform</title>
         <link rel="icon" href="{{url_for('static', filename='img/favicon.png')}}">
+        <!--<link rel="icon" href="img/favicon.png">-->
 
         <!--Bootstrap-->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
         <!-- Icons -->
         <script src="https://kit.fontawesome.com/1269d23fc6.js" crossorigin="anonymous"></script>
+
+        <!--<link rel="stylesheet" href="css/style.css">-->
+        <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+        
 
     </head>
     <body id="body">
@@ -21,6 +25,7 @@
         <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
             <div class="container-fluid">
                 <a class="navbar-brand" href="index.html"> <img src="{{url_for('static', filename='img/logo.jpg')}}" width="30" height="30"> OpenIE Annotator Platform </a>
+                <!--<a class="navbar-brand" href="index.html"> <img src="img/logo.jpg" width="30" height="30"> OpenIE Annotator Platform </a>-->
                 <!--<button class="btn btn-danger ml-auto" style="float:right;" id="exit-button">EXIT</button>-->
             </div>
         </nav>
@@ -28,14 +33,25 @@
         <!--Input Selections-->
 
         <div class="container mt-5 bg-dark text-light py-2 rounded" id="input-area">
-            <a class="lead text-white">Upload your document here:</a>
+            <a class="lead text-white">Upload new document here:</a>
             <div class="input-group mt-2 mb-3">
                 <div class="custom-file mt-1">
-                    <input type="file" class="custom-file-input" id="input-file" oninput="fileUpload()">
+                    <input type="file" class="custom-file-input" id="input-file">
                     <label class="custom-file-label" for="input-file" id="input-file-label">Choose file</label>
-                </div>
-                <button class="btn btn-primary btn-lg ml-3" id="start-input-file">Start</button>
+                    
+                </div>    
             </div>
+            <a class="lead text-white">Resume previous work?</a>
+            <div class="input-group mt-2 mb-3">
+                <div class="custom-file mt-1">
+                    <input type="file" class="custom-file-input" id="input-memory-file">
+                    <label class="custom-file-label" for="input-memory-file" id="input-memory-file-label">Choose file</label>  
+                </div>
+                <button class="btn btn-secondary btn-sm mx-2" id="load-selected-btn">Load Selected File  </button>
+                <button class="btn btn-secondary btn-sm" id="load-last-btn"> Load Last Used </button>   
+            </div>
+            <button class="btn btn-primary btn-lg btn-block mt-5 mb-2" id="start-input-file">Start</button>
+            
         </div>
 
         <!--Do the Magic-->
@@ -44,49 +60,51 @@
             <p class="lead text-white" id="sentence-number">Sentence #:</p>
             <div class="card mt-2 mb-3">
                 <div class="card-body text-dark" id="content-insert">
-
+                   
                 </div>
             </div>
-
-            <button class="btn btn-danger my-2" id="add-cluster-button">Add to cluster</button>
-            
-            <p class="lead text-white" id="sentence-number">Cluster #:</p>
-            <div class="card mt-2 mb-3">
-                <div class="card-body text-dark" id="cluster-insert">
-
-                </div>
-            </div>
-
-
-
             <div>
-                <div class="btn-group btn-group-toggle my-2" data-toggle="buttons" id="button-group">
-                    <label class="btn btn-success active" id="subject-btn">
-                        <input type="radio" name="options" checked> Select subject(s)
-                    </label>
-                    <label class="btn btn-warning text-light" id="predicate-btn">
-                        <input type="radio" name="options" >Select predicate(s)
-                    </label>
-                    <label class="btn btn-info" id="object-btn">
-                        <input type="radio" name="options" >Select object(s)
-                    </label>
-                </div>
+                
 
-                <button class="btn btn-secondary" data-toggle="buttons" id="optional-button" style="text-decoration: underline;">Optional</button>
-                <button class="btn btn-danger my-2 ml-auto" style="float: right;" id="add-triples-button">Add triples to cluster</button>
+                <div class="btn-group btn-group-toggle my-2" data-toggle="buttons" id="button-group">
+                    <a class="btn btn-subject down" id="subject-btn" onclick="tripleButton(this.id)"> Select subject(s) </a>
+                    <a class="btn btn-predicate down" id="predicate-btn" onclick="tripleButton(this.id)"> Select predicate(s) </a>
+                    <a class="btn btn-object down" id="object-btn" onclick="tripleButton(this.id)"> Select object(s) </a>
+                </div>
+               
+
+                <button class="btn btn-optional ml-3 down" id="optional-btn" style="text-decoration: underline;" onclick="optionalButton()">Optional</button>
+                <button class="btn btn-light ml-2" id="clear-btn">Clear</button>
+                
                 <!--<button class="btn btn-secondary my-2 mr-2" style="float: right;">Reset</button>-->
             </div>
 
-            <button class="btn btn-lg btn-primary mt-3 mb-2" id="generate-clusters-button">Generate Clusters</button>
-            
-            <div class="card mt-2 mb-3">
-                <div class="card-body text-dark" id="clusters-generated">
-
-                </div>
+            <p class="lead text-white">Selection</p>
+            <div class="container bg-white py-2 px-2 mb-3" style="border-radius: 5px;" id="selection-insert">
             </div>
 
+            <div class="d-flex flex-row-reverse">
+                <button class="btn btn-primary mb-2" id="active-cluster-btn">Add to active Cluster</button>
+                <button class="btn btn-info mb-2 mr-2" id="new-cluster-btn">Add to new Cluster</button>
+                    
+                <div class="d-flex justify-content-center">
+                    <div class="input-group mb-3 mr-2">
+                        <input type="number" class="form-control" placeholder="..." aria-label="Add to Cluster" aria-describedby="go-to-button" id="add-to-cluster-number">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" type="button" id="add-to-btn" onclick="">Add To</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
             
 
+            <!--Container displaying clusters and triples for the current sentence.-->
+            <p class="lead text-white" id="sentence-number">Cluster #:</p>
+            <div class="container bg-white py-2 px-2 mb-4" style="border-radius: 5px;" id="cluster-insert">
+                
+            </div>
+           
 
             <!--Navigation on Bottom-->
 
@@ -100,25 +118,24 @@
 
                 <div class="row">
                     <div class="col-12 col-md d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" id="jump-first-button">Jump to First</button>
+                        <button type="button" class="btn btn-secondary" id="jump-first-btn">Jump to First</button>
                     </div>
                     <div class="col-12 col-md d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" id="previous-button">Previous</button>
+                        <button type="button" class="btn btn-secondary" id="previous-btn">Previous</button>
                     </div>
                     <div class="col-12 col-md d-flex justify-content-center">
                         <div class="input-group mb-3">
                             <input type="number" class="form-control" placeholder="..." aria-label="GoTo" aria-describedby="go-to-button" id="current-sentence">
                             <div class="input-group-append">
-                                <span class="input-group-text" id="number-of-phrases"></span>
-                                <button class="btn btn-secondary" type="button" id="go-to-button" onclick="goToPhraseX()">Go To</button>
+                                <button class="btn btn-secondary" type="button" id="go-to-btn" onclick="goToPhraseX()">Go To</button>
                             </div>
                         </div>
                     </div>
                     <div class="col-12 col-md d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" id="next-button">Next</button>
+                        <button type="button" class="btn btn-secondary" id="next-btn">Next</button>
                     </div>
                     <div class="col-12 col-md d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" id="jump-last-button">Jump to Last</button>
+                        <button type="button" class="btn btn-secondary" id="jump-last-btn">Jump to Last</button>
                     </div>
                 </div>
             </div>
@@ -135,13 +152,13 @@
             <div class="card mt-2">
                 <textarea class="form-control" id="current-output" rows="1"></textarea>
             </div>
-            <button class="btn btn-secondary mt-2 mb-3" id="save-changes-button">Save output changes</button>
-            <div id="div-saved-changes"></div>
             <div class="container d-flex mt-2">
                 <a class="lead text-white mr-5">Download results: </a>
-                <i class="fas fa-file-download fa-5x" type="button" id="download-button"></i>
+                <i class="fas fa-file-download fa-5x" type="button" id="download-btn"></i>
             </div>
         </div>
+
+       
         
         
         <!--Footer-->
@@ -151,6 +168,7 @@
             <div class="row">
             <div class="col-12 col-md">
                     <img src="{{url_for('static', filename='img/logo.png')}}" width="40%">
+                    <!--<img src="img/logo.png" width="40%">-->
                 <li class="list-unstyled text-small"><a class="text-muted ml-4" target="_blank" href="https://www.uni-mannheim.de">University of Mannheim</a></li>
                 <small class="d-block mb-3 ml-4 text-muted">&copy; 2020</small>
             </div>
@@ -181,6 +199,10 @@
             </div>
         </footer>
 
-    <script src="{{url_for('static', filename='js/appNew.js')}}"></script>
+    <script type="module" src="{{url_for('static', filename='js/App.js')}}"></script>
+    <script src="{{url_for('static', filename='js/Visual.js')}}"></script>
+    <!--<script type="module" src="js/App.js"></script>-->
+    <!--<script src="js/Visual.js"></script>-->
+    
     </body>
 </html>

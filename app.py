@@ -41,7 +41,7 @@ def save_file():
     new_file = open('data/' + data['name']+'.json', 'w')
     new_file.write(json.dumps(data))
     new_file.close()
-    return 'OK'
+    return json.dumps({'success': True}), 200, {'Content-Type': 'application/json'}
 
 
 @app.route('/load', methods=['GET'])
@@ -71,7 +71,7 @@ def find_last_created_file():
     return latest_file.title()
 
 
-if __name__ == '__main__':
-   app.run()
+#if __name__ == '__main__':
+#   app.run()
 
-# ui.run()
+ui.run()

@@ -44,21 +44,6 @@ var saveChangesButton = document.getElementById('save-changes-button');
 var optionalButton = document.getElementById('optional-button');
 var exitButton = document.getElementById('exit-button');
 
-class Cluster {
-    constructor(sentenceNumber, clusterNumber, words) {
-        this.sentenceNumber = sentenceNumber;
-        this.clusterNumber = clusterNumber;
-        this.words = words; //Array of words
-    }
-}
-
-class Word {
-    constructor(text, type, optional) {
-        this.text = text; // wordtext
-        this.type = type; // subject, predicate or object
-        this.optional = optional // Boolean true or false
-    }
-}
 
 // --- Data Input ---
 
@@ -516,17 +501,17 @@ function resetClusterView() {
 function exit() {
     var endpoint = url + 'stop';
     fetch(endpoint, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then((res) => {
+            return res.json();
         })
-            .then((res) => {
-                return res.json();
-            })
-            .then((data) => {
-                console.log(data);
-            })
+        .then((data) => {
+            console.log(data);
+        })
 }
 
 // --- Button EventListeners ---
@@ -542,4 +527,4 @@ downloadButton.addEventListener("click", function () { downloadOutput() });
 addClusterButton.addEventListener("click", function () { copyMarkedWordsToCluster() });
 addTriplesButton.addEventListener("click", function () { storeMarkedWords() });
 saveChangesButton.addEventListener("click", function () { saveChangesInOutputArea() });
-exitButton.addEventListener("click", function() { exit() });
+exitButton.addEventListener("click", function () { exit() });
