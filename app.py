@@ -49,7 +49,7 @@ def load_file():
     bar = request.args.to_dict()
     file_name = ''
     if bar['name'] != 'last':
-        file_name = 'data/' + bar['name'] + '.json'
+        file_name = 'data/' + bar['name']
     else:
         file_name = find_last_created_file()
     file = open(file_name, "r")

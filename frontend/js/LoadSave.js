@@ -97,7 +97,7 @@ function save(url) {
     var content = JSON.stringify(data);
     var endpoint = url + 'save';
     var result = undefined;
-    console.log(content);
+    //console.log(content);
 
     try {
         fetch(endpoint, {
@@ -206,7 +206,7 @@ async function loadData(content) {
                 predicates.push(word);
             }
             var jsonObjects = activeJsonTriple["objects"];
-            console.log(jsonObjects)
+            //console.log(jsonObjects)
             var objects = []
             for (var k = 0; k < jsonObjects.length; k++) {
                 var activeJsonWord = jsonObjects[k];

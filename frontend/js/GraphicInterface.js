@@ -110,7 +110,7 @@ function highlightTriples(identifier) {
         targetElement.className = targetElement.className.replace('marked-optional', '');
         targetElement.removeAttribute('style');
     }
-    copyToSelection(identifier);
+    copyToSelection();
 }
 
 function upgrade(targetElement, tripleType) {
@@ -189,15 +189,15 @@ function getSelectionAsTriple() {
     return triple;
 }
 
-function copyToSelection(id) {
-    var element = document.getElementById(id)
-    if (element.className.includes('mk')) {
-        var copy = element.cloneNode(true);
+function copyToSelection() {
+    selectionInsert.innerHTML = '';
+    var elements = contentInsert.getElementsByClassName('mk');
+    console.log(elements.length);
+    for (var i = 0; i < elements.length; i++) {
+        var copy = elements[i].cloneNode(true);
         copy.id = copy.id + '-copy';
         copy.addEventListener("click", function () { removeButton(this.id) })
-        if (document.getElementById(id + '-copy') == undefined) {
-            selectionInsert.appendChild(copy);
-        }
+        selectionInsert.appendChild(copy);
     }
 }
 

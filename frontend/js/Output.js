@@ -1,4 +1,4 @@
-import { getAnnotation } from './App.js';
+import { getAnnotation, sortClusters } from './App.js';
 
 
 function createOutputPreview() {
@@ -7,6 +7,8 @@ function createOutputPreview() {
     var clusters = annotation.clusters;
 
     let output = '';
+    console.log(clusters);
+    sortClusters();
 
     for (var i = 0; i < clusters.length; i++) {
         var sentence = textFile.sentences[clusters[i].sentenceNumber];
@@ -54,16 +56,18 @@ function createOutputPreview() {
                     output += '[' + objects[k].text + '(' + objects[k].index + ')] ';
                 }
             }
+            output += '\n'
         }
     }
-    console.log(output);
+    //console.log(output);
     return output;
 }
 
 // Output download steering
 function downloadOutput() {
     if (document.getElementById('current-output').innerHTML != "") {
-        var filename = inputUpload.files[0].name;
+        var textFile = getAnnotation().textFile
+        var filename = textFile.name;
         if (filename.includes('.txt')) {
             filename = filename.replace('.txt', '');
         }
@@ -81,8 +85,9 @@ function downloadOutput() {
 function download(filename) {
     console.log('function download with ' + filename);
     var element = document.createElement('a');
-    var content = document.getElementById('current-output').value;
-    content = content.replace('\n', '\r\n');
+    var content = document.getElementById('current-output').innerHTML;
+    content = content.replaceAll('<br>', '\r\n');
+    content = content.replaceAll('&gt', '>');
     element.style.display = 'none';
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
     element.setAttribute('download', filename + '-annotated.tsv');
