@@ -94,6 +94,7 @@ async function newSentenceAnnotation() {
     sentence = file.sentences[sentenceNumber];
     sentence.words = await getPOStagging();
     updateSentenceNumber(sentenceNumber)
+    initClusterNumber(sentenceNumber);
     clearSelection();
     createTaggedContent(sentence.words);
     addHighlighters();
@@ -107,9 +108,11 @@ function changeWordType(index, type, optional) {
 }
 
 function addTripleToCluster() {
+    initClusterNumber(sentenceNumber);
     var triple = getSelectionAsTriple();
     var cl = findCluster();
     cl.triples.push(triple);
+    sortClusters();
     //console.log(annotate.clusters);
 }
 
@@ -121,7 +124,11 @@ function addTripleToClusterNumber() {
         cl.triples.push(triple);
     }
     else {
-        //TODO: Insert Alert that cluster number is out of range
+        console.log('alert');
+        document.getElementById('alert-div-cluster').innerHTML += `<div class="alert alert-danger mt-3" role="alert" id="cluster-alert">
+                                    Selected cluster number is out of range. Please try again.
+                                    </div>`;
+        setTimeout(function () { document.getElementById('cluster-alert').remove() }, 3000);
     }
 
 }
@@ -192,12 +199,12 @@ function removeTriple(clNumber, tripleID) {
     }
 }
 
-function deleteCluster(identifier) {
+async function deleteCluster(identifier) {
     var array = identifier.split('-');
     var sentNumber = parseInt(array[1]);
     var clusNumber = parseInt(array[2]);
     console.log(sentNumber + ' ' + clusNumber);
-    removeCluster(clusNumber);
+    var removed = await removeCluster(clusNumber);
     displayClusters(sentenceNumber);
     console.log('Removed Cluster');
 }
@@ -212,17 +219,40 @@ function removeCluster(clNumber) {
             }
         }
     }
-    clusterNumber--;
+    sortClusters();
+    var counter = 0;
+    for (var i = 0; i < clusters.length; i++) {
+        if (clusters[i].sentenceNumber == sentenceNumber) {
+            clusters[i].clusterNumber = counter + 1;
+            counter++;
+        }
+
+    }
+    clusterNumber = counter;
+    console.log(clusters);
+    return true;
+}
+
+function initClusterNumber(sentenceNumber) {
+    var clusters = annotate.clusters;
+    var counter = 0;
+    for (var i = 0; i < clusters.length; i++) {
+        if (clusters[i].sentenceNumber == sentenceNumber) {
+            clusters[i].clusterNumber = counter + 1;
+            counter++;
+        }
+    }
+    clusterNumber = counter;
 }
 
 function saveAnnotationProgress() {
     var output = createOutputPreview();
     document.getElementById('current-output').innerText = output;
-    document.getElementById('current-output').setAttribute('rows', '10');
 }
 
 function getClusters() {
     var clusters = annotate.clusters;
+
     return clusters;
 }
 
@@ -240,6 +270,12 @@ function previousSentence() {
         sentenceNumber -= 1;
         newSentenceAnnotation();
     }
+    if (annotate.clusters != null) {
+        clusterNumber = annotate.clusters.length;
+    }
+    else {
+        clusterNumber = 0;
+    }
 }
 
 // Reads in the last Phrase
@@ -250,12 +286,24 @@ function nextSentence() {
         sentenceNumber += 1;
         newSentenceAnnotation();
     }
+    if (annotate.clusters != null) {
+        clusterNumber = annotate.clusters.length;
+    }
+    else {
+        clusterNumber = 0;
+    }
 }
 
 // Jumps to the first sentence
 function jumpFirst() {
     sentenceNumber = 0;
     newSentenceAnnotation();
+    if (annotate.clusters != null) {
+        clusterNumber = annotate.clusters.length;
+    }
+    else {
+        clusterNumber = 0;
+    }
 }
 
 // Jumps to the last sentence
@@ -263,6 +311,12 @@ function jumpLast() {
     var file = annotate.textFile;
     sentenceNumber = file.sentences.length - 1;
     newSentenceAnnotation();
+    if (annotate.clusters != null) {
+        clusterNumber = annotate.clusters.length;
+    }
+    else {
+        clusterNumber = 0;
+    }
 }
 
 // Jumps to the selected sentence number
@@ -273,6 +327,12 @@ function goToPhraseX() {
         console.log('here2')
         sentenceNumber = number - 1;
         newSentenceAnnotation();
+    }
+    if (annotate.clusters != null) {
+        clusterNumber = annotate.clusters.length;
+    }
+    else {
+        clusterNumber = 0;
     }
 }
 
@@ -286,6 +346,50 @@ async function loadAsynchronous() {
         console.log(annotate);
     })
 }
+
+function sortWords(firstEl, secondEl) {
+    if (firstEl.index <= secondEl.index) {
+        return -1;
+    }
+    else {
+        return 1
+    }
+}
+
+function sortTriples(firstEl, secondEl) {
+    if (firstEl.tripleID <= secondEl.tripleID) {
+        return -1;
+    }
+    else {
+        return 1;
+    }
+}
+
+function sortClusters() {
+    var clusters = annotate.clusters;
+    clusters.sort((first, second) => {
+        if (first.sentenceNumber == second.sentenceNumber) {
+            if (first.clusterNumber == second.clusterNumber) {
+                return 0;
+            }
+            if (first.clusterNumber < second.clusterNumber) {
+                return -1;
+            }
+            if (first.clusterNumber > second.clusterNumber) {
+                return 1;
+            }
+        }
+        else {
+            if (first.sentenceNumber < second.sentenceNumber) {
+                return -1;
+            }
+            else {
+                return 1;
+            }
+        }
+    })
+}
+
 
 
 startInputFile.addEventListener("click", function () { startAnnotation(); });
@@ -312,4 +416,4 @@ document.getElementById('load-last-btn').addEventListener("click", function () {
 
 
 
-export { changeWordType, getClusters, getAnnotation, deleteCluster, deleteTriple, getFile };
+export { changeWordType, getClusters, getAnnotation, deleteCluster, deleteTriple, getFile, sortClusters };

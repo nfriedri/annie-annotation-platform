@@ -97,7 +97,7 @@ function save(url) {
     var content = JSON.stringify(data);
     var endpoint = url + 'save';
     var result = undefined;
-    console.log(content);
+    //console.log(content);
 
     try {
         fetch(endpoint, {
@@ -137,6 +137,10 @@ async function requestLoad(url, fileName) {
             })
     } catch (error) {
         console.error(error);
+        document.getElementById('alert-div-load').innerHTML += `<div class="alert alert-danger mt-3" role="alert" id="load-alert">
+                                                            Failed loading data.
+                                                             </div>`;
+        setTimeout(function () { document.getElementById('load-alert').remove() }, 3000);
     }
     //console.log(results);
     return results;
@@ -206,7 +210,7 @@ async function loadData(content) {
                 predicates.push(word);
             }
             var jsonObjects = activeJsonTriple["objects"];
-            console.log(jsonObjects)
+            //console.log(jsonObjects)
             var objects = []
             for (var k = 0; k < jsonObjects.length; k++) {
                 var activeJsonWord = jsonObjects[k];
@@ -233,6 +237,10 @@ async function loadData(content) {
 async function load(url, fileName) {
     var data = await requestLoad(url, fileName);
     var results = await (loadData(data))
+    document.getElementById('alert-div-load').innerHTML += `<div class="alert alert-success mt-3" role="alert" id="load-alert">
+                                                            Succesfully loaded data. Press the START Button to continue.
+                                                             </div>`;
+    setTimeout(function () { document.getElementById('load-alert').remove() }, 3000);
     return results;
 }
 

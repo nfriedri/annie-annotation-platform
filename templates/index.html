@@ -50,6 +50,7 @@
                 <button class="btn btn-secondary btn-sm mx-2" id="load-selected-btn">Load Selected File  </button>
                 <button class="btn btn-secondary btn-sm" id="load-last-btn"> Load Last Used </button>   
             </div>
+            <div id="alert-div-load"></div>
             <button class="btn btn-primary btn-lg btn-block mt-5 mb-2" id="start-input-file">Start</button>
             
         </div>
@@ -95,8 +96,9 @@
                         </div>
                     </div>
                 </div>
-
             </div>
+
+            <div id="alert-div-cluster"></div>
             
 
             <!--Container displaying clusters and triples for the current sentence.-->
@@ -150,7 +152,7 @@
             <!--Current Output-->
             <a class="lead text-white">Output:</a>
             <div class="card mt-2">
-                <textarea class="form-control" id="current-output" rows="1"></textarea>
+                <div class="card-body text-dark" id="current-output"></div>
             </div>
             <div class="container d-flex mt-2">
                 <a class="lead text-white mr-5">Download results: </a>
@@ -199,17 +201,17 @@
             </div>
         </footer>
 
-        <script>
+    <script>
 
-            document.addEventListener('DOMContentLoaded', function() {
-            
-                var url = 'http://127.0.0.1:5001/GUI-is-still-open'; 
-                fetch(url, { mode: 'no-cors'});
-                setInterval(function(){ fetch(url, { mode: 'no-cors'});}, 5000)();
-            
-            });
-            
-            </script>
+        document.addEventListener('DOMContentLoaded', function() {
+        
+            var url = 'http://127.0.0.1:5001/GUI-is-still-open'; 
+            fetch(url, { mode: 'no-cors'});
+            setInterval(function(){ fetch(url, { mode: 'no-cors'});}, 5000)();
+        
+        });
+        
+    </script>
     <script type="module" src="{{url_for('static', filename='js/App.js')}}"></script>
     <script src="{{url_for('static', filename='js/Visual.js')}}"></script>
     <!--<script type="module" src="js/App.js"></script>-->

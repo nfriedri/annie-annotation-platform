@@ -78,6 +78,42 @@ function highlightTriples(identifier) {
     //console.log(identifier);
     var targetElement = document.getElementById(identifier);
     var tripleType = getActiveTripleBtnID();
+    var elementType = targetElement.className;
+    switch (elementType) {
+        case 'btn btn-noun ml-1 mb-1':
+            upgrade(targetElement, tripleType);
+            break;
+        case 'btn btn-verb ml-1 mb-1':
+            upgrade(targetElement, tripleType);
+            break;
+        case 'btn btn-adjective ml-1 mb-1':
+            upgrade(targetElement, tripleType);
+            break;
+        case 'btn btn-secondary ml-1 mb-1':
+            upgrade(targetElement, tripleType);
+            break;
+        case 'btn btn-subject ml-1 mb-1 mk marked-subject':
+            downgrade(targetElement);
+            break;
+        case 'btn btn-predicate ml-1 mb-1 mk marked-predicate':
+            downgrade(targetElement);
+            break;
+        case 'btn btn-object mk ml-1 mb-1 marked-object':
+            downgrade(targetElement);
+            break;
+    }
+    if (isOptionalActive()) {
+        targetElement.className += 'marked-optional';
+        targetElement.setAttribute('style', 'text-decoration: underline;')
+    }
+    else {
+        targetElement.className = targetElement.className.replace('marked-optional', '');
+        targetElement.removeAttribute('style');
+    }
+    copyToSelection();
+}
+
+function upgrade(targetElement, tripleType) {
     switch (tripleType) {
         case 'subject-btn':
             targetElement.className = 'btn btn-subject ml-1 mb-1 mk marked-subject';
@@ -88,30 +124,29 @@ function highlightTriples(identifier) {
         case 'object-btn':
             targetElement.className = 'btn btn-object mk ml-1 mb-1 marked-object';
             break;
+    }
+}
+
+function downgrade(targetElement) {
+    var posLabel = targetElement.getElementsByTagName('pos')[0].innerHTML;
+    switch (posLabel) {
+        case 'NOUN':
+            targetElement.className = "btn btn-noun ml-1 mb-1";
+            break;
+        case 'VERB':
+            targetElement.className = "btn btn-verb ml-1 mb-1";
+            break;
+        case 'ADJ':
+            targetElement.className = "btn btn-adjective ml-1 mb-1";
+            break;
         default:
-            var posLabel = targetElement.getElementsByTagName('pos')[0].innerHTML;
-            switch (posLabel) {
-                case 'NOUN':
-                    targetElement.className = "btn btn-noun ml-1 mb-1";
-                    break;
-                case 'VERB':
-                    targetElement.className = "btn btn-verb ml-1 mb-1";
-                    break;
-                case 'ADJ':
-                    targetElement.className = "btn btn-adjective ml-1 mb-1";
-                    break;
-                default:
-                    targetElement.className = "btn btn-secondary ml-1 mb-1";
-                    break;
-            }
+            targetElement.className = "btn btn-secondary ml-1 mb-1";
             break;
     }
-    if (isOptionalActive()) {
-        targetElement.className += 'marked-optional';
-        targetElement.setAttribute('style', 'text-decoration: underline;')
-    }
-    copyToSelection(identifier);
 }
+
+
+
 
 function getActiveTripleBtnID() {
     var btnGroup = document.getElementById('button-group');
@@ -154,15 +189,15 @@ function getSelectionAsTriple() {
     return triple;
 }
 
-function copyToSelection(id) {
-    var element = document.getElementById(id)
-    if (element.className.includes('mk')) {
-        var copy = element.cloneNode(true);
+function copyToSelection() {
+    selectionInsert.innerHTML = '';
+    var elements = contentInsert.getElementsByClassName('mk');
+    console.log(elements.length);
+    for (var i = 0; i < elements.length; i++) {
+        var copy = elements[i].cloneNode(true);
         copy.id = copy.id + '-copy';
         copy.addEventListener("click", function () { removeButton(this.id) })
-        if (document.getElementById(id + '-copy') == undefined) {
-            selectionInsert.appendChild(copy);
-        }
+        selectionInsert.appendChild(copy);
     }
 }
 
