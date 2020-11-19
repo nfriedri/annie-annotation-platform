@@ -192,12 +192,12 @@ function removeTriple(clNumber, tripleID) {
     }
 }
 
-function deleteCluster(identifier) {
+async function deleteCluster(identifier) {
     var array = identifier.split('-');
     var sentNumber = parseInt(array[1]);
     var clusNumber = parseInt(array[2]);
     console.log(sentNumber + ' ' + clusNumber);
-    removeCluster(clusNumber);
+    var removed = await removeCluster(clusNumber);
     displayClusters(sentenceNumber);
     console.log('Removed Cluster');
 }
@@ -212,7 +212,11 @@ function removeCluster(clNumber) {
             }
         }
     }
-    clusterNumber--;
+    for (i = 0; i < clusters.length; i++) {
+        clusters.clusterNumber = i + 1;
+    }
+    console.log(clusters);
+    return true;
 }
 
 function saveAnnotationProgress() {
@@ -223,6 +227,14 @@ function saveAnnotationProgress() {
 
 function getClusters() {
     var clusters = annotate.clusters;
+    clusters.sort((firstEl, secondEl) => {
+        if (firstEl.clusterNumber <= secondEl.clusterNumber) {
+            return -1;
+        }
+        else {
+            return 1;
+        }
+    });
     return clusters;
 }
 
@@ -240,6 +252,12 @@ function previousSentence() {
         sentenceNumber -= 1;
         newSentenceAnnotation();
     }
+    if (annotate.clusters != null) {
+        clusterNumber = annotate.clusters.length;
+    }
+    else {
+        clusterNumber = 0;
+    }
 }
 
 // Reads in the last Phrase
@@ -250,12 +268,24 @@ function nextSentence() {
         sentenceNumber += 1;
         newSentenceAnnotation();
     }
+    if (annotate.clusters != null) {
+        clusterNumber = annotate.clusters.length;
+    }
+    else {
+        clusterNumber = 0;
+    }
 }
 
 // Jumps to the first sentence
 function jumpFirst() {
     sentenceNumber = 0;
     newSentenceAnnotation();
+    if (annotate.clusters != null) {
+        clusterNumber = annotate.clusters.length;
+    }
+    else {
+        clusterNumber = 0;
+    }
 }
 
 // Jumps to the last sentence
@@ -263,6 +293,12 @@ function jumpLast() {
     var file = annotate.textFile;
     sentenceNumber = file.sentences.length - 1;
     newSentenceAnnotation();
+    if (annotate.clusters != null) {
+        clusterNumber = annotate.clusters.length;
+    }
+    else {
+        clusterNumber = 0;
+    }
 }
 
 // Jumps to the selected sentence number
@@ -273,6 +309,12 @@ function goToPhraseX() {
         console.log('here2')
         sentenceNumber = number - 1;
         newSentenceAnnotation();
+    }
+    if (annotate.clusters != null) {
+        clusterNumber = annotate.clusters.length;
+    }
+    else {
+        clusterNumber = 0;
     }
 }
 
@@ -286,6 +328,25 @@ async function loadAsynchronous() {
         console.log(annotate);
     })
 }
+
+function compareWords(firstEl, secondEl) {
+    if (firstEl.index <= secondEl.index) {
+        return -1;
+    }
+    else {
+        return 1
+    }
+}
+
+function compareTriples(firstEl, secondEl) {
+    if (firstEl.tripleID <= secondEl.tripleID) {
+        return -1;
+    }
+    else {
+        return 1;
+    }
+}
+
 
 
 startInputFile.addEventListener("click", function () { startAnnotation(); });

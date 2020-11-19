@@ -13,7 +13,7 @@ from POS_Tagger import Tagger, TaggedWord
 
 app = Flask(__name__)
 CORS(app)
-ui = FlaskUI(app, maximized=True, width=1920, height=1080)
+# ui = FlaskUI(app, maximized=True, width=1920, height=1080)
 
 '''Start POS-Tagger'''
 spacy = Tagger()
@@ -71,7 +71,7 @@ def find_last_created_file():
     return latest_file.title()
 
 
-#if __name__ == '__main__':
-#   app.run()
+if __name__ == '__main__':
+    app.run()
 
-ui.run()
+# ui.run()
