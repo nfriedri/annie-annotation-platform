@@ -218,7 +218,7 @@ async function loadData(content) {
                 word.posLabel = activeJsonWord["posLabel"];
                 word.type = activeJsonWord["type"];
                 word.optional = activeJsonWord["optional"];
-                //objects.push(word);
+                objects.push(word);
             }
             var triple = new Triple(subjects, predicates, objects);
             tripleArray.push(triple);
