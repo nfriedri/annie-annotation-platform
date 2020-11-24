@@ -6,14 +6,14 @@ function createOutputPreview() {
     var textFile = annotation.textFile;
     var clusters = annotation.clusters;
 
-    let output = '';
+    let output = '<pre>';
     console.log(clusters);
     sortClusters();
 
     for (var i = 0; i < clusters.length; i++) {
         var sentence = textFile.sentences[clusters[i].sentenceNumber];
         output += sentence.text + '\n';
-        output += (clusters[i].sentenceNumber + 1) + '-->Cluster ' + clusters[i].clusterNumber + ': ';
+        output += (clusters[i].sentenceNumber + 1) + '&#9;Cluster ' + clusters[i].clusterNumber + ': ';
 
         let triples = clusters[i].triples;
         for (var j = 0; j < triples.length; j++) {
@@ -29,7 +29,7 @@ function createOutputPreview() {
             for (var k = 0; k < objects.length; k++) {
                 output += objects[k].text + ' ';
             }
-            output += '\n--> '
+            output += '\t';
             for (var k = 0; k < subjects.length; k++) {
                 if (!subjects[k].optional) {
                     output += subjects[k].text + '(' + subjects[k].index + ') ';
@@ -38,7 +38,7 @@ function createOutputPreview() {
                     output += '[' + subjects[k].text + '(' + subjects[k].index + ')] ';
                 }
             }
-            output += '--> '
+            output += '\t'
             for (var k = 0; k < predicates.length; k++) {
                 if (!predicates[k].optional) {
                     output += predicates[k].text + '(' + predicates[k].index + ') ';
@@ -47,7 +47,7 @@ function createOutputPreview() {
                     output += '[' + predicates[k].text + '(' + predicates[k].index + ')] ';
                 }
             }
-            output += '-->'
+            output += '     '
             for (var k = 0; k < objects.length; k++) {
                 if (!objects[k].optional) {
                     output += objects[k].text + '(' + objects[k].index + ') ';
@@ -60,6 +60,7 @@ function createOutputPreview() {
         }
     }
     //console.log(output);
+    output += '</pre>'
     return output;
 }
 
@@ -87,7 +88,8 @@ function download(filename) {
     var element = document.createElement('a');
     var content = document.getElementById('current-output').innerHTML;
     content = content.replaceAll('<br>', '\r\n');
-    content = content.replaceAll('&gt', '>');
+    content = content.replaceAll('<pre>', '');
+    content = content.replaceAll('</pre>', '');
     element.style.display = 'none';
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
     element.setAttribute('download', filename + '-annotated.tsv');
