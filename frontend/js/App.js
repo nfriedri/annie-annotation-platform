@@ -247,7 +247,7 @@ function initClusterNumber(sentenceNumber) {
 
 function saveAnnotationProgress() {
     var output = createOutputPreview();
-    document.getElementById('current-output').innerText = output;
+    document.getElementById('current-output').innerHTML = output;
 }
 
 function getClusters() {
