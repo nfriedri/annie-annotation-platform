@@ -13,7 +13,7 @@ function createOutputPreview() {
     for (var i = 0; i < clusters.length; i++) {
         var sentence = textFile.sentences[clusters[i].sentenceNumber];
         output += sentence.text + '\n';
-        output += (clusters[i].sentenceNumber + 1) + '&#9;Cluster ' + clusters[i].clusterNumber + ': ';
+        output += (clusters[i].sentenceNumber + 1) + '\tCluster ' + clusters[i].clusterNumber + ': ';
 
         let triples = clusters[i].triples;
         for (var j = 0; j < triples.length; j++) {
@@ -47,7 +47,7 @@ function createOutputPreview() {
                     output += '[' + predicates[k].text + '(' + predicates[k].index + ')] ';
                 }
             }
-            output += '     '
+            output += '\t'
             for (var k = 0; k < objects.length; k++) {
                 if (!objects[k].optional) {
                     output += objects[k].text + '(' + objects[k].index + ') ';
