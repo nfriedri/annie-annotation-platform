@@ -1,6 +1,7 @@
 import glob
 import json
 import os
+from datetime import datetime
 
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
@@ -8,12 +9,15 @@ from flaskwebgui import FlaskUI
 
 from POS_Tagger import Tagger, TaggedWord
 
+'''Config File'''
+config_file = "config.json"
+
 
 '''Initialize GUI'''
 
 app = Flask(__name__)
 CORS(app)
-ui = FlaskUI(app, maximized=True, width=1920, height=1080)
+# ui = FlaskUI(app, maximized=True, width=1920, height=1080)
 
 '''Start POS-Tagger'''
 spacy = Tagger()
@@ -54,6 +58,7 @@ def load_file():
         file_name = find_last_created_file()
     file = open(file_name, "r")
     data = json.load(file)
+    print(file_name)
     return json.dumps(data)
 
 
@@ -63,15 +68,41 @@ def exit_on_close():
     exit()
 
 
+@app.route('/config', methods=['GET'])
+def return_config():
+    file = open(config_file, "r")
+    data = json.load(file)
+    print(data)
+    return json.dumps(data)
+
+
+@app.route('/files', methods=['GET'])
+def return_files():
+    return list_latest_files(number_of_files=5)
+
+
 def find_last_created_file():
     list_of_files = glob.glob('data/*')
-    print(list_of_files)
+    #print(list_of_files)
     latest_file = max(list_of_files, key=os.path.getctime)
     print(latest_file.title())
     return latest_file.title()
 
 
-# if __name__ == '__main__':
-#      app.run()
+def list_latest_files(number_of_files):
+    list_of_files = glob.glob('data/*')
+    #print(list_of_files)
+    data = {}
+    for i in range(number_of_files):
+        latest_file = max(list_of_files, key=os.path.getctime)
+        change_date = datetime.fromtimestamp(os.path.getctime(latest_file))
+        file_name = str(latest_file).replace('data\\', '')
+        data[i] = {"name": file_name, "date": change_date}
+        list_of_files.remove(latest_file)
+    return data
 
-ui.run()
+
+if __name__ == '__main__':
+     app.run()
+
+#ui.run()

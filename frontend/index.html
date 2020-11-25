@@ -21,17 +21,63 @@
     <body id="body">
 
         <!--Navigation bar on top-->
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top mx-4">
             <div class="container-fluid">
                 <!--<a class="navbar-brand" href="index.html"> <img src="{{url_for('static', filename='img/logo.jpg')}}" width="30" height="30"> OpenIE Annotator Platform </a>-->
                 <a class="navbar-brand" href="index.html"> <img src="img/logo.jpg" width="30" height="30"> OpenIE Annotator Platform </a>
                 <!--<button class="btn btn-danger ml-auto" style="float:right;" id="exit-button">EXIT</button>-->
+               <!--<i class="fas fa-sliders-h text-light" type="button" id="settings-btn"></i>-->
             </div>
         </nav>
 
+        <div class="px-4">
+
+        <!--Settings-->
+        <div class="container mt-4 bg-dark text-light rounded py-2 px-2" id="settings-container" hidden>
+            <a class="lead text-white ml-2">Settings</a>
+            <div class="row ml-3 mb-2 justify-content-md-center">
+                <div class="col col-lg-2">
+                    <a>Show POS-Tags:</a>
+                </div>
+                <div class="col col-lg-2">
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons" id="posToggleGroup">
+                        <label class="btn btn-primary btn-sm active" id="pos-off">
+                            <input type="radio" name="options" autocomplete="off" checked>Off
+                        </label>
+                        <label class="btn btn-primary btn-sm" id="pos-on">
+                            <input type="radio" name="options" autocomplete="on" checked>On
+                        </label>
+                    </div>
+                </div>  
+            </div>
+            <div class="row ml-3 justify-content-md-center">
+                <div class="col col-lg-2">
+                    <a>Display Coloring:</a>
+                </div>
+                <div class="col col-lg-2">
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons" id="colorToggleGroup">
+                        <label class="btn btn-primary btn-sm active" id="full-color">
+                            <input type="radio" name="options" autocomplete="off" checked>Full
+                        </label>
+                        <label class="btn btn-primary btn-sm" id="verbs-color">
+                            <input type="radio" name="options" autocomplete="off" checked>Verbs
+                        </label>
+                        <label class="btn btn-primary btn-sm" id="none-color">
+                            <input type="radio" name="options" autocomplete="off" checked>None
+                        </label>
+                    </div>
+                </div>   
+            </div>
+            <div class="row justify-content-md-center">
+                <button class="btn btn-primary btn-sm ml-3">OK</button>
+            </div>
+            
+            
+        </div>
+
         <!--Input Selections-->
 
-        <div class="container mt-5 bg-dark text-light py-2 rounded" id="input-area">
+        <div class="container-fluid mt-4 bg-dark text-light py-2 rounded" id="input-area">
             <a class="lead text-white">Upload new document here:</a>
             <div class="input-group mt-2 mb-3">
                 <div class="custom-file mt-1">
@@ -50,13 +96,58 @@
                 <button class="btn btn-secondary btn-sm" id="load-last-btn"> Load Last Used </button>   
             </div>
             <div id="alert-div-load"></div>
+
+            <div id="table-container">
+                <table class="table table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col"><i class="fas fa-angle-down" type="button" id="files-table-icon"></i></th>
+                            <th scope="col">Filename</th>
+                            <th scope="col">LastUsed</th>
+                            <th scope="col">-</th>
+                        </tr>
+                    </thead>
+                    <tbody id="files-tbody" hidden>
+                    </tbody>
+                </table>
+            </div>
+
+
+
             <button class="btn btn-primary btn-lg btn-block mt-5 mb-2" id="start-input-file">Start</button>
             
         </div>
 
         <!--Do the Magic-->
 
-        <div class="container mt-3 bg-dark text-light py-2 rounded" id="content-area">
+        <div class="container-fluid mt-3 bg-dark text-light py-2 rounded" id="content-area">
+            <!--Navigation on Bottom-->
+
+            <div class="container mb-2">
+                <div class="row">
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="jump-first-btn">Jump to First</button>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="previous-btn">Previous</button>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <div class="input-group">
+                            <input type="number" class="form-control" placeholder="..." aria-label="GoTo" aria-describedby="go-to-button" id="current-sentence">
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary" type="button" id="go-to-btn" onclick="goToPhraseX()">Go To</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="next-btn">Next</button>
+                    </div>
+                    <div class="col-12 col-md d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" id="jump-last-btn">Jump to Last</button>
+                    </div>
+                </div>
+            </div>
+
             <p class="lead text-white" id="sentence-number">Sentence #:</p>
             <div class="card mt-2 mb-3">
                 <div class="card-body text-dark" id="content-insert">
@@ -64,15 +155,12 @@
                 </div>
             </div>
             <div>
-                
-
                 <div class="btn-group btn-group-toggle my-2" data-toggle="buttons" id="button-group">
                     <a class="btn btn-subject down" id="subject-btn" onclick="tripleButton(this.id)"> Select subject(s) </a>
                     <a class="btn btn-predicate down" id="predicate-btn" onclick="tripleButton(this.id)"> Select predicate(s) </a>
                     <a class="btn btn-object down" id="object-btn" onclick="tripleButton(this.id)"> Select object(s) </a>
                 </div>
                
-
                 <button class="btn btn-optional ml-3 down" id="optional-btn" style="text-decoration: underline;" onclick="optionalButton()">Optional</button>
                 <button class="btn btn-light ml-2" id="clear-btn">Clear</button>
                 
@@ -80,7 +168,7 @@
             </div>
 
             <p class="lead text-white">Selection</p>
-            <div class="container bg-white py-2 px-2 mb-3" style="border-radius: 5px;" id="selection-insert">
+            <div class="card-body bg-white py-2 px-2 mb-3" style="border-radius: 5px;" id="selection-insert">
             </div>
 
             <div class="d-flex flex-row-reverse">
@@ -102,65 +190,38 @@
 
             <!--Container displaying clusters and triples for the current sentence.-->
             <p class="lead text-white" id="sentence-number">Cluster #:</p>
-            <div class="container bg-white py-2 px-2 mb-4" style="border-radius: 5px;" id="cluster-insert">
-                
+            <div class="card-body bg-white py-2 px-2 mb-4" style="border-radius: 5px;" id="cluster-insert">
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md d-flex justify-content-center">
+                    <button type="button" class="btn btn-primary btn-lg" id="save-button">Save</button>
+                </div>
             </div>
            
 
-            <!--Navigation on Bottom-->
-
-            <div class="container">
-
-                <div class="row mb-3">
-                    <div class="col-md d-flex justify-content-center">
-                        <button type="button" class="btn btn-primary btn-lg" id="save-button">Save</button>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-12 col-md d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" id="jump-first-btn">Jump to First</button>
-                    </div>
-                    <div class="col-12 col-md d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" id="previous-btn">Previous</button>
-                    </div>
-                    <div class="col-12 col-md d-flex justify-content-center">
-                        <div class="input-group mb-3">
-                            <input type="number" class="form-control" placeholder="..." aria-label="GoTo" aria-describedby="go-to-button" id="current-sentence">
-                            <div class="input-group-append">
-                                <button class="btn btn-secondary" type="button" id="go-to-btn" onclick="goToPhraseX()">Go To</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" id="next-btn">Next</button>
-                    </div>
-                    <div class="col-12 col-md d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" id="jump-last-btn">Jump to Last</button>
-                    </div>
-                </div>
-            </div>
+            
             
         </div>
 
 
         <!--Output Download-->
         
-        <div class="container mt-3 bg-dark text-light py-2 rounded" id="download-area">
+        <div class="container-fluid mt-3 bg-dark text-light py-2 rounded" id="download-area">
             
             <!--Current Output-->
             <a class="lead text-white">Output:</a>
             <div class="card mt-2">
                 <div class="card-body text-dark" id="current-output"></div>
             </div>
-            <div class="container d-flex mt-2">
+            <div class="container-fluid d-flex mt-4">
                 <a class="lead text-white mr-5">Download results: </a>
                 <i class="fas fa-file-download fa-5x" type="button" id="download-btn"></i>
             </div>
         </div>
 
        
-        
+    </div> 
         
         <!--Footer-->
 
