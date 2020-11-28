@@ -49,3 +49,11 @@ function btnUp(identifier) {
     document.getElementById(identifier).className = document.getElementById(identifier).className.replace('secondary', identifier.substring(0, identifier.length - 4));
     document.getElementById(identifier).className = document.getElementById(identifier).className.replace('down', 'up');
 }
+
+function changeInputLabel() {
+    document.getElementById('input-file-label').innerText = document.getElementById('input-file').files[0].name;
+}
+
+function changeResumeLabel() {
+    document.getElementById('input-memory-file-label').innerText = document.getElementById('input-memory-file').files[0].name;
+}

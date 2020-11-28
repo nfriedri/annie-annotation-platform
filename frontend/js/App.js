@@ -3,7 +3,7 @@ import { Tokenizer } from './Tokenizer.js';
 import { TextFile, Annotation, Sentence, Triple, Word, Cluster } from './DataStructures.js';
 import { updateSentenceNumber, createTaggedContent, addHighlighters, getSelectionAsTriple, displayClusters, clearSelection, initConfigurations, displayFilesTable } from './GraphicInterface.js';
 import { createOutputPreview, downloadOutput } from './Output.js'
-import { save, load } from './LoadSave.js';
+import { save, load, loadFile } from './LoadSave.js';
 
 const url = 'http://127.0.0.1:5000/';
 
@@ -339,12 +339,16 @@ function goToPhraseX() {
     }
 }
 
-async function loadAsynchronous() {
+async function loadFileFlask() {
     var fileName = 'last';
-    if (inputLoad.files[0] != undefined) {
-        fileName = inputLoad.files[0].name;
-    }
     load(url, fileName).then(response => {
+        annotate = response;
+        console.log(annotate);
+    })
+}
+
+async function loadFileDirect() {
+    await loadFile(inputLoad.files[0]).then(response => {
         annotate = response;
         console.log(annotate);
     })
@@ -485,8 +489,8 @@ downloadBtn.addEventListener("click", function () { downloadOutput() });
 //settingsBtn.addEventListener("click", function () { showSettings() });
 
 //document.getElementById('test-save-btn').addEventListener("click", function () { save(url) });
-document.getElementById('load-selected-btn').addEventListener("click", function () { loadAsynchronous() });
-document.getElementById('load-last-btn').addEventListener("click", function () { loadAsynchronous() });
+document.getElementById('load-selected-btn').addEventListener("click", function () { loadFileDirect() });
+document.getElementById('load-last-btn').addEventListener("click", function () { loadFileFlask() });
 
 filesTableIcon.addEventListener("click", function () { expandTable() })
 

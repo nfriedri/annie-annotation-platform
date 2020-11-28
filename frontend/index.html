@@ -82,15 +82,14 @@
                 <p class="lead text-white">Upload a new document here:</p>
             <div class="input-group mt-2 mb-3">
                 <div class="custom-file mt-1">
-                    <input type="file" class="custom-file-input" id="input-file">
-                    <label class="custom-file-label" for="input-file" id="input-file-label">Choose file</label>
-                    
+                    <input type="file" class="custom-file-input" id="input-file" onchange="changeInputLabel()">
+                    <label class="custom-file-label" for="input-file" id="input-file-label">Choose file</label> 
                 </div>    
             </div>
             <p class="lead text-white">Resume previous work?</p>
             <div class="input-group mt-2 mb-3">
                 <div class="custom-file mt-1">
-                    <input type="file" class="custom-file-input" id="input-memory-file">
+                    <input type="file" class="custom-file-input" id="input-memory-file" onchange="changeResumeLabel()">
                     <label class="custom-file-label" for="input-memory-file" id="input-memory-file-label">Choose file</label>  
                 </div>
                 <button class="btn btn-secondary btn-sm mx-2" id="load-selected-btn">Load Selected File  </button>

@@ -20,6 +20,7 @@ CORS(app)
 # ui = FlaskUI(app, maximized=True, width=1920, height=1080)
 
 '''Start POS-Tagger'''
+os.system('python -m spacy download en_core_web_sm')
 spacy = Tagger()
 
 
