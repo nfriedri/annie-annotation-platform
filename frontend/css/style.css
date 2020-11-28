@@ -87,7 +87,7 @@ pos {
   text-decoration: none;
 }
 
-#button-group .up {
+/* #button-group .up {
   color: white;
   background-color: #fe2e9a;
   border-color: #fe2e9a;
@@ -96,7 +96,7 @@ pos {
   color: white;
   background-color: #b4206c;
   border-color: #b4206c;
-}
+} */
 
 pre {
   font-family: Arial, Helvetica, sans-serif;

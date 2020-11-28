@@ -78,7 +78,8 @@
         <!--Input Selections-->
 
         <div class="container-fluid mt-4 bg-dark text-light py-2 rounded" id="input-area">
-            <a class="lead text-white">Upload new document here:</a>
+            <div class="container">
+                <p class="lead text-white">Upload a new document here:</p>
             <div class="input-group mt-2 mb-3">
                 <div class="custom-file mt-1">
                     <input type="file" class="custom-file-input" id="input-file">
@@ -86,7 +87,7 @@
                     
                 </div>    
             </div>
-            <a class="lead text-white">Resume previous work?</a>
+            <p class="lead text-white">Resume previous work?</p>
             <div class="input-group mt-2 mb-3">
                 <div class="custom-file mt-1">
                     <input type="file" class="custom-file-input" id="input-memory-file">
@@ -103,7 +104,7 @@
                         <tr>
                             <th scope="col"><i class="fas fa-angle-down" type="button" id="files-table-icon"></i></th>
                             <th scope="col">Filename</th>
-                            <th scope="col">LastUsed</th>
+                            <th scope="col">Last Used</th>
                             <th scope="col">-</th>
                         </tr>
                     </thead>
@@ -115,6 +116,9 @@
 
 
             <button class="btn btn-primary btn-lg btn-block mt-5 mb-2" id="start-input-file">Start</button>
+
+            </div>
+            
             
         </div>
 
@@ -156,12 +160,12 @@
             </div>
             <div>
                 <div class="btn-group btn-group-toggle my-2" data-toggle="buttons" id="button-group">
-                    <a class="btn btn-subject down" id="subject-btn" onclick="tripleButton(this.id)"> Select subject(s) </a>
-                    <a class="btn btn-predicate down" id="predicate-btn" onclick="tripleButton(this.id)"> Select predicate(s) </a>
-                    <a class="btn btn-object down" id="object-btn" onclick="tripleButton(this.id)"> Select object(s) </a>
+                    <a class="btn btn-secondary down mr-1" id="subject-btn" onclick="tripleButton(this.id)"> Select subject(s) </a>
+                    <a class="btn btn-secondary down mr-1" id="predicate-btn" onclick="tripleButton(this.id)"> Select predicate(s) </a>
+                    <a class="btn btn-secondary down" id="object-btn" onclick="tripleButton(this.id)"> Select object(s) </a>
                 </div>
                
-                <button class="btn btn-optional ml-3 down" id="optional-btn" style="text-decoration: underline;" onclick="optionalButton()">Optional</button>
+                <button class="btn btn-secondary down ml-3" id="optional-btn" onclick="optionalButton()">Optional</button>
                 <button class="btn btn-light ml-2" id="clear-btn">Clear</button>
                 
                 <!--<button class="btn btn-secondary my-2 mr-2" style="float: right;">Reset</button>-->
@@ -210,12 +214,12 @@
         <div class="container-fluid mt-3 bg-dark text-light py-2 rounded" id="download-area">
             
             <!--Current Output-->
-            <a class="lead text-white">Output:</a>
+            <p class="lead text-white">Output:</p>
             <div class="card mt-2">
                 <div class="card-body text-dark" id="current-output"></div>
             </div>
             <div class="container-fluid d-flex mt-4">
-                <a class="lead text-white mr-5">Download results: </a>
+                <p class="lead text-white mr-5">Download results: </p>
                 <i class="fas fa-file-download fa-5x" type="button" id="download-btn"></i>
             </div>
         </div>

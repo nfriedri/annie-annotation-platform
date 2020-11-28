@@ -3,10 +3,7 @@ function tripleButton(identifier) {
     //TODO Catch id - error and add alert 
     var element = document.getElementById(identifier);
     var name = element.className;
-    if (name.includes('up')) {
-        btnDown(identifier);
-    }
-    else {
+    if (name.includes('secondary')) {
         btnUp(identifier);
         switch (identifier) {
             case 'subject-btn':
@@ -25,25 +22,30 @@ function tripleButton(identifier) {
                 break;
         }
     }
+    else {
+        btnDown(identifier);
+    }
 }
 
 function optionalButton() {
     var element = document.getElementById('optional-btn');
-    console.log(element.className)
-    if (element.className.includes('up')) {
-        btnDown('optional-btn');
+    //console.log(element.className)
+    if (element.className.includes('secondary')) {
+        btnUp('optional-btn');
         element.setAttribute('style', 'text-decoration: underline;');
     }
     else {
-        btnUp('optional-btn');
-        element.setAttribute('style', 'text-decoration: underline; color:white; background-color:#b4206c;border-color: #b4206c;')
+        btnDown('optional-btn');
+        element.removeAttribute('style');
     }
 }
 
 function btnDown(identifier) {
+    document.getElementById(identifier).className = document.getElementById(identifier).className.replace(identifier.substring(0, identifier.length - 4), 'secondary');
     document.getElementById(identifier).className = document.getElementById(identifier).className.replace('up', 'down');
 }
 
 function btnUp(identifier) {
+    document.getElementById(identifier).className = document.getElementById(identifier).className.replace('secondary', identifier.substring(0, identifier.length - 4));
     document.getElementById(identifier).className = document.getElementById(identifier).className.replace('down', 'up');
 }

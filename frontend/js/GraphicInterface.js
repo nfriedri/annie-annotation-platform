@@ -154,36 +154,11 @@ function highlightTriples(identifier) {
     var targetElement = document.getElementById(identifier);
     var tripleType = getActiveTripleBtnID();
     var elementType = targetElement.className;
-    switch (elementType) {
-        case 'btn btn-noun ml-1 mb-1':
-            upgrade(targetElement, tripleType);
-            break;
-        case 'btn btn-verb ml-1 mb-1':
-            upgrade(targetElement, tripleType);
-            break;
-        case 'btn btn-adjective ml-1 mb-1':
-            upgrade(targetElement, tripleType);
-            break;
-        case 'btn btn-secondary ml-1 mb-1':
-            upgrade(targetElement, tripleType);
-            break;
-        case 'btn btn-subject ml-1 mb-1 mk marked-subject':
-            downgrade(targetElement);
-            break;
-        case 'btn btn-predicate ml-1 mb-1 mk marked-predicate':
-            downgrade(targetElement);
-            break;
-        case 'btn btn-object mk ml-1 mb-1 marked-object':
-            downgrade(targetElement);
-            break;
-    }
-    if (isOptionalActive()) {
-        targetElement.className += 'marked-optional';
-        targetElement.setAttribute('style', 'text-decoration: underline;')
+    if (elementType.includes('noun') || elementType.includes('verb') || elementType.includes('adjective') || elementType.includes('secondary')) {
+        upgrade(targetElement, tripleType);
     }
     else {
-        targetElement.className = targetElement.className.replace('marked-optional', '');
-        targetElement.removeAttribute('style');
+        downgrade(targetElement);
     }
     copyToSelection();
 }
@@ -200,28 +175,51 @@ function upgrade(targetElement, tripleType) {
             targetElement.className = 'btn btn-object mk ml-1 mb-1 marked-object';
             break;
     }
+    if (isOptionalActive()) {
+        targetElement.className += 'marked-optional';
+        targetElement.setAttribute('style', 'text-decoration: underline;');
+    }
 }
 
 function downgrade(targetElement) {
     var posLabel = targetElement.getElementsByTagName('pos')[0].innerHTML;
-    switch (posLabel) {
-        case 'NOUN':
-            targetElement.className = "btn btn-noun ml-1 mb-1";
-            break;
-        case 'VERB':
-            targetElement.className = "btn btn-verb ml-1 mb-1";
-            break;
-        case 'ADJ':
-            targetElement.className = "btn btn-adjective ml-1 mb-1";
-            break;
-        default:
+    if (targetElement.className.includes('marked-optional')) {
+        targetElement.className = targetElement.className.replace('marked-optional', '');
+        targetElement.removeAttribute('style');
+    }
+    else {
+        if (coloring == 'full') {
+            switch (posLabel) {
+                case 'NOUN':
+                    targetElement.className = "btn btn-noun ml-1 mb-1";
+                    break;
+                case 'VERB':
+                    targetElement.className = "btn btn-verb ml-1 mb-1";
+                    break;
+                case 'ADJ':
+                    targetElement.className = "btn btn-adjective ml-1 mb-1";
+                    break;
+                default:
+                    targetElement.className = "btn btn-secondary ml-1 mb-1";
+                    break;
+            }
+        }
+        if (coloring == 'verbs') {
+            switch (posLabel) {
+                case 'VERB':
+                    targetElement.className = "btn btn-verb ml-1 mb-1";
+                    break;
+                default:
+                    targetElement.className = "btn btn-secondary ml-1 mb-1";
+                    break;
+            }
+        }
+        else {
             targetElement.className = "btn btn-secondary ml-1 mb-1";
-            break;
+        }
+        targetElement.removeAttribute('style');
     }
 }
-
-
-
 
 function getActiveTripleBtnID() {
     var btnGroup = document.getElementById('button-group');
@@ -267,7 +265,7 @@ function getSelectionAsTriple() {
 function copyToSelection() {
     selectionInsert.innerHTML = '';
     var elements = contentInsert.getElementsByClassName('mk');
-    console.log(elements.length);
+    //console.log(elements.length);
     for (var i = 0; i < elements.length; i++) {
         var copy = elements[i].cloneNode(true);
         copy.id = copy.id + '-copy';
@@ -301,7 +299,7 @@ function displayClusters(sentenceNumber) {
     for (var i = 0; i < clusters.length; i++) {
         if (clusters[i].sentenceNumber == sentenceNumber) {
             output += `
-            <div class="container bg-dark py-3 mt-2" style="border-radius: 5px;">
+            <div class="container-fluid bg-dark py-3 mt-2 rounded">
                 <div class="d-flex" >
                     <i class="fas fa-times-circle mr-3 cluster" type="button" id="cluster-${clusters[i].sentenceNumber}-${clusters[i].clusterNumber}"></i>
                     <h6 class="card-title">Cluster ${clusters[i].clusterNumber}</h6>
@@ -388,7 +386,7 @@ function displayFilesTable(data) {
         var current = data[i];
         output += `
         <tr>
-            <th scope="row">1</th>
+            <th scope="row">${i + 1}</th>
             <td>${current['name']}</td>
             <td>${current['date']}</td>
             <td><button class="btn btn-secondary btn-sm" id='load-${current['name']}'>Load</button></td>
