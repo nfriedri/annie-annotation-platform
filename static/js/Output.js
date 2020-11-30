@@ -9,10 +9,14 @@ function createOutputPreview() {
     let output = '';
     console.log(clusters);
     sortClusters();
+    var sentence_memory = -1;
 
     for (var i = 0; i < clusters.length; i++) {
         var sentence = textFile.sentences[clusters[i].sentenceNumber];
-        output += sentence.text + '\n';
+        if (clusters[i].sentenceNumber != sentence_memory) {
+            output += sentence.text + '\n';
+            sentence_memory = clusters[i].sentenceNumber;
+        }
         output += (clusters[i].sentenceNumber + 1) + '--> Cluster ' + clusters[i].clusterNumber + ': ';
 
         let triples = clusters[i].triples;
@@ -78,8 +82,7 @@ function download(filename) {
     var element = document.createElement('a');
     var content = document.getElementById('current-output').innerHTML;
     content = content.replaceAll('<br>', '\r\n');
-    content = content.replaceAll('<pre>', '');
-    content = content.replaceAll('</pre>', '');
+    content = content.replaceAll('&gt;', '>');
     element.style.display = 'none';
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
     element.setAttribute('download', filename + '-annotated.tsv');
