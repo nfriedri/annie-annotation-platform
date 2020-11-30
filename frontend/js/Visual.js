@@ -52,6 +52,10 @@ function btnUp(identifier) {
 
 function changeInputLabel() {
     document.getElementById('input-file-label').innerText = document.getElementById('input-file').files[0].name;
+    document.getElementById('alert-div-load').innerHTML += `<div class="alert alert-success mt-3" role="alert" id="load-alert">
+                                                            Succesfully loaded data. Press the START Button to continue.
+                                                             </div>`;
+    setTimeout(function () { document.getElementById('load-alert').remove() }, 3000);
 }
 
 function changeResumeLabel() {

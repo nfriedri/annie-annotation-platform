@@ -6,30 +6,20 @@ function createOutputPreview() {
     var textFile = annotation.textFile;
     var clusters = annotation.clusters;
 
-    let output = '<pre>';
+    let output = '';
     console.log(clusters);
     sortClusters();
 
     for (var i = 0; i < clusters.length; i++) {
         var sentence = textFile.sentences[clusters[i].sentenceNumber];
         output += sentence.text + '\n';
-        output += (clusters[i].sentenceNumber + 1) + '\tCluster ' + clusters[i].clusterNumber + ': ';
+        output += (clusters[i].sentenceNumber + 1) + '--> Cluster ' + clusters[i].clusterNumber + ': ';
 
         let triples = clusters[i].triples;
         for (var j = 0; j < triples.length; j++) {
             let subjects = triples[j].subjects;
             let predicates = triples[j].predicates;
             let objects = triples[j].objects;
-            for (var k = 0; k < subjects.length; k++) {
-                output += subjects[k].text + ' ';
-            }
-            for (var k = 0; k < predicates.length; k++) {
-                output += predicates[k].text + ' ';
-            }
-            for (var k = 0; k < objects.length; k++) {
-                output += objects[k].text + ' ';
-            }
-            output += '\t';
             for (var k = 0; k < subjects.length; k++) {
                 if (!subjects[k].optional) {
                     output += subjects[k].text + '(' + subjects[k].index + ') ';
@@ -38,7 +28,7 @@ function createOutputPreview() {
                     output += '[' + subjects[k].text + '(' + subjects[k].index + ')] ';
                 }
             }
-            output += '\t'
+            output += '--> '
             for (var k = 0; k < predicates.length; k++) {
                 if (!predicates[k].optional) {
                     output += predicates[k].text + '(' + predicates[k].index + ') ';
@@ -47,7 +37,7 @@ function createOutputPreview() {
                     output += '[' + predicates[k].text + '(' + predicates[k].index + ')] ';
                 }
             }
-            output += '\t'
+            output += '--> '
             for (var k = 0; k < objects.length; k++) {
                 if (!objects[k].optional) {
                     output += objects[k].text + '(' + objects[k].index + ') ';
@@ -60,7 +50,7 @@ function createOutputPreview() {
         }
     }
     //console.log(output);
-    output += '</pre>'
+    output += ''
     return output;
 }
 

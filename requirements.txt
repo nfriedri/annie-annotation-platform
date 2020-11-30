@@ -1,4 +1,4 @@
-numpy==1.15.4
+numpy>=1.15.4
 flask>=1.1.2
 flask-cors>=3.0.8
 flaskwebgui>=0.1.13

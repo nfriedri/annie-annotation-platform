@@ -147,7 +147,7 @@ async function requestLoad(url, fileName) {
 }
 
 
-async function loadData(content) {
+function loadData(content) {
     console.log(content);
     var jsonTextFile = content['textFile'];
     var textFile = new TextFile();
@@ -236,7 +236,7 @@ async function loadData(content) {
 
 async function load(url, fileName) {
     var data = await requestLoad(url, fileName);
-    var results = await (loadData(data))
+    var results = (loadData(data));
     document.getElementById('alert-div-load').innerHTML += `<div class="alert alert-success mt-3" role="alert" id="load-alert">
                                                             Succesfully loaded data. Press the START Button to continue.
                                                              </div>`;
@@ -244,4 +244,32 @@ async function load(url, fileName) {
     return results;
 }
 
-export { save, load }
+async function readFile(file) {
+    console.log(file.name);
+    var reader = new FileReader();
+    return new Promise((resolve, reject) => {
+        reader.onerror = () => {
+            reader.abort();
+            reject(new DOMException("Problem parsing input file."));
+        };
+        reader.onload = () => {
+            resolve(reader.result);
+        };
+        reader.readAsText(file)
+    });
+}
+
+async function loadFile(file) {
+    var results = null;
+    await readFile(file).then((data) => {
+        var dict = JSON.parse(data);
+        results = loadData(dict);
+    });
+    document.getElementById('alert-div-load').innerHTML += `<div class="alert alert-success mt-3" role="alert" id="load-alert">
+                                                            Succesfully loaded data. Press the START Button to continue.
+                                                             </div>`;
+    setTimeout(function () { document.getElementById('load-alert').remove() }, 3000);
+    return results;
+}
+
+export { save, load, loadFile }

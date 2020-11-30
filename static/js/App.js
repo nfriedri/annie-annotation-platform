@@ -1,9 +1,9 @@
 //IMPORTS
 import { Tokenizer } from './Tokenizer.js';
 import { TextFile, Annotation, Sentence, Triple, Word, Cluster } from './DataStructures.js';
-import { updateSentenceNumber, createTaggedContent, addHighlighters, getSelectionAsTriple, displayClusters, clearSelection } from './GraphicInterface.js';
+import { updateSentenceNumber, createTaggedContent, addHighlighters, getSelectionAsTriple, displayClusters, clearSelection, initConfigurations, displayFilesTable } from './GraphicInterface.js';
 import { createOutputPreview, downloadOutput } from './Output.js'
-import { save, load } from './LoadSave.js';
+import { save, load, loadFile } from './LoadSave.js';
 
 const url = 'http://127.0.0.1:5000/';
 
@@ -37,6 +37,8 @@ var firstBtn = document.getElementById('jump-first-btn');
 var lastBtn = document.getElementById('jump-last-btn');
 var goToBtn = document.getElementById('go-to-btn');
 var downloadBtn = document.getElementById('download-btn')
+var filesTableIcon = document.getElementById('files-table-icon');
+//var settingsBtn = document.getElementById('settings-btn');
 
 //file.text = 'After the stock-market bloodbath of the past few years, why would any defensive investor put a dime into stocks?';
 var sentence = null //Points to current sentence element
@@ -57,6 +59,7 @@ function fileUpload() {
         file.text = textFromFileLoaded;
     };
     fileReader.readAsText(fileToLoad, "UTF-8");
+    annotate = new Annotation();
     annotate.textFile = file;
 }
 
@@ -75,14 +78,14 @@ async function tokenizeFile() {
 
 async function startAnnotation() {
     sentenceNumber = 0;
-    console.log(annotate);
-    console.log(file);
+    //console.log(annotate);
+    //console.log(file);
     var file = annotate.textFile;
     file.sentences = await tokenizeFile();
     sentence = file.sentences[sentenceNumber];
     sentence.words = await getPOStagging();
     console.log(sentence);
-    updateSentenceNumber(sentenceNumber)
+    updateSentenceNumber(sentenceNumber, file.sentences.length);
     createTaggedContent(sentence.words);
     addHighlighters();
     displayClusters(sentenceNumber);
@@ -93,7 +96,7 @@ async function newSentenceAnnotation() {
     console.log(file);
     sentence = file.sentences[sentenceNumber];
     sentence.words = await getPOStagging();
-    updateSentenceNumber(sentenceNumber)
+    updateSentenceNumber(sentenceNumber, file.sentences.length)
     initClusterNumber(sentenceNumber);
     clearSelection();
     createTaggedContent(sentence.words);
@@ -247,7 +250,7 @@ function initClusterNumber(sentenceNumber) {
 
 function saveAnnotationProgress() {
     var output = createOutputPreview();
-    document.getElementById('current-output').innerHTML = output;
+    document.getElementById('current-output').innerText = output;
 }
 
 function getClusters() {
@@ -336,12 +339,16 @@ function goToPhraseX() {
     }
 }
 
-async function loadAsynchronous() {
+async function loadFileFlask() {
     var fileName = 'last';
-    if (inputLoad.files[0] != undefined) {
-        fileName = inputLoad.files[0].name;
-    }
     load(url, fileName).then(response => {
+        annotate = response;
+        console.log(annotate);
+    })
+}
+
+async function loadFileDirect() {
+    await loadFile(inputLoad.files[0]).then(response => {
         annotate = response;
         console.log(annotate);
     })
@@ -390,30 +397,104 @@ function sortClusters() {
     })
 }
 
+function clear() {
+    var words = sentence.words
+    words.forEach(word => { word.type = '' });
+    clearSelection();
+    createTaggedContent(sentence.words);
+    addHighlighters();
+}
 
+async function getConfigData() {
+    var endpoint = url + 'config';
+    try {
+        await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then((data) => {
+                console.log(data);
+                var posLabel = false;
+                if (data['POSLabels'] == 'true') {
+                    posLabel = true;
+                }
+                initConfigurations(posLabel, data['Coloring']);
+            });
+    }
+    catch (error) {
+        console.error(error);
+    }
+}
 
+async function requestLastUsedFiles() {
+    var endpoint = url + 'files';
+    var result = {};
+    try {
+        await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then((data) => {
+                console.log(data);
+                displayFilesTable(data);
+            });
+    }
+    catch (error) {
+        console.error(error);
+    }
+    return result;
+}
+
+function expandTable() {
+    var ele = document.getElementById('files-tbody');
+    if (ele.hasAttribute('hidden')) {
+        ele.removeAttribute('hidden');
+        filesTableIcon.className = filesTableIcon.className.replace('down', 'right');
+    }
+    else {
+        ele.setAttribute('hidden', 'true');
+        filesTableIcon.className = filesTableIcon.className.replace('right', 'down');
+    }
+}
+
+function loadFileByID(identifier) {
+    var fileName = identifier.substring(5);
+    console.log(fileName);
+    load(url, fileName).then(response => {
+        annotate = response;
+        //console.log(annotate);
+    })
+}
+
+window.onload = () => { getConfigData(); requestLastUsedFiles() };
 startInputFile.addEventListener("click", function () { startAnnotation(); });
 inputUpload.addEventListener("input", function () { fileUpload(); });
 addActiveClusterBtn.addEventListener('click', function () { addTripleToCluster(); displayClusters(sentenceNumber); });
 addNewCLusterBtn.addEventListener("click", function () { createNewCluster(); addTripleToCluster(); displayClusters(sentenceNumber); });
 addToButton.addEventListener("click", function () { addTripleToClusterNumber(); displayClusters(sentenceNumber); })
 saveButton.addEventListener("click", function () { saveAnnotationProgress(); save(url) });
-clearBtn.addEventListener("click", function () {
-    clearSelection(); createTaggedContent(sentence.words);
-    addHighlighters();
-})
+clearBtn.addEventListener("click", function () { clear() })
 nextBtn.addEventListener("click", function () { nextSentence() });
 previousBtn.addEventListener("click", function () { previousSentence() });
 firstBtn.addEventListener("click", function () { jumpFirst() });
 lastBtn.addEventListener("click", function () { jumpLast() });
 goToBtn.addEventListener("click", function () { goToPhraseX() });
 downloadBtn.addEventListener("click", function () { downloadOutput() });
+//settingsBtn.addEventListener("click", function () { showSettings() });
 
 //document.getElementById('test-save-btn').addEventListener("click", function () { save(url) });
-document.getElementById('load-selected-btn').addEventListener("click", function () { loadAsynchronous() });
-document.getElementById('load-last-btn').addEventListener("click", function () { loadAsynchronous() });
+document.getElementById('load-selected-btn').addEventListener("click", function () { loadFileDirect() });
+document.getElementById('load-last-btn').addEventListener("click", function () { loadFileFlask() });
+
+filesTableIcon.addEventListener("click", function () { expandTable() })
 
 
 
 
-export { changeWordType, getClusters, getAnnotation, deleteCluster, deleteTriple, getFile, sortClusters };
+export { changeWordType, getClusters, getAnnotation, deleteCluster, deleteTriple, getFile, sortClusters, loadFileByID };

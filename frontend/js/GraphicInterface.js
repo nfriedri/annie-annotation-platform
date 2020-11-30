@@ -175,7 +175,7 @@ function upgrade(targetElement, tripleType) {
             targetElement.className = 'btn btn-object mk ml-1 mb-1 marked-object';
             break;
     }
-    if (isOptionalActive()) {
+    if (isOptionalActive() && tripleType != 'no') {
         targetElement.className += 'marked-optional';
         targetElement.setAttribute('style', 'text-decoration: underline;');
     }
@@ -183,9 +183,15 @@ function upgrade(targetElement, tripleType) {
 
 function downgrade(targetElement) {
     var posLabel = targetElement.getElementsByTagName('pos')[0].innerHTML;
-    if (targetElement.className.includes('marked-optional')) {
-        targetElement.className = targetElement.className.replace('marked-optional', '');
-        targetElement.removeAttribute('style');
+    if (targetElement.className.includes('marked-optional') || isOptionalActive()) {
+        if (targetElement.className.includes('marked-optional')) {
+            targetElement.className = targetElement.className.replace('marked-optional', '');
+            targetElement.removeAttribute('style');
+        }
+        else {
+            targetElement.className += 'marked-optional';
+            targetElement.setAttribute('style', 'text-decoration: underline;');
+        }
     }
     else {
         if (coloring == 'full') {

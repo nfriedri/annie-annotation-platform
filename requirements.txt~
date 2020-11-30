@@ -1,7 +1,0 @@
-numpy==1.15.4
-flask>=1.1.2
-flask-cors>=3.0.8
-flaskwebgui>=0.1.13
-spacy>=2.3.2
-
-#python -m spacy download en_core_web_sm

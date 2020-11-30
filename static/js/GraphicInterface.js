@@ -1,6 +1,12 @@
 // GUI Methods
-import { changeWordType, getClusters, deleteCluster, deleteTriple } from './App.js';
+import { changeWordType, getClusters, deleteCluster, deleteTriple, loadFileByID } from './App.js';
 import { TextFile, Sentence, Triple, Word } from './DataStructures.js';
+
+//Global Variables ==> INIT BY CONFIG FILE
+var showTag = false;
+var coloring = 'verbs'; // full, verbs, none
+
+
 
 // Elements
 var numberOfPhrases = document.getElementById('number-of-phrases');
@@ -12,18 +18,84 @@ var selectionInsert = document.getElementById("selection-insert");
 var clusterInsert = document.getElementById("cluster-insert");
 var currentSentenceDisplay = document.getElementById('current-sentence');
 var currentOutput = document.getElementById('current-output');
+var tableBody = document.getElementById('files-tbody')
 
 
 // Containers
 var inputArea = document.getElementById('input-area');
 var contentMainArea = document.getElementById('content-area');
 var downloadArea = document.getElementById('download-area');
+var tableContainer = document.getElementById('table-container');
 
 
-function updateSentenceNumber(sentenceNumber) {
+function updateSentenceNumber(sentenceNumber, totalNumber) {
     var number = sentenceNumber + 1;
     console.log(number)
-    document.getElementById('sentence-number').innerHTML = 'Sentence #' + number + ':';
+    document.getElementById('sentence-number').innerHTML = 'Sentence # ' + number + ' / ' + totalNumber + ':';
+}
+
+function initConfigurations(showTagContent, coloringContent) {
+    showTag = showTagContent;
+    coloring = coloringContent;
+    console.log(showTag);
+    console.log(coloring);
+}
+
+
+function fullColoring(labelText, labelPos, index) {
+    let output = '';
+    switch (labelPos) {
+        case 'NOUN':
+            output += `<button class="btn btn-noun ml-1 mb-1" id="posLabel-${index}"> `;
+            break;
+        case 'VERB':
+            output += `<button class="btn btn-verb ml-1 mb-1" id="posLabel-${index}">`;
+            break;
+        case 'ADJ':
+            output += `<button class="btn btn-adjective ml-1 mb-1" id="posLabel-${index}">`;
+            break;
+        default:
+            output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${index}">`;
+            break;
+    }
+    if (showTag) {
+        output += `<text>${labelText}</text> <span class="badge badge-secondary">${index}</span><br/><pos>${labelPos}</pos></button>`;
+    }
+    else {
+        output += `<text>${labelText}</text> <span class="badge badge-secondary">${index}</span><pos hidden>${labelPos}</pos></button>`;
+    }
+    return output;
+}
+
+function verbColoring(labelText, labelPos, index) {
+    let output = '';
+    switch (labelPos) {
+        case 'VERB':
+            output += `<button class="btn btn-verb ml-1 mb-1" id="posLabel-${index}">`;
+            break;
+        default:
+            output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${index}">`;
+            break;
+    }
+    if (showTag) {
+        output += `<text>${labelText}</text> <span class="badge badge-secondary">${index}</span><br/><pos>${labelPos}</pos></button>`;
+    }
+    else {
+        output += `<text>${labelText}</text> <span class="badge badge-secondary">${index}</span><pos hidden>${labelPos}</pos></button>`;
+    }
+    return output;
+}
+
+function noneColoring(labelText, labelPos, index) {
+    let output = '';
+    output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${index}">`;
+    if (showTag) {
+        output += `<text>${labelText}</text> <span class="badge badge-secondary">${index}</span><br/><pos>${labelPos}</pos></button>`;
+    }
+    else {
+        output += `<text>${labelText}</text> <span class="badge badge-secondary">${index}</span><pos hidden>${labelPos}</pos></button>`;
+    }
+    return output;
 }
 
 
@@ -36,21 +108,20 @@ function createTaggedContent(words) {
         let type = words[i].type;
         let index = words[i].index;
         if (type == '') {
-            switch (labelPos) {
-                case 'NOUN':
-                    output += `<button class="btn btn-noun ml-1 mb-1" id="posLabel-${index}"> `;
+            switch (coloring) {
+                case 'full':
+                    output += fullColoring(labelText, labelPos, index);
                     break;
-                case 'VERB':
-                    output += `<button class="btn btn-verb ml-1 mb-1" id="posLabel-${index}">`;
+                case 'verbs':
+                    output += verbColoring(labelText, labelPos, index);
                     break;
-                case 'ADJ':
-                    output += `<button class="btn btn-adjective ml-1 mb-1" id="posLabel-${index}">`;
+                case 'none':
+                    output += noneColoring(labelText, labelPos, index);
                     break;
                 default:
-                    output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${index}">`;
+                    output += verbColoring(labelText, labelPos, index);
                     break;
             }
-            output += `<text>${labelText}</text> <span class="badge badge-secondary">${index}</span><br/><pos>${labelPos}</pos></button>`;
         }
         else {
             switch (type) {
@@ -67,11 +138,15 @@ function createTaggedContent(words) {
                     output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${index}">`;
                     break;
             }
-            output += `${labelText} <span class="badge badge-secondary">${index}</span><br/><pos>${labelPos}</pos></button>`;
+            if (showTag) {
+                output += `<text>${labelText}</text> <span class="badge badge-secondary">${index}</span><br/><pos>${labelPos}</pos></button>`;
+            }
+            else {
+                output += `<text>${labelText}</text> <span class="badge badge-secondary">${index}</span><pos hidden>${labelPos}</pos></button>`;
+            }
         }
     }
     contentInsert.innerHTML = output;
-    //updateSentenceNumber()
 }
 
 function highlightTriples(identifier) {
@@ -79,36 +154,11 @@ function highlightTriples(identifier) {
     var targetElement = document.getElementById(identifier);
     var tripleType = getActiveTripleBtnID();
     var elementType = targetElement.className;
-    switch (elementType) {
-        case 'btn btn-noun ml-1 mb-1':
-            upgrade(targetElement, tripleType);
-            break;
-        case 'btn btn-verb ml-1 mb-1':
-            upgrade(targetElement, tripleType);
-            break;
-        case 'btn btn-adjective ml-1 mb-1':
-            upgrade(targetElement, tripleType);
-            break;
-        case 'btn btn-secondary ml-1 mb-1':
-            upgrade(targetElement, tripleType);
-            break;
-        case 'btn btn-subject ml-1 mb-1 mk marked-subject':
-            downgrade(targetElement);
-            break;
-        case 'btn btn-predicate ml-1 mb-1 mk marked-predicate':
-            downgrade(targetElement);
-            break;
-        case 'btn btn-object mk ml-1 mb-1 marked-object':
-            downgrade(targetElement);
-            break;
-    }
-    if (isOptionalActive()) {
-        targetElement.className += 'marked-optional';
-        targetElement.setAttribute('style', 'text-decoration: underline;')
+    if (elementType.includes('noun') || elementType.includes('verb') || elementType.includes('adjective') || elementType.includes('secondary')) {
+        upgrade(targetElement, tripleType);
     }
     else {
-        targetElement.className = targetElement.className.replace('marked-optional', '');
-        targetElement.removeAttribute('style');
+        downgrade(targetElement);
     }
     copyToSelection();
 }
@@ -125,28 +175,57 @@ function upgrade(targetElement, tripleType) {
             targetElement.className = 'btn btn-object mk ml-1 mb-1 marked-object';
             break;
     }
+    if (isOptionalActive() && tripleType != 'no') {
+        targetElement.className += 'marked-optional';
+        targetElement.setAttribute('style', 'text-decoration: underline;');
+    }
 }
 
 function downgrade(targetElement) {
     var posLabel = targetElement.getElementsByTagName('pos')[0].innerHTML;
-    switch (posLabel) {
-        case 'NOUN':
-            targetElement.className = "btn btn-noun ml-1 mb-1";
-            break;
-        case 'VERB':
-            targetElement.className = "btn btn-verb ml-1 mb-1";
-            break;
-        case 'ADJ':
-            targetElement.className = "btn btn-adjective ml-1 mb-1";
-            break;
-        default:
+    if (targetElement.className.includes('marked-optional') || isOptionalActive()) {
+        if (targetElement.className.includes('marked-optional')) {
+            targetElement.className = targetElement.className.replace('marked-optional', '');
+            targetElement.removeAttribute('style');
+        }
+        else {
+            targetElement.className += 'marked-optional';
+            targetElement.setAttribute('style', 'text-decoration: underline;');
+        }
+    }
+    else {
+        if (coloring == 'full') {
+            switch (posLabel) {
+                case 'NOUN':
+                    targetElement.className = "btn btn-noun ml-1 mb-1";
+                    break;
+                case 'VERB':
+                    targetElement.className = "btn btn-verb ml-1 mb-1";
+                    break;
+                case 'ADJ':
+                    targetElement.className = "btn btn-adjective ml-1 mb-1";
+                    break;
+                default:
+                    targetElement.className = "btn btn-secondary ml-1 mb-1";
+                    break;
+            }
+        }
+        if (coloring == 'verbs') {
+            switch (posLabel) {
+                case 'VERB':
+                    targetElement.className = "btn btn-verb ml-1 mb-1";
+                    break;
+                default:
+                    targetElement.className = "btn btn-secondary ml-1 mb-1";
+                    break;
+            }
+        }
+        else {
             targetElement.className = "btn btn-secondary ml-1 mb-1";
-            break;
+        }
+        targetElement.removeAttribute('style');
     }
 }
-
-
-
 
 function getActiveTripleBtnID() {
     var btnGroup = document.getElementById('button-group');
@@ -192,7 +271,7 @@ function getSelectionAsTriple() {
 function copyToSelection() {
     selectionInsert.innerHTML = '';
     var elements = contentInsert.getElementsByClassName('mk');
-    console.log(elements.length);
+    //console.log(elements.length);
     for (var i = 0; i < elements.length; i++) {
         var copy = elements[i].cloneNode(true);
         copy.id = copy.id + '-copy';
@@ -226,7 +305,7 @@ function displayClusters(sentenceNumber) {
     for (var i = 0; i < clusters.length; i++) {
         if (clusters[i].sentenceNumber == sentenceNumber) {
             output += `
-            <div class="container bg-dark py-3 mt-2" style="border-radius: 5px;">
+            <div class="container-fluid bg-dark py-3 mt-2 rounded">
                 <div class="d-flex" >
                     <i class="fas fa-times-circle mr-3 cluster" type="button" id="cluster-${clusters[i].sentenceNumber}-${clusters[i].clusterNumber}"></i>
                     <h6 class="card-title">Cluster ${clusters[i].clusterNumber}</h6>
@@ -300,11 +379,32 @@ function removeButton(identifier) {
     var element = document.getElementById(identifier);
     selectionInsert.removeChild(element);
     //var contentID = identifier.replace("-copy", "");
-
 }
 
 function clearSelection() {
     selectionInsert.innerHTML = '';
+}
+
+function displayFilesTable(data) {
+    //console.log(data);
+    let output = '';
+    for (var i = 0; i < Object.keys(data).length; i++) {
+        var current = data[i];
+        output += `
+        <tr>
+            <th scope="row">${i + 1}</th>
+            <td>${current['name']}</td>
+            <td>${current['date']}</td>
+            <td><button class="btn btn-secondary btn-sm" id='load-${current['name']}'>Load</button></td>
+        </tr>`;
+    }
+    tableBody.innerHTML += output;
+    var elements = tableBody.getElementsByClassName('btn');
+    //console.log(elements);
+    for (var i = 0; i < elements.length; i++) {
+        console.log(elements[i].id);
+        elements[i].addEventListener("click", function () { loadFileByID(this.id) })
+    }
 }
 
 
@@ -315,3 +415,5 @@ export { copyToSelection }
 export { getSelectionAsTriple }
 export { displayClusters }
 export { clearSelection }
+export { initConfigurations }
+export { displayFilesTable }
