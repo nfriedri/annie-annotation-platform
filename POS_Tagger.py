@@ -15,6 +15,13 @@ class Tagger:
             tagged_word = TaggedWord(word=str(token.text), index=counter, label=str(token.pos_))
             result.append(tagged_word)
             counter += 1
+        # TEST whether following code runs:
+        for i in range(len(result)):
+            if result[i].word == '`' and i < len(result):
+                if result[i+1].word == '`':
+                    result[i].word = '``'
+                    result.pop(i+1)
+        # 
         return result
 
     @staticmethod
