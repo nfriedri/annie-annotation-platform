@@ -12,7 +12,7 @@ from POS_Tagger import Tagger, TaggedWord
 '''Config File'''
 config_file = "config.json"
 
-# TODD: Adjust output dictionary that `` is packed together to one entry.
+# TODO: Adjust output dictionary that `` is packed together to one entry.
 
 '''Initialize GUI'''
 
