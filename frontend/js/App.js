@@ -1,7 +1,7 @@
 //IMPORTS
 import { Tokenizer } from './Tokenizer.js';
 import { TextFile, Annotation, Sentence, Triple, Word, Cluster } from './DataStructures.js';
-import { updateSentenceNumber, createTaggedContent, addHighlighters, getSelectionAsTriple, displayClusters, clearSelection, initConfigurations, displayFilesTable } from './GraphicInterface.js';
+import { updateSentenceNumber, createTaggedContent, addHighlighters, getSelectionAsTriple, displayClusters, clearSelection, initConfigurations, displayFilesTable, addFastHighlighting } from './GraphicInterface.js';
 import { createOutputPreview, downloadOutput } from './Output.js'
 import { save, load, loadFile } from './LoadSave.js';
 
@@ -88,6 +88,7 @@ async function startAnnotation() {
     updateSentenceNumber(sentenceNumber, file.sentences.length);
     createTaggedContent(sentence.words);
     addHighlighters();
+    addFastHighlighting();
     displayClusters(sentenceNumber);
 }
 

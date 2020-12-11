@@ -1,3 +1,4 @@
+import json
 import spacy
 
 
@@ -13,7 +14,19 @@ class Tagger:
 
     def __init__(self):
         self.nlp = spacy.load("en_core_web_sm")
+        self.compound_words = False
+        self.quotation_marks = False
+        self.read_config_file()
         print('Spacy POS-Tagger started')
+
+    '''Read config file'''
+    def read_config_file(self):
+        configs = open('config.json', 'r')
+        configs = json.load(configs)
+        if configs['Compound-words'] == 'true':
+            self.compound_words = True
+        if configs['Quotation-marks'] == 'true':
+            self.quotation_marks = True
 
     def tag_input(self, text):
         result = []
@@ -23,23 +36,30 @@ class Tagger:
             tagged_word = TaggedWord(word=str(token.text), index=counter, label=str(token.pos_))
             result.append(tagged_word)
             counter += 1
-        # Filter for special quotation marks and compound words
+
+        # Filters for special quotation marks and compound words
         changed = False
-        for ele in result:
-            number = ele.get_index()
-            if number < len(result) and number != 0:
-                if ele.word == '-':
-                    result[number - 1].word += result[number].word + result[number + 1].word
-                    result.pop(number + 1)
-                    result.pop(number)
-                    changed = True
-                if ele.word == '`':
-                    if result[number+1] == '`':
-                        result[number].word += result[number + 1].word
+        if self.compound_words:
+            for ele in result:
+                number = ele.get_index()
+                if number < len(result) and number != 0:
+                    if ele.word == '-':
+                        result[number - 1].word += result[number].word + result[number + 1].word
                         result.pop(number + 1)
+                        result.pop(number)
                         changed = True
+        if self.quotation_marks:
+            for ele in result:
+                number = ele.get_index()
+                if number < len(result) and number != 0:
+                    if ele.word == '`':
+                        if result[number+1] == '`':
+                            result[number].word += result[number + 1].word
+                            result.pop(number + 1)
+                            changed = True
         if changed:
             result = new_counter(result)
+
         return result
 
     @staticmethod

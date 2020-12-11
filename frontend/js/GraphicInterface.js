@@ -163,6 +163,23 @@ function highlightTriples(identifier) {
     copyToSelection();
 }
 
+function highlightTriplesFast(ev, identifier) {
+    //console.log(identifier);
+    if (ev.ctrlKey) {
+        var targetElement = document.getElementById(identifier);
+        var tripleType = getActiveTripleBtnID();
+        var elementType = targetElement.className;
+        if (elementType.includes('noun') || elementType.includes('verb') || elementType.includes('adjective') || elementType.includes('secondary')) {
+            upgrade(targetElement, tripleType);
+        }
+        else {
+            downgrade(targetElement);
+        }
+        copyToSelection();
+    }
+
+}
+
 function upgrade(targetElement, tripleType) {
     switch (tripleType) {
         case 'subject-btn':
@@ -255,6 +272,15 @@ function addHighlighters() {
         elements[i].addEventListener("click", function () { highlightTriples(this.id) })
     }
 }
+
+function addFastHighlighting() {
+    var elements = contentInsert.getElementsByClassName('btn');
+    //console.log(elements);
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].addEventListener("mouseover", function () { highlightTriplesFast(event, this.id) })
+    }
+}
+
 
 function getSelectionAsTriple() {
     var subjectElements = selectionInsert.getElementsByClassName('marked-subject')
@@ -481,6 +507,7 @@ function displayFilesTable(data) {
 export { updateSentenceNumber }
 export { createTaggedContent }
 export { addHighlighters }
+export { addFastHighlighting }
 export { copyToSelection }
 export { getSelectionAsTriple }
 export { displayClusters }

@@ -1,4 +1,6 @@
 {
 	"POSLabels": "false",
-	"Coloring": "verbs"
+	"Coloring": "verbs",
+	"Compound-words": "true",
+	"Quotation-marks": "true"
 }
