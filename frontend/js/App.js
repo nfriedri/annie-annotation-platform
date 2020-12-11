@@ -102,6 +102,7 @@ async function newSentenceAnnotation() {
     clearSelection();
     createTaggedContent(sentence.words);
     addHighlighters();
+    addFastHighlighting();
     displayClusters(sentenceNumber)
 }
 
@@ -404,6 +405,7 @@ function clear() {
     clearSelection();
     createTaggedContent(sentence.words);
     addHighlighters();
+    addFastHighlighting();
 }
 
 async function getConfigData() {

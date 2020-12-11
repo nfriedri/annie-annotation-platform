@@ -12,13 +12,11 @@ from POS_Tagger import Tagger, TaggedWord
 '''Config File'''
 config_file = "config.json"
 
-# TODO: Adjust output dictionary that `` is packed together to one entry.
-
 '''Initialize GUI'''
 
 app = Flask(__name__)
 CORS(app)
-# ui = FlaskUI(app, maximized=False, width=1920, height=1080)
+ui = FlaskUI(app, maximized=False, width=1920, height=1080)
 
 '''Start POS-Tagger'''
 os.system('python -m spacy download en_core_web_sm')
@@ -106,7 +104,7 @@ def list_latest_files(number_of_files):
     return data
 
 
-if __name__ == '__main__':
-     app.run()
+# if __name__ == '__main__':
+#     app.run()
 
-# ui.run()
+ui.run()

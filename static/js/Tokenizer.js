@@ -63,6 +63,7 @@ export class Tokenizer {
         var content = await this.requestPOStagging(url);
         var arrayOfWords = [];
         for (var i = 0; i < Object.keys(content).length; i++) {
+            console.log(content[i])
             var label = content[i].split(' ');
             var word = new Word(label[0], i + 1);
             word.posLabel = label[1];

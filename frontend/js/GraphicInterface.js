@@ -274,10 +274,13 @@ function addHighlighters() {
 }
 
 function addFastHighlighting() {
-    var elements = contentInsert.getElementsByClassName('btn');
-    //console.log(elements);
-    for (var i = 0; i < elements.length; i++) {
-        elements[i].addEventListener("mouseover", function () { highlightTriplesFast(event, this.id) })
+    var buttonElements = contentInsert.getElementsByClassName('btn');
+    //var badgeElements = contentInsert.getElementsByClassName('badge');
+    //console.log(buttonElements.length);
+    //console.log(badgeElements.length);
+    for (var i = 0; i < buttonElements.length; i++) {
+        buttonElements[i].addEventListener("mouseenter", function () { highlightTriplesFast(event, this.id) })
+        //badgeElements[i].addEventListener("mouseover", function () { highlightTriplesFast(event, buttonElements[i].id); })
     }
 }
 
