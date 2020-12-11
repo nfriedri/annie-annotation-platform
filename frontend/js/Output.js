@@ -14,10 +14,13 @@ function createOutputPreview() {
     for (var i = 0; i < clusters.length; i++) {
         var sentence = textFile.sentences[clusters[i].sentenceNumber];
         if (clusters[i].sentenceNumber != sentence_memory) {
+            if (i != 0) {
+                output += '\n';
+            }
             output += sentence.text + '\n';
             sentence_memory = clusters[i].sentenceNumber;
         }
-        output += (clusters[i].sentenceNumber + 1) + '--> Cluster ' + clusters[i].clusterNumber + ': ';
+        output += (clusters[i].sentenceNumber + 1) + '--> Cluster ' + clusters[i].clusterNumber + ': \n';
 
         let triples = clusters[i].triples;
         for (var j = 0; j < triples.length; j++) {

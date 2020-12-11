@@ -92,7 +92,8 @@ def find_last_created_file():
 
 def list_latest_files(number_of_files):
     list_of_files = glob.glob('data/*')
-    #print(list_of_files)
+    if len(list_of_files) < number_of_files:
+        number_of_files = len(list_of_files)
     data = {}
     for i in range(number_of_files):
         latest_file = max(list_of_files, key=os.path.getctime)

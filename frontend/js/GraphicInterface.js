@@ -176,7 +176,7 @@ function upgrade(targetElement, tripleType) {
             break;
     }
     if (isOptionalActive() && tripleType != 'no') {
-        targetElement.className += 'marked-optional';
+        targetElement.className += ' marked-optional';
         targetElement.setAttribute('style', 'text-decoration: underline;');
     }
 }
@@ -189,7 +189,7 @@ function downgrade(targetElement) {
             targetElement.removeAttribute('style');
         }
         else {
-            targetElement.className += 'marked-optional';
+            targetElement.className += ' marked-optional';
             targetElement.setAttribute('style', 'text-decoration: underline;');
         }
     }
@@ -326,27 +326,89 @@ function displayClusters(sentenceNumber) {
                 let subjects = triples[j].subjects;
                 let predicates = triples[j].predicates;
                 let objects = triples[j].objects;
-                for (var k = 0; k < subjects.length; k++) {
-                    output += `
-                    <button class="btn btn-subject ml-1 mb-1">${subjects[k].text}
-                    <span class="badge badge-secondary">${subjects[k].index}</span><br/>
-                    <pos>${subjects[k].posLabel}</pos></button>
-                    `;
+                if (showTag) {
+                    for (var k = 0; k < subjects.length; k++) {
+                        if (subjects[k].optional) {
+                            output += `<button class="btn btn-subject ml-1 mb-1" style="text-decoration: underline;">`
+                        }
+                        else {
+                            output += `<button class="btn btn-subject ml-1 mb-1">`
+                        }
+                        output += `
+                        ${subjects[k].text}
+                        <span class="badge badge-secondary">${subjects[k].index}</span><br/>
+                        <pos>${subjects[k].posLabel}</pos></button>
+                        `;
+                    }
+                    for (var k = 0; k < predicates.length; k++) {
+                        if (predicates[k].optional) {
+                            output += `<button class="btn btn-predicate ml-1 mb-1" style="text-decoration: underline;">`
+                        }
+                        else {
+                            output += `<button class="btn btn-predicate ml-1 mb-1">`
+                        }
+                        output += `
+                        ${predicates[k].text}
+                        <span class="badge badge-secondary">${predicates[k].index}</span><br/>
+                        <pos>${predicates[k].posLabel}</pos></button>
+                        `;
+                    }
+                    for (var k = 0; k < objects.length; k++) {
+                        if (objects[k].optional) {
+                            output += `<button class="btn btn-object ml-1 mb-1" style="text-decoration: underline;">`
+                        }
+                        else {
+                            output += `<button class="btn btn-object ml-1 mb-1">`
+                        }
+                        output += `
+                        ${objects[k].text}
+                        <span class="badge badge-secondary">${objects[k].index}</span><br/>
+                        <pos>${objects[k].posLabel}</pos></button>
+                        `;
+                    }
                 }
-                for (var k = 0; k < predicates.length; k++) {
-                    output += `
-                    <button class="btn btn-predicate ml-1 mb-1">${predicates[k].text}
-                    <span class="badge badge-secondary">${predicates[k].index}</span><br/>
-                    <pos>${predicates[k].posLabel}</pos></button>
-                    `;
+                else {
+                    for (var k = 0; k < subjects.length; k++) {
+                        if (subjects[k].optional) {
+                            output += `<button class="btn btn-subject ml-1 mb-1" style="text-decoration: underline;">`
+                        }
+                        else {
+                            output += `<button class="btn btn-subject ml-1 mb-1">`
+                        }
+                        output += `
+                        ${subjects[k].text}
+                        <span class="badge badge-secondary">${subjects[k].index}</span>
+                        <pos hidden>${subjects[k].posLabel}</pos></button>
+                        `;
+                    }
+                    for (var k = 0; k < predicates.length; k++) {
+                        if (predicates[k].optional) {
+                            output += `<button class="btn btn-predicate ml-1 mb-1" style="text-decoration: underline;">`
+                        }
+                        else {
+                            output += `<button class="btn btn-predicate ml-1 mb-1">`
+                        }
+                        output += `
+                        ${predicates[k].text}
+                        <span class="badge badge-secondary">${predicates[k].index}</span>
+                        <pos hidden>${predicates[k].posLabel}</pos></button>
+                        `;
+                    }
+                    for (var k = 0; k < objects.length; k++) {
+                        if (objects[k].optional) {
+                            output += `<button class="btn btn-object ml-1 mb-1" style="text-decoration: underline;">`
+                        }
+                        else {
+                            output += `<button class="btn btn-object ml-1 mb-1">`
+                        }
+                        output += `
+                        ${objects[k].text}
+                        <span class="badge badge-secondary">${objects[k].index}</span>
+                        <pos hidden>${objects[k].posLabel}</pos></button>
+                        `;
+                    }
                 }
-                for (var k = 0; k < objects.length; k++) {
-                    output += `
-                    <button class="btn btn-object ml-1 mb-1">${objects[k].text}
-                    <span class="badge badge-secondary">${objects[k].index}</span><br/>
-                    <pos>${objects[k].posLabel}</pos></button>
-                    `;
-                }
+
                 output += `
                     </div>
                 </div>
@@ -360,6 +422,14 @@ function displayClusters(sentenceNumber) {
     clusterInsert.innerHTML = output;
     addRemoveListenersCluster();
 }
+
+
+
+
+
+
+
+
 
 function addRemoveListenersCluster() {
     var clusterEle = clusterInsert.getElementsByClassName('cluster');
