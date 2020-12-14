@@ -3,8 +3,9 @@ import { changeWordType, getClusters, deleteCluster, deleteTriple, loadFileByID 
 import { TextFile, Sentence, Triple, Word } from './DataStructures.js';
 
 //Global Variables ==> INIT BY CONFIG FILE
-var showTag = false;
+var showTag = false;    // true, false
 var coloring = 'verbs'; // full, verbs, none
+var enableWordSort = false // true, false
 
 
 
@@ -34,11 +35,13 @@ function updateSentenceNumber(sentenceNumber, totalNumber) {
     document.getElementById('sentence-number').innerHTML = 'Sentence # ' + number + ' / ' + totalNumber + ':';
 }
 
-function initConfigurations(showTagContent, coloringContent) {
+function initConfigurations(showTagContent, coloringContent, enableWordSortation) {
     showTag = showTagContent;
     coloring = coloringContent;
+    enableWordSort = enableWordSortation;
     console.log(showTag);
     console.log(coloring);
+    console.log(enableWordSort);
 }
 
 
@@ -160,7 +163,9 @@ function highlightTriples(identifier) {
     else {
         downgrade(targetElement);
     }
-    copyToSelection();
+    if (enableWordSort) {
+        copyToSelection();
+    }
 }
 
 function highlightTriplesFast(ev, identifier) {
@@ -175,7 +180,10 @@ function highlightTriplesFast(ev, identifier) {
         else {
             downgrade(targetElement);
         }
-        copyToSelection();
+
+        if (enableWordSort) {
+            copyToSelection();
+        }
     }
 
 }
@@ -195,6 +203,12 @@ function upgrade(targetElement, tripleType) {
     if (isOptionalActive() && tripleType != 'no') {
         targetElement.className += ' marked-optional';
         targetElement.setAttribute('style', 'text-decoration: underline;');
+    }
+    if (!enableWordSort) {
+        var copy = targetElement.cloneNode(true);
+        copy.id = copy.id + '-copy';
+        copy.addEventListener("click", function () { removeButton(this.id) })
+        selectionInsert.appendChild(copy);
     }
 }
 
@@ -242,6 +256,19 @@ function downgrade(targetElement) {
         }
         targetElement.removeAttribute('style');
     }
+
+    var checkID = targetElement.id + '-copy';
+    console.log(checkID)
+    var selectionEles = selectionInsert.childNodes;
+    console.log(selectionEles);
+    for (var i = 0; i < selectionEles.length; i++) {
+        console.log(selectionEles[i].id)
+        if (selectionEles[i].id == checkID) {
+            selectionInsert.removeChild(selectionEles[i]);
+            break;
+        }
+    }
+
 }
 
 function getActiveTripleBtnID() {
@@ -274,10 +301,13 @@ function addHighlighters() {
 }
 
 function addFastHighlighting() {
-    var elements = contentInsert.getElementsByClassName('btn');
-    //console.log(elements);
-    for (var i = 0; i < elements.length; i++) {
-        elements[i].addEventListener("mouseenter", function () { highlightTriplesFast(event, this.id) })
+    var buttonElements = contentInsert.getElementsByClassName('btn');
+    //var badgeElements = contentInsert.getElementsByClassName('badge');
+    //console.log(buttonElements.length);
+    //console.log(badgeElements.length);
+    for (var i = 0; i < buttonElements.length; i++) {
+        buttonElements[i].addEventListener("mouseenter", function () { highlightTriplesFast(event, this.id) })
+        //badgeElements[i].addEventListener("mouseover", function () { highlightTriplesFast(event, buttonElements[i].id); })
     }
 }
 
@@ -449,14 +479,6 @@ function displayClusters(sentenceNumber) {
     addRemoveListenersCluster();
 }
 
-
-
-
-
-
-
-
-
 function addRemoveListenersCluster() {
     var clusterEle = clusterInsert.getElementsByClassName('cluster');
     //console.log(elements);
@@ -472,9 +494,13 @@ function addRemoveListenersCluster() {
 }
 
 function removeButton(identifier) {
+    //console.log('removed Button')
     var element = document.getElementById(identifier);
-    selectionInsert.removeChild(element);
-    //var contentID = identifier.replace("-copy", "");
+    var downgradeElementID = element.id.substring(0, element.id.length - 5);
+    //console.log(downgradeElementID);
+    var ele = document.getElementById(downgradeElementID)
+    downgrade(ele);
+    //selectionInsert.removeChild(element);
 }
 
 function clearSelection() {

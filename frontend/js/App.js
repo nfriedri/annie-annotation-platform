@@ -14,6 +14,8 @@ const url = 'http://127.0.0.1:5000/';
 // --- Initialization ---
 //var file = new TextFile();
 var annotate = new Annotation();
+
+var enableWordSort = false;
 //console.log(annotate);
 
 var sentenceNumber = 0;
@@ -424,7 +426,10 @@ async function getConfigData() {
                 if (data['POSLabels'] == 'true') {
                     posLabel = true;
                 }
-                initConfigurations(posLabel, data['Coloring']);
+                if (data['Word-sort'] == 'true') {
+                    enableWordSort = true;
+                }
+                initConfigurations(posLabel, data['Coloring'], enableWordSort);
             });
     }
     catch (error) {
