@@ -1,5 +1,5 @@
 import { getAnnotation } from './App.js'
-import { TextFile, Annotation, Sentence, Triple, Word, Cluster } from './DataStructures.js';
+import { TextFile, Annotation, Sentence, Triple, Word, Cluster, Separator } from './DataStructures.js';
 
 var loadedData = undefined;
 
@@ -74,9 +74,30 @@ function saveData() {
                 objectData['optional'] = objects[k].optional;
                 objectArray.push(objectData);
             }
+            var startSeparaters = triples[j].startSeparaters;
+            var startSepArray = [];
+            for (var k = 0; k < startSeparaters.length; k++) {
+                var separaterData = {};
+                separaterData['state'] = startSeparaters[k].state;
+                separaterData['index1'] = startSeparaters[k].index1;
+                separaterData['index2'] = startSeparaters[k].index2;
+                startSepArray.push(separaterData);
+            }
+            var endSeparaters = triples[j].endSeparaters;
+            var endSepArray = [];
+            for (var k = 0; k < endSeparaters.length; k++) {
+                var separaterData = {};
+                separaterData['state'] = endSeparaters[k].state;
+                separaterData['index1'] = endSeparaters[k].index1;
+                separaterData['index2'] = endSeparaters[k].index2;
+                endSepArray.push(separaterData);
+            }
+
             tripleData['subjects'] = subjectArray;
             tripleData['predicates'] = predicateArray;
             tripleData['objects'] = objectArray;
+            tripleData['startSeparators'] = startSepArray;
+            tripleData['endSeparators'] = endSepArray;
             tripleArray.push(tripleData);
         }
         clusterData['sentenceNumber'] = clusters[i].sentenceNumber;
@@ -210,7 +231,6 @@ function loadData(content) {
                 predicates.push(word);
             }
             var jsonObjects = activeJsonTriple["objects"];
-            //console.log(jsonObjects)
             var objects = []
             for (var k = 0; k < jsonObjects.length; k++) {
                 var activeJsonWord = jsonObjects[k];
@@ -220,7 +240,21 @@ function loadData(content) {
                 word.optional = activeJsonWord["optional"];
                 objects.push(word);
             }
-            var triple = new Triple(subjects, predicates, objects);
+            var jsonStartSep = activeJsonTriple["startSeparaters"];
+            var startSeparaters = []
+            for (var k = 0; k < jsonStartSep.length; k++) {
+                var activeJsonSep = jsonStartSep[k];
+                var separater = new Separator(activeJsonSep["state"], activeJsonSep["index1"], activeJsonSep["index2"]);
+                startSeparaters.push(separater);
+            }
+            var jsonEndSep = activeJsonTriple["endSeparaters"];
+            var endSeparaters = []
+            for (var k = 0; k < jsonEndSep.length; k++) {
+                var activeJsonSep = jsonEndSep[k];
+                var separater = new Separator(activeJsonSep["state"], activeJsonSep["index1"], activeJsonSep["index2"]);
+                endSeparaters.push(separater);
+            }
+            var triple = new Triple(subjects, predicates, objects, startSeparaters, endSeparaters);
             tripleArray.push(triple);
         }
         cluster.triples = tripleArray

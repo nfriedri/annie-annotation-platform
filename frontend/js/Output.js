@@ -22,38 +22,98 @@ function createOutputPreview() {
         }
         output += (clusters[i].sentenceNumber + 1) + '--> Cluster ' + clusters[i].clusterNumber + ': \n';
 
-        let triples = clusters[i].triples;
+        var triples = clusters[i].triples;
         for (var j = 0; j < triples.length; j++) {
-            let subjects = triples[j].subjects;
-            let predicates = triples[j].predicates;
-            let objects = triples[j].objects;
+            var subjects = triples[j].subjects;
+            var predicates = triples[j].predicates;
+            var objects = triples[j].objects;
+            var startSeparators = triples[j].startSeparators;
+            var endSeparators = triples[j].endSeparators;
+            //var counter = 0;
+            var separateActive = false;
+
+            console.log(startSeparators);
+            console.log(endSeparators);
+
             for (var k = 0; k < subjects.length; k++) {
+                for (var l = 0; l < startSeparators.length; l++) {
+                    //console.log(startSeparators[l].index2 + "    " + counter);
+                    if (startSeparators[l].index2 == subjects[k].index) {
+                        if (separateActive) {
+                            output += '] '
+                        }
+                        output += '[';
+                        separateActive = true;
+                    }
+                }
+                for (var l = 0; l < endSeparators.length; l++) {
+                    if (endSeparators[l].index2 == subjects[k].index) {
+                        output += '] ';
+                        separateActive = false;
+                    }
+                }
                 if (!subjects[k].optional) {
                     output += subjects[k].text + '(' + subjects[k].index + ') ';
                 }
                 else {
                     output += '[' + subjects[k].text + '(' + subjects[k].index + ')] ';
                 }
+
+                //counter += 1;
             }
             output += '--> '
             for (var k = 0; k < predicates.length; k++) {
+                for (var l = 0; l < startSeparators.length; l++) {
+                    if (startSeparators[l].index2 == predicates[k].index) {
+                        if (separateActive) {
+                            output += '] '
+                        }
+                        output += '[';
+                        separateActive = true;
+                    }
+                }
+                for (var l = 0; l < endSeparators.length; l++) {
+                    if (endSeparators[l].index2 == predicates[k].index) {
+                        output += '] ';
+                        separateActive = false;
+                    }
+                }
                 if (!predicates[k].optional) {
                     output += predicates[k].text + '(' + predicates[k].index + ') ';
                 }
                 else {
                     output += '[' + predicates[k].text + '(' + predicates[k].index + ')] ';
                 }
+
+                //counter += 1;
             }
             output += '--> '
             for (var k = 0; k < objects.length; k++) {
+                for (var l = 0; l < startSeparators.length; l++) {
+                    if (startSeparators[l].index2 == objects[k].index) {
+                        if (separateActive) {
+                            output += '] '
+                        }
+                        output += '[';
+                        separateActive = true;
+                    }
+                }
+                for (var l = 0; l < endSeparators.length; l++) {
+                    if (endSeparators[l].index2 == objects[k].index) {
+                        output += '] ';
+                        separateActive = false;
+                    }
+                }
                 if (!objects[k].optional) {
                     output += objects[k].text + '(' + objects[k].index + ') ';
                 }
                 else {
                     output += '[' + objects[k].text + '(' + objects[k].index + ')] ';
                 }
+
+                //counter += 1;
             }
-            output += '\n'
+            output += '\n';
         }
     }
     //console.log(output);

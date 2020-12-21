@@ -87,6 +87,22 @@ pos {
   text-decoration: none;
 }
 
+sep {
+  color: white;
+}
+
+sep:hover,
+sep:focus {
+  color: black;
+}
+
+.sep-start {
+  color: #00b0e6;
+}
+.sep-end {
+  color: #fe2e9a;
+}
+
 /* #button-group .up {
   color: white;
   background-color: #fe2e9a;

@@ -36,12 +36,14 @@ export class Cluster {
 }
 
 export class Triple {
-    constructor(subjects, predicates, objects) {
+    constructor(subjects, predicates, objects, startSeparators, endSeparators) {
         this.tripleID = tripleIdentifier;
         tripleIdentifier++;
         this.subjects = subjects;               //Array of type Word 
         this.predicates = predicates;           //Array of type Word
         this.objects = objects;                 //Array of type Word
+        this.startSeparators = startSeparators;
+        this.endSeparators = endSeparators;
     }
 }
 
@@ -52,5 +54,14 @@ export class Word {
         this.posLabel = '';
         this.type = '';                      // subject, predicate or object
         this.optional = false;               // Boolean true or false
+        //this.setSep = false;
+    }
+}
+
+export class Separator {
+    constructor(state, index1, index2) {
+        this.state = state;
+        this.index1 = index1;
+        this.index2 = index2;
     }
 }

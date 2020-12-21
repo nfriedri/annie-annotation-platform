@@ -1,13 +1,13 @@
 // GUI Methods
 import { changeWordType, getClusters, deleteCluster, deleteTriple, loadFileByID } from './App.js';
-import { TextFile, Sentence, Triple, Word } from './DataStructures.js';
+import { TextFile, Sentence, Triple, Word, Separator } from './DataStructures.js';
 
 //Global Variables ==> INIT BY CONFIG FILE
 var showTag = false;    // true, false
 var coloring = 'verbs'; // full, verbs, none
 var enableWordSort = false // true, false
 
-
+var separatorCounter = 0;
 
 // Elements
 var numberOfPhrases = document.getElementById('number-of-phrases');
@@ -207,17 +207,6 @@ function upgrade(targetElement, tripleType) {
     addToSelection(targetElement);
 }
 
-function addToSelection(targetElement) {
-    if (!enableWordSort) {
-        if (!targetElement.className.includes('btn-secondary')) {
-            var copy = targetElement.cloneNode(true);
-            copy.id = copy.id + '-copy';
-            copy.addEventListener("click", function () { removeButton(this.id) })
-            selectionInsert.appendChild(copy);
-        }
-    }
-}
-
 function downgrade(targetElement) {
     var posLabel = targetElement.getElementsByTagName('pos')[0].innerHTML;
     if (targetElement.className.includes('marked-optional') || isOptionalActive()) {
@@ -266,18 +255,24 @@ function downgrade(targetElement) {
         else {
             targetElement.className = "btn btn-secondary ml-1 mb-1";
         }
+
         targetElement.removeAttribute('style');
         var checkID = targetElement.id + '-copy';
-        console.log(checkID)
+        //console.log(checkID)
         var selectionEles = selectionInsert.childNodes;
-        console.log(selectionEles);
+        //console.log(selectionEles);
         for (var i = 0; i < selectionEles.length; i++) {
-            console.log(selectionEles[i].id)
-            if (selectionEles[i].id == checkID) {
+            //console.log(selectionEles[i].id)
+            if (selectionEles[i].id === checkID) {
+                var sepID = selectionEles[i].id + "-sep";
+                //console.log(sepID);
                 selectionInsert.removeChild(selectionEles[i]);
-                break;
+                if (document.getElementById(sepID) != undefined) {
+                    document.getElementById(sepID).remove();
+                }
             }
         }
+
     }
 }
 
@@ -312,12 +307,8 @@ function addHighlighters() {
 
 function addFastHighlighting() {
     var buttonElements = contentInsert.getElementsByClassName('btn');
-    //var badgeElements = contentInsert.getElementsByClassName('badge');
-    //console.log(buttonElements.length);
-    //console.log(badgeElements.length);
     for (var i = 0; i < buttonElements.length; i++) {
         buttonElements[i].addEventListener("mouseenter", function () { highlightTriplesFast(event, this.id) })
-        //badgeElements[i].addEventListener("mouseover", function () { highlightTriplesFast(event, buttonElements[i].id); })
     }
 }
 
@@ -326,24 +317,59 @@ function getSelectionAsTriple() {
     var subjectElements = selectionInsert.getElementsByClassName('marked-subject')
     var predicateElements = selectionInsert.getElementsByClassName('marked-predicate');
     var objectElements = selectionInsert.getElementsByClassName('marked-object');
+    var startSeparatorEles = selectionInsert.getElementsByClassName('sep-start');
+    var endSeparatorEles = selectionInsert.getElementsByClassName('sep-end');
     var subjects = elementsToWords(subjectElements, 'subject');
     var predicates = elementsToWords(predicateElements, 'predicate');
     var objects = elementsToWords(objectElements, 'object');
-    var triple = new Triple(subjects, predicates, objects);
-    //console.log(triple);
+    var startSeparators = addSeparatorList(startSeparatorEles, 'sep-start');
+    var endSeparators = addSeparatorList(endSeparatorEles, 'sep-end');
+    var triple = new Triple(subjects, predicates, objects, startSeparators, endSeparators);
+    console.log(triple);
     return triple;
 }
+
 
 function copyToSelection() {
     selectionInsert.innerHTML = '';
     var elements = contentInsert.getElementsByClassName('mk');
-    //console.log(elements.length);
+    createSeparator(0)
     for (var i = 0; i < elements.length; i++) {
         var copy = elements[i].cloneNode(true);
+        var index = parseInt(elements[i].getElementsByTagName('badge')[0].innerHTML);
         copy.id = copy.id + '-copy';
         copy.addEventListener("click", function () { removeButton(this.id) })
         selectionInsert.appendChild(copy);
+        createSeparator(index);
     }
+}
+
+function addToSelection(targetElement) {
+    if (!enableWordSort) {
+        if (selectionInsert.childNodes.length == 0) {
+            createSeparator(0);
+        }
+        if (!targetElement.className.includes('btn-secondary')) {
+
+            var label = targetElement.id.replaceAll('posLabel-', '')
+            var index = parseInt(label);
+            var copy = targetElement.cloneNode(true);
+            copy.id = copy.id + '-copy';
+            copy.addEventListener("click", function () { removeButton(this.id) })
+            copy.className = copy.className.replace('ml-1 ', 'my-1');
+            selectionInsert.appendChild(copy);
+            createSeparator(index);
+        }
+    }
+}
+
+function createSeparator(index) {
+    separatorCounter += 1;
+    var ele = document.createElement("sep");
+    ele.className = `fas fa-i-cursor fa-lg`;
+    ele.id = 'separator' + index;
+    ele.addEventListener("click", function () { activateSeparator(this.id) });
+    selectionInsert.appendChild(ele);
 }
 
 function elementsToWords(elements, type) {
@@ -365,6 +391,19 @@ function elementsToWords(elements, type) {
     return array;
 }
 
+function addSeparatorList(elements, type) {
+    var array = []
+    //var numberOfSeparators = elements.length;
+    for (var i = 0; i < elements.length; i++) {
+        var label = elements[i].id.replaceAll("separator", '');
+        var index = parseInt(label);
+        var separator = new Separator(type, index, index + 1);
+        array.push(separator);
+    }
+    console.log(array);
+    return array;
+}
+
 function displayClusters(sentenceNumber) {
     var clusters = getClusters();
     let output = '';
@@ -378,7 +417,7 @@ function displayClusters(sentenceNumber) {
                 </div>
                 <div class="card-deck">
             `;
-            let triples = clusters[i].triples;
+            var triples = clusters[i].triples;
             for (var j = 0; j < triples.length; j++) {
                 output += `
                 <div class="card bg-secondary text-light">
@@ -386,27 +425,52 @@ function displayClusters(sentenceNumber) {
                         <i class="fas fa-times-circle mr-3 triple" type="button" id="tripleID-${clusters[i].clusterNumber}-${triples[j].tripleID}"></i>
                         <a>Triple ${j + 1}</a></br>
                 `
-                //TODO Include if not undefined then: !!!!!!!!!!!
-                //TODO Add underlining for optionals
-
-                let subjects = triples[j].subjects;
-                let predicates = triples[j].predicates;
-                let objects = triples[j].objects;
+                //var counter = 0;
+                var startSeparators = triples[j].startSeparators;
+                var endSeparators = triples[j].endSeparators;
+                var subjects = triples[j].subjects;
+                var predicates = triples[j].predicates;
+                var objects = triples[j].objects;
                 if (showTag) {
                     for (var k = 0; k < subjects.length; k++) {
+                        for (var l = 0; l < startSeparators.length; l++) {
+                            if (startSeparators[l].index2 == subjects[k].index) {
+                                output += '<i class="fas fa-i-cursor fa-lg sep-start"></i>'
+                            }
+                        }
+                        for (var l = 0; l < endSeparators.length; l++) {
+                            if (endSeparators[l].index2 == subjects[k].index) {
+                                output += '<i class="fas fa-i-cursor fa-lg sep-end"></i>'
+                            }
+                        }
                         if (subjects[k].optional) {
                             output += `<button class="btn btn-subject ml-1 mb-1" style="text-decoration: underline;">`
                         }
                         else {
                             output += `<button class="btn btn-subject ml-1 mb-1">`
                         }
+
                         output += `
                         ${subjects[k].text}
                         <span class="badge badge-secondary">${subjects[k].index}</span><br/>
                         <pos>${subjects[k].posLabel}</pos></button>
                         `;
+                        //counter += 1;
                     }
                     for (var k = 0; k < predicates.length; k++) {
+                        for (var l = 0; l < startSeparators.length; l++) {
+                            if (startSeparators[l].index2 == predicates[k].index) {
+                                output += '<i class="fas fa-i-cursor fa-lg sep-start"></i>'
+                            }
+                        }
+                        for (var l = 0; l < endSeparators.length; l++) {
+                            if (endSeparators[l].index2 == predicates[k].index) {
+                                output += '<i class="fas fa-i-cursor fa-lg sep-end"></i>'
+                            }
+                        }
+                        if (predicates[k].setSep) {
+                            output += '';
+                        }
                         if (predicates[k].optional) {
                             output += `<button class="btn btn-predicate ml-1 mb-1" style="text-decoration: underline;">`
                         }
@@ -418,8 +482,19 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${predicates[k].index}</span><br/>
                         <pos>${predicates[k].posLabel}</pos></button>
                         `;
+                        //counter += 1;
                     }
                     for (var k = 0; k < objects.length; k++) {
+                        for (var l = 0; l < startSeparators.length; l++) {
+                            if (startSeparators[l].index2 == objects[k].index) {
+                                output += '<i class="fas fa-i-cursor fa-lg sep-start"></i>'
+                            }
+                        }
+                        for (var l = 0; l < endSeparators.length; l++) {
+                            if (endSeparators[l].index2 == objects[k].index) {
+                                output += '<i class="fas fa-i-cursor fa-lg sep-end"></i>'
+                            }
+                        }
                         if (objects[k].optional) {
                             output += `<button class="btn btn-object ml-1 mb-1" style="text-decoration: underline;">`
                         }
@@ -431,10 +506,22 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${objects[k].index}</span><br/>
                         <pos>${objects[k].posLabel}</pos></button>
                         `;
+                        //counter += 1;
                     }
                 }
                 else {
+
                     for (var k = 0; k < subjects.length; k++) {
+                        for (var l = 0; l < startSeparators.length; l++) {
+                            if (startSeparators[l].index2 == subjects[k].index) {
+                                output += '<i class="fas fa-i-cursor fa-lg sep-start"></i>'
+                            }
+                        }
+                        for (var l = 0; l < endSeparators.length; l++) {
+                            if (endSeparators[l].index2 == subjects[k].index) {
+                                output += '<i class="fas fa-i-cursor fa-lg sep-end"></i>'
+                            }
+                        }
                         if (subjects[k].optional) {
                             output += `<button class="btn btn-subject ml-1 mb-1" style="text-decoration: underline;">`
                         }
@@ -446,8 +533,19 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${subjects[k].index}</span>
                         <pos hidden>${subjects[k].posLabel}</pos></button>
                         `;
+                        //counter += 1;
                     }
                     for (var k = 0; k < predicates.length; k++) {
+                        for (var l = 0; l < startSeparators.length; l++) {
+                            if (startSeparators[l].index2 == predicates[k].index) {
+                                output += '<i class="fas fa-i-cursor fa-lg sep-start"></i>'
+                            }
+                        }
+                        for (var l = 0; l < endSeparators.length; l++) {
+                            if (endSeparators[l].index2 == predicates[k].index) {
+                                output += '<i class="fas fa-i-cursor fa-lg sep-end"></i>'
+                            }
+                        }
                         if (predicates[k].optional) {
                             output += `<button class="btn btn-predicate ml-1 mb-1" style="text-decoration: underline;">`
                         }
@@ -459,8 +557,19 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${predicates[k].index}</span>
                         <pos hidden>${predicates[k].posLabel}</pos></button>
                         `;
+                        //counter += 1;
                     }
                     for (var k = 0; k < objects.length; k++) {
+                        for (var l = 0; l < startSeparators.length; l++) {
+                            if (startSeparators[l].index2 == objects[k].index) {
+                                output += '<i class="fas fa-i-cursor fa-lg sep-start"></i>'
+                            }
+                        }
+                        for (var l = 0; l < endSeparators.length; l++) {
+                            if (endSeparators[l].index2 == objects[k].index) {
+                                output += '<i class="fas fa-i-cursor fa-lg sep-end"></i>'
+                            }
+                        }
                         if (objects[k].optional) {
                             output += `<button class="btn btn-object ml-1 mb-1" style="text-decoration: underline;">`
                         }
@@ -472,6 +581,7 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${objects[k].index}</span>
                         <pos hidden>${objects[k].posLabel}</pos></button>
                         `;
+                        //counter += 1;
                     }
                 }
 
@@ -507,14 +617,18 @@ function removeButton(identifier) {
     //console.log('removed Button')
     var element = document.getElementById(identifier);
     var downgradeElementID = element.id.substring(0, element.id.length - 5);
+    var sepIndex = downgradeElementID.replaceAll('posLabel-', '');
     //console.log(downgradeElementID);
     var ele = document.getElementById(downgradeElementID)
     downgrade(ele);
-    //selectionInsert.removeChild(element);
+    var index = parseInt(sepIndex);
+    var separ = document.getElementById("separator" + index);
+    selectionInsert.removeChild(separ);
 }
 
 function clearSelection() {
     selectionInsert.innerHTML = '';
+    separatorCounter = 0;
 }
 
 function displayFilesTable(data) {
@@ -539,6 +653,22 @@ function displayFilesTable(data) {
     }
 }
 
+
+function activateSeparator(identifier) {
+    var ele = document.getElementById(identifier);
+    if (ele.className.includes('sep')) {
+        if (ele.className.includes('sep-start')) {
+            ele.className = ele.className.replace('sep-start', 'sep-end');
+        }
+        else {
+            ele.className = ele.className.replace(' sep-end', '');
+        }
+    }
+    else {
+        ele.className += (' sep-start');
+    }
+    console.log(ele);
+}
 
 export { updateSentenceNumber }
 export { createTaggedContent }

@@ -87,6 +87,7 @@ async function startAnnotation() {
     sentence = file.sentences[sentenceNumber];
     sentence.words = await getPOStagging();
     console.log(sentence);
+    clearSelection();
     updateSentenceNumber(sentenceNumber, file.sentences.length);
     createTaggedContent(sentence.words);
     addHighlighters();
