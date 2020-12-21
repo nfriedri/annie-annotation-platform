@@ -204,24 +204,36 @@ function upgrade(targetElement, tripleType) {
         targetElement.className += ' marked-optional';
         targetElement.setAttribute('style', 'text-decoration: underline;');
     }
+    addToSelection(targetElement);
+}
+
+function addToSelection(targetElement) {
     if (!enableWordSort) {
-        var copy = targetElement.cloneNode(true);
-        copy.id = copy.id + '-copy';
-        copy.addEventListener("click", function () { removeButton(this.id) })
-        selectionInsert.appendChild(copy);
+        if (!targetElement.className.includes('btn-secondary')) {
+            var copy = targetElement.cloneNode(true);
+            copy.id = copy.id + '-copy';
+            copy.addEventListener("click", function () { removeButton(this.id) })
+            selectionInsert.appendChild(copy);
+        }
     }
 }
 
 function downgrade(targetElement) {
     var posLabel = targetElement.getElementsByTagName('pos')[0].innerHTML;
     if (targetElement.className.includes('marked-optional') || isOptionalActive()) {
+        var copyID = targetElement.id + '-copy';
+        var copy = document.getElementById(copyID);
         if (targetElement.className.includes('marked-optional')) {
             targetElement.className = targetElement.className.replace('marked-optional', '');
             targetElement.removeAttribute('style');
+            copy.className = copy.className.replace('marked-optional', '');
+            copy.removeAttribute('style');
         }
         else {
             targetElement.className += ' marked-optional';
-            targetElement.setAttribute('style', 'text-decoration: underline;');
+            targetElement.setAttribute('style', 'text-decoration: underline;')
+            copy.className += ' marked-optional';
+            copy.setAttribute('style', 'text-decoration: underline;');
         }
     }
     else {
@@ -255,20 +267,18 @@ function downgrade(targetElement) {
             targetElement.className = "btn btn-secondary ml-1 mb-1";
         }
         targetElement.removeAttribute('style');
-    }
-
-    var checkID = targetElement.id + '-copy';
-    console.log(checkID)
-    var selectionEles = selectionInsert.childNodes;
-    console.log(selectionEles);
-    for (var i = 0; i < selectionEles.length; i++) {
-        console.log(selectionEles[i].id)
-        if (selectionEles[i].id == checkID) {
-            selectionInsert.removeChild(selectionEles[i]);
-            break;
+        var checkID = targetElement.id + '-copy';
+        console.log(checkID)
+        var selectionEles = selectionInsert.childNodes;
+        console.log(selectionEles);
+        for (var i = 0; i < selectionEles.length; i++) {
+            console.log(selectionEles[i].id)
+            if (selectionEles[i].id == checkID) {
+                selectionInsert.removeChild(selectionEles[i]);
+                break;
+            }
         }
     }
-
 }
 
 function getActiveTripleBtnID() {

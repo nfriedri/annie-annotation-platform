@@ -104,7 +104,7 @@ def list_latest_files(number_of_files):
     return data
 
 
-if __name__ == '__main__':
-    app.run()
+# if __name__ == '__main__':
+#     app.run()
 
-# ui.run()
+ui.run()
