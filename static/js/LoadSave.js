@@ -74,23 +74,23 @@ function saveData() {
                 objectData['optional'] = objects[k].optional;
                 objectArray.push(objectData);
             }
-            var startSeparaters = triples[j].startSeparaters;
+            var startSeparators = triples[j].startSeparators;
             var startSepArray = [];
-            for (var k = 0; k < startSeparaters.length; k++) {
-                var separaterData = {};
-                separaterData['state'] = startSeparaters[k].state;
-                separaterData['index1'] = startSeparaters[k].index1;
-                separaterData['index2'] = startSeparaters[k].index2;
-                startSepArray.push(separaterData);
+            for (var k = 0; k < startSeparators.length; k++) {
+                var separatorData = {};
+                separatorData['state'] = startSeparators[k].state;
+                separatorData['index1'] = startSeparators[k].index1;
+                separatorData['index2'] = startSeparators[k].index2;
+                startSepArray.push(separatorData);
             }
-            var endSeparaters = triples[j].endSeparaters;
+            var endSeparators = triples[j].endSeparators;
             var endSepArray = [];
-            for (var k = 0; k < endSeparaters.length; k++) {
-                var separaterData = {};
-                separaterData['state'] = endSeparaters[k].state;
-                separaterData['index1'] = endSeparaters[k].index1;
-                separaterData['index2'] = endSeparaters[k].index2;
-                endSepArray.push(separaterData);
+            for (var k = 0; k < endSeparators.length; k++) {
+                var separatorData = {};
+                separatorData['state'] = endSeparators[k].state;
+                separatorData['index1'] = endSeparators[k].index1;
+                separatorData['index2'] = endSeparators[k].index2;
+                endSepArray.push(separatorData);
             }
 
             tripleData['subjects'] = subjectArray;
@@ -240,21 +240,21 @@ function loadData(content) {
                 word.optional = activeJsonWord["optional"];
                 objects.push(word);
             }
-            var jsonStartSep = activeJsonTriple["startSeparaters"];
-            var startSeparaters = []
+            var jsonStartSep = activeJsonTriple["startSeparators"];
+            var startSeparators = []
             for (var k = 0; k < jsonStartSep.length; k++) {
                 var activeJsonSep = jsonStartSep[k];
-                var separater = new Separator(activeJsonSep["state"], activeJsonSep["index1"], activeJsonSep["index2"]);
-                startSeparaters.push(separater);
+                var separator = new Separator(activeJsonSep["state"], activeJsonSep["index1"], activeJsonSep["index2"]);
+                startSeparators.push(separator);
             }
-            var jsonEndSep = activeJsonTriple["endSeparaters"];
-            var endSeparaters = []
+            var jsonEndSep = activeJsonTriple["endSeparators"];
+            var endSeparators = []
             for (var k = 0; k < jsonEndSep.length; k++) {
                 var activeJsonSep = jsonEndSep[k];
-                var separater = new Separator(activeJsonSep["state"], activeJsonSep["index1"], activeJsonSep["index2"]);
-                endSeparaters.push(separater);
+                var separator = new Separator(activeJsonSep["state"], activeJsonSep["index1"], activeJsonSep["index2"]);
+                endSeparators.push(separator);
             }
-            var triple = new Triple(subjects, predicates, objects, startSeparaters, endSeparaters);
+            var triple = new Triple(subjects, predicates, objects, startSeparators, endSeparators);
             tripleArray.push(triple);
         }
         cluster.triples = tripleArray
@@ -274,7 +274,7 @@ async function load(url, fileName) {
     document.getElementById('alert-div-load').innerHTML += `<div class="alert alert-success mt-3" role="alert" id="load-alert">
                                                             Succesfully loaded data. Press the START Button to continue.
                                                              </div>`;
-    setTimeout(function () { document.getElementById('load-alert').remove() }, 3000);
+    setTimeout(function () { document.getElementById('load-alert').remove() }, 2000);
     return results;
 }
 

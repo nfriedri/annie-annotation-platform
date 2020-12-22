@@ -366,7 +366,7 @@ function addToSelection(targetElement) {
 function createSeparator(index) {
     separatorCounter += 1;
     var ele = document.createElement("sep");
-    ele.className = `fas fa-i-cursor fa-lg`;
+    ele.className = `fas fa-grip-lines-vertical fa-lg`;
     ele.id = 'separator' + index;
     ele.addEventListener("click", function () { activateSeparator(this.id) });
     selectionInsert.appendChild(ele);
@@ -435,12 +435,12 @@ function displayClusters(sentenceNumber) {
                     for (var k = 0; k < subjects.length; k++) {
                         for (var l = 0; l < startSeparators.length; l++) {
                             if (startSeparators[l].index2 == subjects[k].index) {
-                                output += '<i class="fas fa-i-cursor fa-lg sep-start"></i>'
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
                             }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
                             if (endSeparators[l].index2 == subjects[k].index) {
-                                output += '<i class="fas fa-i-cursor fa-lg sep-end"></i>'
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
                             }
                         }
                         if (subjects[k].optional) {
@@ -460,12 +460,12 @@ function displayClusters(sentenceNumber) {
                     for (var k = 0; k < predicates.length; k++) {
                         for (var l = 0; l < startSeparators.length; l++) {
                             if (startSeparators[l].index2 == predicates[k].index) {
-                                output += '<i class="fas fa-i-cursor fa-lg sep-start"></i>'
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
                             }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
                             if (endSeparators[l].index2 == predicates[k].index) {
-                                output += '<i class="fas fa-i-cursor fa-lg sep-end"></i>'
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
                             }
                         }
                         if (predicates[k].setSep) {
@@ -487,12 +487,12 @@ function displayClusters(sentenceNumber) {
                     for (var k = 0; k < objects.length; k++) {
                         for (var l = 0; l < startSeparators.length; l++) {
                             if (startSeparators[l].index2 == objects[k].index) {
-                                output += '<i class="fas fa-i-cursor fa-lg sep-start"></i>'
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
                             }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
                             if (endSeparators[l].index2 == objects[k].index) {
-                                output += '<i class="fas fa-i-cursor fa-lg sep-end"></i>'
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
                             }
                         }
                         if (objects[k].optional) {
@@ -514,12 +514,12 @@ function displayClusters(sentenceNumber) {
                     for (var k = 0; k < subjects.length; k++) {
                         for (var l = 0; l < startSeparators.length; l++) {
                             if (startSeparators[l].index2 == subjects[k].index) {
-                                output += '<i class="fas fa-i-cursor fa-lg sep-start"></i>'
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
                             }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
                             if (endSeparators[l].index2 == subjects[k].index) {
-                                output += '<i class="fas fa-i-cursor fa-lg sep-end"></i>'
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
                             }
                         }
                         if (subjects[k].optional) {
@@ -538,12 +538,12 @@ function displayClusters(sentenceNumber) {
                     for (var k = 0; k < predicates.length; k++) {
                         for (var l = 0; l < startSeparators.length; l++) {
                             if (startSeparators[l].index2 == predicates[k].index) {
-                                output += '<i class="fas fa-i-cursor fa-lg sep-start"></i>'
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
                             }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
                             if (endSeparators[l].index2 == predicates[k].index) {
-                                output += '<i class="fas fa-i-cursor fa-lg sep-end"></i>'
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
                             }
                         }
                         if (predicates[k].optional) {
@@ -562,12 +562,12 @@ function displayClusters(sentenceNumber) {
                     for (var k = 0; k < objects.length; k++) {
                         for (var l = 0; l < startSeparators.length; l++) {
                             if (startSeparators[l].index2 == objects[k].index) {
-                                output += '<i class="fas fa-i-cursor fa-lg sep-start"></i>'
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
                             }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
                             if (endSeparators[l].index2 == objects[k].index) {
-                                output += '<i class="fas fa-i-cursor fa-lg sep-end"></i>'
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
                             }
                         }
                         if (objects[k].optional) {
