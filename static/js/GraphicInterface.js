@@ -335,10 +335,12 @@ function copyToSelection() {
     var elements = contentInsert.getElementsByClassName('mk');
     createSeparator(0)
     for (var i = 0; i < elements.length; i++) {
+        var label = elements[i].id.replaceAll('posLabel-', '')
+        var index = parseInt(label);
         var copy = elements[i].cloneNode(true);
-        var index = parseInt(elements[i].getElementsByTagName('badge')[0].innerHTML);
         copy.id = copy.id + '-copy';
         copy.addEventListener("click", function () { removeButton(this.id) })
+        copy.className = copy.className.replace('ml-1 ', 'my-1');
         selectionInsert.appendChild(copy);
         createSeparator(index);
     }
@@ -350,7 +352,6 @@ function addToSelection(targetElement) {
             createSeparator(0);
         }
         if (!targetElement.className.includes('btn-secondary')) {
-
             var label = targetElement.id.replaceAll('posLabel-', '')
             var index = parseInt(label);
             var copy = targetElement.cloneNode(true);
@@ -437,10 +438,24 @@ function displayClusters(sentenceNumber) {
                             if (startSeparators[l].index2 == subjects[k].index) {
                                 output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
                             }
+                            else {
+                                if (k > 0) {
+                                    if (startSeparators[l].index1 == subjects[k - 1].index) {
+                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
+                                    }
+                                }
+                            }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
                             if (endSeparators[l].index2 == subjects[k].index) {
                                 output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
+                            }
+                            else {
+                                if (k > 0) {
+                                    if (endSeparators[l].index1 == subjects[k - 1].index) {
+                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
+                                    }
+                                }
                             }
                         }
                         if (subjects[k].optional) {
@@ -462,10 +477,24 @@ function displayClusters(sentenceNumber) {
                             if (startSeparators[l].index2 == predicates[k].index) {
                                 output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
                             }
+                            else {
+                                if (k > 0) {
+                                    if (startSeparators[l].index1 == predicates[k - 1].index) {
+                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
+                                    }
+                                }
+                            }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
                             if (endSeparators[l].index2 == predicates[k].index) {
                                 output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
+                            }
+                            else {
+                                if (k > 0) {
+                                    if (endSeparators[l].index1 == predicates[k - 1].index) {
+                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
+                                    }
+                                }
                             }
                         }
                         if (predicates[k].setSep) {
@@ -489,10 +518,24 @@ function displayClusters(sentenceNumber) {
                             if (startSeparators[l].index2 == objects[k].index) {
                                 output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
                             }
+                            else {
+                                if (k > 0) {
+                                    if (startSeparators[l].index1 == objects[k - 1].index) {
+                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
+                                    }
+                                }
+                            }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
                             if (endSeparators[l].index2 == objects[k].index) {
                                 output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
+                            }
+                            else {
+                                if (k > 0) {
+                                    if (endSeparators[l].index1 == objects[k - 1].index) {
+                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
+                                    }
+                                }
                             }
                         }
                         if (objects[k].optional) {
@@ -516,10 +559,24 @@ function displayClusters(sentenceNumber) {
                             if (startSeparators[l].index2 == subjects[k].index) {
                                 output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
                             }
+                            else {
+                                if (k > 0) {
+                                    if (startSeparators[l].index1 == subjects[k - 1].index) {
+                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
+                                    }
+                                }
+                            }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
                             if (endSeparators[l].index2 == subjects[k].index) {
                                 output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
+                            }
+                            else {
+                                if (k > 0) {
+                                    if (endSeparators[l].index1 == subjects[k - 1].index) {
+                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
+                                    }
+                                }
                             }
                         }
                         if (subjects[k].optional) {
@@ -540,10 +597,24 @@ function displayClusters(sentenceNumber) {
                             if (startSeparators[l].index2 == predicates[k].index) {
                                 output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
                             }
+                            else {
+                                if (k > 0) {
+                                    if (startSeparators[l].index1 == predicates[k - 1].index) {
+                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
+                                    }
+                                }
+                            }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
                             if (endSeparators[l].index2 == predicates[k].index) {
                                 output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
+                            }
+                            else {
+                                if (k > 0) {
+                                    if (endSeparators[l].index1 == predicates[k - 1].index) {
+                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
+                                    }
+                                }
                             }
                         }
                         if (predicates[k].optional) {
@@ -564,10 +635,24 @@ function displayClusters(sentenceNumber) {
                             if (startSeparators[l].index2 == objects[k].index) {
                                 output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
                             }
+                            else {
+                                if (k > 0) {
+                                    if (startSeparators[l].index1 == objects[k - 1].index) {
+                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
+                                    }
+                                }
+                            }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
                             if (endSeparators[l].index2 == objects[k].index) {
                                 output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
+                            }
+                            else {
+                                if (k > 0) {
+                                    if (endSeparators[l].index1 == objects[k - 1].index) {
+                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
+                                    }
+                                }
                             }
                         }
                         if (objects[k].optional) {

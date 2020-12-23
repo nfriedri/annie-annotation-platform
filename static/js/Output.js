@@ -45,11 +45,30 @@ function createOutputPreview() {
                         output += '[';
                         separateActive = true;
                     }
+                    else {
+                        if (k > 0) {
+                            if (startSeparators[l].index1 == subjects[k - 1].index) {
+                                if (separateActive) {
+                                    output += '] '
+                                }
+                                output += '[';
+                                separateActive = true;
+                            }
+                        }
+                    }
                 }
                 for (var l = 0; l < endSeparators.length; l++) {
                     if (endSeparators[l].index2 == subjects[k].index) {
                         output += '] ';
                         separateActive = false;
+                    }
+                    else {
+                        if (k > 0) {
+                            if (endSeparators[l].index1 == subjects[k - 1].index) {
+                                output += '] ';
+                                separateActive = false;
+                            }
+                        }
                     }
                 }
                 if (!subjects[k].optional) {
@@ -71,11 +90,30 @@ function createOutputPreview() {
                         output += '[';
                         separateActive = true;
                     }
+                    else {
+                        if (k > 0) {
+                            if (startSeparators[l].index1 == predicates[k - 1].index) {
+                                if (separateActive) {
+                                    output += '] '
+                                }
+                                output += '[';
+                                separateActive = true;
+                            }
+                        }
+                    }
                 }
                 for (var l = 0; l < endSeparators.length; l++) {
                     if (endSeparators[l].index2 == predicates[k].index) {
                         output += '] ';
                         separateActive = false;
+                    }
+                    else {
+                        if (k > 0) {
+                            if (endSeparators[l].index1 == predicates[k - 1].index) {
+                                output += '] ';
+                                separateActive = false;
+                            }
+                        }
                     }
                 }
                 if (!predicates[k].optional) {
@@ -97,11 +135,30 @@ function createOutputPreview() {
                         output += '[';
                         separateActive = true;
                     }
+                    else {
+                        if (k > 0) {
+                            if (startSeparators[l].index1 == objects[k - 1].index) {
+                                if (separateActive) {
+                                    output += '] '
+                                }
+                                output += '[';
+                                separateActive = true;
+                            }
+                        }
+                    }
                 }
                 for (var l = 0; l < endSeparators.length; l++) {
                     if (endSeparators[l].index2 == objects[k].index) {
                         output += '] ';
                         separateActive = false;
+                    }
+                    else {
+                        if (k > 0) {
+                            if (endSeparators[l].index1 == objects[k - 1].index) {
+                                output += '] ';
+                                separateActive = false;
+                            }
+                        }
                     }
                 }
                 if (!objects[k].optional) {

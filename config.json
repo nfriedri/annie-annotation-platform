@@ -1,7 +1,7 @@
 {
 	"POSLabels": "false",
 	"Coloring": "verbs",
-	"Word-sort": "false",
+	"Word-sort": "true",
 	"Compound-words": "true",
 	"Quotation-marks": "true"
 }
