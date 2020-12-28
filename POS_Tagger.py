@@ -2,12 +2,16 @@ import json
 import spacy
 
 
+# Creates indices values for an array
 def new_counter(array):
     counter = 0
     for i in range(len(array)):
         array[i].index = counter
         counter += 1
     return array
+
+
+'''Tagger Class'''
 
 
 class Tagger:
@@ -19,7 +23,7 @@ class Tagger:
         self.read_config_file()
         print('Spacy POS-Tagger started')
 
-    '''Read config file'''
+    # Read configuration file
     def read_config_file(self):
         configs = open('config.json', 'r')
         configs = json.load(configs)
@@ -28,6 +32,7 @@ class Tagger:
         if configs['Quotation-marks'] == 'true':
             self.quotation_marks = True
 
+    # Creates an TaggedWord object for each token and collects its POS-Label, returns an array of TaggedWord objects.
     def tag_input(self, text):
         result = []
         counter = 0
@@ -62,12 +67,16 @@ class Tagger:
 
         return result
 
+    # Serielize output dictionary to JSON-format
     @staticmethod
     def serialize_json(tagged_words):
         output = {}
         for element in tagged_words:
             output[element.index] = element.word + ' ' + element.label
         return output
+
+
+'''TaggedWord Class'''
 
 
 class TaggedWord:

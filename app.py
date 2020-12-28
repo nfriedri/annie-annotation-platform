@@ -10,6 +10,7 @@ from flaskwebgui import FlaskUI
 from POS_Tagger import Tagger, TaggedWord
 
 '''Config File'''
+
 config_file = "config.json"
 
 '''Initialize GUI'''
@@ -18,17 +19,22 @@ app = Flask(__name__)
 CORS(app)
 ui = FlaskUI(app, maximized=False, width=1920, height=1080)
 
-'''Start POS-Tagger'''
+'''Start POS-Tagger SpaCy'''
+
 os.system('python -m spacy download en_core_web_sm')
 spacy = Tagger()
 
+'''API Endpoints'''
 
-@app.route('/', methods= ['GET'])
+
+# Test-Endpoint
+@app.route('/', methods=['GET'])
 def index():
     print('APP IS RUNNING')
     return render_template('index.html')
 
 
+# Returns POS-Labels for an input text
 @app.route('/pos-tagger', methods=['POST'])
 def input_tagger():
     content = request.get_json()
@@ -40,15 +46,17 @@ def input_tagger():
     return output
 
 
+# Saves current annotation progress into a json file
 @app.route('/save', methods=['POST'])
 def save_file():
     data = request.get_json()
-    new_file = open('data/' + data['name']+'.json', 'w')
+    new_file = open('data/' + data['name'] + '.json', 'w')
     new_file.write(json.dumps(data))
     new_file.close()
     return json.dumps({'success': True}), 200, {'Content-Type': 'application/json'}
 
 
+# Loads requested save-data file
 @app.route('/load', methods=['GET'])
 def load_file():
     bar = request.args.to_dict()
@@ -63,12 +71,7 @@ def load_file():
     return json.dumps(data)
 
 
-@app.route('/stop', methods=['GET'])
-def exit_on_close():
-    print('exit_on_close')
-    exit()
-
-
+# Loads configuration file and returns its content
 @app.route('/config', methods=['GET'])
 def return_config():
     file = open(config_file, "r")
@@ -77,19 +80,32 @@ def return_config():
     return json.dumps(data)
 
 
+# Returns a list of available save-data files
 @app.route('/files', methods=['GET'])
 def return_files():
     return list_latest_files(number_of_files=5)
 
 
+# Stops the tool.
+@app.route('/stop', methods=['GET'])
+def exit_on_close():
+    print('exit_on_close')
+    exit()
+
+
+'''File definitions'''
+
+
+# Returns the filename of the newest save-data file
 def find_last_created_file():
     list_of_files = glob.glob('data/*')
-    #print(list_of_files)
+    # print(list_of_files)
     latest_file = max(list_of_files, key=os.path.getctime)
     print(latest_file.title())
     return latest_file.title()
 
 
+# Returns a list of X last created files
 def list_latest_files(number_of_files):
     list_of_files = glob.glob('data/*')
     if len(list_of_files) < number_of_files:
@@ -106,5 +122,7 @@ def list_latest_files(number_of_files):
 
 # if __name__ == '__main__':
 #     app.run()
+
+'''Execute application and start GUI'''
 
 ui.run()
