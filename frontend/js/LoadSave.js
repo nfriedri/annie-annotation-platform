@@ -1,14 +1,17 @@
+// --- Load / Save Data scripts ---
+// Functions required for serializing content into a JSON-file and deseriealizing from JSON into the tool.
+
 import { getAnnotation } from './App.js'
 import { TextFile, Annotation, Sentence, Triple, Word, Cluster, Separator } from './DataStructures.js';
 
-var loadedData = undefined;
-
+// Function creating a dictionary containing current process & data.
 function saveData() {
     var data = {};
     var annotations = getAnnotation();
     var clusters = annotations.clusters;
     var file = annotations.textFile;
 
+    // Save input text data
     var fileData = {};
     var sentences = file.sentences;
     var sentenceArray = [];
@@ -34,6 +37,7 @@ function saveData() {
     fileData['text'] = file.text;
     fileData['sentences'] = sentenceArray;
 
+    // Save Cluster data
     var clusterArray = [];
     for (var i = 0; i < clusters.length; i++) {
         var clusterData = {};
@@ -113,6 +117,7 @@ function saveData() {
     return data;
 }
 
+// Sends POST-request to save data via the back-end.
 function save(url) {
     var data = saveData();
     var content = JSON.stringify(data);
@@ -140,6 +145,7 @@ function save(url) {
     }
 }
 
+// Sends request to get saved data by its filename.
 async function requestLoad(url, fileName) {
     var endpoint = url + 'load?name=' + fileName;
     var results = {};
@@ -167,7 +173,7 @@ async function requestLoad(url, fileName) {
     return results;
 }
 
-
+// Deserializes content into the tools internal data objects. Returns an instance of classtype "Annotation".
 function loadData(content) {
     console.log(content);
     var jsonTextFile = content['textFile'];
@@ -177,6 +183,8 @@ function loadData(content) {
     var jsonSentences = jsonTextFile["sentences"]
     //console.log(jsonSentences);
     var sentencesArray = [];
+
+    // Deserielize text file object
     for (var i = 0; i < jsonSentences.length; i++) {
         var sentence = new Sentence()
 
@@ -200,6 +208,8 @@ function loadData(content) {
 
     var jsonClusters = content["clusters"];
     var clusters = []
+
+    // Dezerialize clusters and triple objects
     for (var i = 0; i < jsonClusters.length; i++) {
         var activeJsonCl = jsonClusters[i]
         var cluster = new Cluster(activeJsonCl["sentenceNumber"], activeJsonCl["clusterNumber"]);
@@ -268,6 +278,7 @@ function loadData(content) {
     return annotate
 }
 
+// Steers the  back-end request and deserialization process of an file load.
 async function load(url, fileName) {
     var data = await requestLoad(url, fileName);
     var results = (loadData(data));
@@ -278,6 +289,7 @@ async function load(url, fileName) {
     return results;
 }
 
+// Reads incoming file data.
 async function readFile(file) {
     console.log(file.name);
     var reader = new FileReader();
@@ -293,6 +305,7 @@ async function readFile(file) {
     });
 }
 
+// Deserializes save-file content of a direct upload.
 async function loadFile(file) {
     var results = null;
     await readFile(file).then((data) => {

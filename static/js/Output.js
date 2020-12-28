@@ -1,16 +1,20 @@
+// --- Output script ---
+// Creates the text representation of the selected Triples and Clusters.
+
 import { getAnnotation, sortClusters } from './App.js';
 
-
+// Analyzes the selected Clusters and its contained Triples and creates a text representation of it.
 function createOutputPreview() {
     var annotation = getAnnotation();
     var textFile = annotation.textFile;
     var clusters = annotation.clusters;
 
     let output = '';
-    console.log(clusters);
+    //console.log(clusters);
     sortClusters();
     var sentence_memory = -1;
 
+    //Go through all current cluster data 
     for (var i = 0; i < clusters.length; i++) {
         var sentence = textFile.sentences[clusters[i].sentenceNumber];
         if (clusters[i].sentenceNumber != sentence_memory) {
@@ -23,21 +27,22 @@ function createOutputPreview() {
         output += (clusters[i].sentenceNumber + 1) + '--> Cluster ' + clusters[i].clusterNumber + ': \n';
 
         var triples = clusters[i].triples;
+
+        // Go through all Triples of the current cluster
         for (var j = 0; j < triples.length; j++) {
             var subjects = triples[j].subjects;
             var predicates = triples[j].predicates;
             var objects = triples[j].objects;
             var startSeparators = triples[j].startSeparators;
             var endSeparators = triples[j].endSeparators;
-            //var counter = 0;
             var separateActive = false;
 
             console.log(startSeparators);
             console.log(endSeparators);
 
+            // Go through all subjects of the current Triple
             for (var k = 0; k < subjects.length; k++) {
                 for (var l = 0; l < startSeparators.length; l++) {
-                    //console.log(startSeparators[l].index2 + "    " + counter);
                     if (startSeparators[l].index2 == subjects[k].index) {
                         if (separateActive) {
                             output += '] '
@@ -77,10 +82,10 @@ function createOutputPreview() {
                 else {
                     output += '[' + subjects[k].text + '(' + subjects[k].index + ')] ';
                 }
-
-                //counter += 1;
             }
-            output += '--> '
+            output += '--> ';
+
+            // Go through all predicates of the current Triple
             for (var k = 0; k < predicates.length; k++) {
                 for (var l = 0; l < startSeparators.length; l++) {
                     if (startSeparators[l].index2 == predicates[k].index) {
@@ -122,10 +127,10 @@ function createOutputPreview() {
                 else {
                     output += '[' + predicates[k].text + '(' + predicates[k].index + ')] ';
                 }
-
-                //counter += 1;
             }
-            output += '--> '
+            output += '--> ';
+
+            // Go through all objects of the current Triple
             for (var k = 0; k < objects.length; k++) {
                 for (var l = 0; l < startSeparators.length; l++) {
                     if (startSeparators[l].index2 == objects[k].index) {
@@ -167,8 +172,6 @@ function createOutputPreview() {
                 else {
                     output += '[' + objects[k].text + '(' + objects[k].index + ')] ';
                 }
-
-                //counter += 1;
             }
             output += '\n';
         }
@@ -178,7 +181,7 @@ function createOutputPreview() {
     return output;
 }
 
-// Output download steering
+// Steer download of created output textdata as .tsv file.
 function downloadOutput() {
     if (document.getElementById('current-output').innerHTML != "") {
         var textFile = getAnnotation().textFile
@@ -196,7 +199,7 @@ function downloadOutput() {
     }
 }
 
-// Create downloadable File
+// Create File-element for download
 function download(filename) {
     console.log('function download with ' + filename);
     var element = document.createElement('a');

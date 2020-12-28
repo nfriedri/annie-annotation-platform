@@ -1,3 +1,6 @@
+// --- APP Scripts ---
+// Steering of the complete application.
+
 //IMPORTS
 import { Tokenizer } from './Tokenizer.js';
 import { TextFile, Annotation, Sentence, Triple, Word, Cluster } from './DataStructures.js';
@@ -5,50 +8,93 @@ import { updateSentenceNumber, createTaggedContent, addHighlighters, getSelectio
 import { createOutputPreview, downloadOutput } from './Output.js'
 import { save, load, loadFile } from './LoadSave.js';
 
+// Back-end URL (Localhost)
 const url = 'http://127.0.0.1:5000/';
 
 
-
-//GUI-STEERING
-
 // --- Initialization ---
-//var file = new TextFile();
-var annotate = new Annotation();
 
-var enableWordSort = false;
-//console.log(annotate);
+// Variables
+var annotate = new Annotation();                                                        // Main object, contains complete process data.
+var enableWordSort = false;                                                             // Enabel automatic word sort, value set via config-file.
+var sentenceNumber = 0;                                                                 // Pointer, pointing to currently used sentence number.
+var clusterNumber = 0;                                                                  // Pointer, pointing to currently last given clusternumber for current sentence.
+var sentence = null                                                                     // Pointer, pointing to currently used sentence element.
 
-var sentenceNumber = 0;
-var clusterNumber = 0;
-//var clusters = annotate.clusters;
+// Input Elements
+var inputUpload = document.getElementById('input-file');                                // File-upload field
+var inputLoad = document.getElementById('input-memory-file');                           // Savedata-upload field
+var inputFileLabel = document.getElementById('input-file-label');                       // Savedata-upload field label
 
-var inputUpload = document.getElementById('input-file');
-var inputLoad = document.getElementById('input-memory-file');
-var inputFileLabel = document.getElementById('input-file-label');
-var inputLoadLabel = document.getElementById('input-memory-file-label');
 
-var startInputFile = document.getElementById('start-input-file');
-var clearBtn = document.getElementById('clear-btn');
-var addNewCLusterBtn = document.getElementById('new-cluster-btn');
-var addActiveClusterBtn = document.getElementById('active-cluster-btn');
-var addToButton = document.getElementById('add-to-btn');
-var saveButton = document.getElementById('save-button');
-var nextBtn = document.getElementById('next-btn');
-var previousBtn = document.getElementById('previous-btn');
-var firstBtn = document.getElementById('jump-first-btn');
-var lastBtn = document.getElementById('jump-last-btn');
-var goToBtn = document.getElementById('go-to-btn');
-var downloadBtn = document.getElementById('download-btn')
-var filesTableIcon = document.getElementById('files-table-icon');
+// Button Elements
+var startInputFileBtn = document.getElementById('start-input-file');                    // "Start"-button
+var clearBtn = document.getElementById('clear-btn');                                    // "Clear"-button
+var addNewCLusterBtn = document.getElementById('new-cluster-btn');                      // "Add to new cluster"-button
+var addActiveClusterBtn = document.getElementById('active-cluster-btn');                // "Add to active cluster"-button
+var addToButton = document.getElementById('add-to-btn');                                // "Add to X"-button
+var saveButton = document.getElementById('save-button');                                // "Save"-button
+var nextBtn = document.getElementById('next-btn');                                      // "Next"-button
+var previousBtn = document.getElementById('previous-btn');                              // "Previous"-button
+var firstBtn = document.getElementById('jump-first-btn');                               // "First"-button
+var lastBtn = document.getElementById('jump-last-btn');                                 // "Last"-button
+var goToBtn = document.getElementById('go-to-btn');                                     // "Go to X"-button
+var downloadBtn = document.getElementById('download-btn')                               // "Download"-button
+var filesTableIcon = document.getElementById('files-table-icon');                       // "Table-Icon"-button
 //var settingsBtn = document.getElementById('settings-btn');
 
-//file.text = 'After the stock-market bloodbath of the past few years, why would any defensive investor put a dime into stocks?';
-var sentence = null //Points to current sentence element
-//annotate.textFile = file;
 
-// --- File Upload ---
+// ----- Objects GETters
 
+// Returns the cluster array of the current Annotation object.
+function getClusters() {
+    var clusters = annotate.clusters;
+    return clusters;
+}
 
+// Returns the current Annotation object.
+function getAnnotation() {
+    return annotate;
+}
+
+// Returns the current TextFile object.
+function getFile() {
+    return file;
+}
+
+// ----- Initialize Configuration
+
+// Requests the configuration data from the back-end.
+async function getConfigData() {
+    var endpoint = url + 'config';
+    try {
+        await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then((data) => {
+                console.log(data);
+                var posLabel = false;
+                if (data['POSLabels'] == 'true') {
+                    posLabel = true;
+                }
+                if (data['Word-sort'] == 'true') {
+                    enableWordSort = true;
+                }
+                initConfigurations(posLabel, data['Coloring'], enableWordSort);
+            });
+    }
+    catch (error) {
+        console.error(error);
+    }
+}
+
+// ----- File Upload & Savedata load
+
+// Processing of in input-upload selected file data.
 function fileUpload() {
     var file = new TextFile();
     var fileName = inputUpload.files[0].name;
@@ -65,6 +111,65 @@ function fileUpload() {
     annotate.textFile = file;
 }
 
+// Loads a file by its filename
+function loadFileByID(identifier) {
+    var fileName = identifier.substring(5);
+    console.log(fileName);
+    load(url, fileName).then(response => {
+        annotate = response;
+        //console.log(annotate);
+    })
+}
+
+// Loads a file from the last recently used ones via the back-end.
+async function loadFileFlask() {
+    var fileName = 'last';
+    load(url, fileName).then(response => {
+        annotate = response;
+        console.log(annotate);
+    })
+}
+
+// Loads a file directly into the front-end.
+async function loadFileDirect() {
+    await loadFile(inputLoad.files[0]).then(response => {
+        annotate = response;
+        console.log(annotate);
+    })
+}
+
+// Requests the last used savdata-files from the back-end.
+async function requestLastUsedFiles() {
+    var endpoint = url + 'files';
+    var result = {};
+    try {
+        await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then((data) => {
+                console.log(data);
+                displayFilesTable(data);
+            });
+    }
+    catch (error) {
+        console.error(error);
+    }
+    return result;
+}
+
+// Saves the current annotation progress by calling the Output scripts.
+function saveAnnotationProgress() {
+    var output = createOutputPreview();
+    document.getElementById('current-output').innerText = output;
+}
+
+// ----- Input Data Initialization
+
+// Requests POS-labels for sentence data via the Tokenizer.
 async function getPOStagging() {
     var tagger = new Tokenizer(sentence.text)
     var taggedElements = await tagger.getPOStaggedWords(url);
@@ -72,12 +177,14 @@ async function getPOStagging() {
     return taggedElements;
 }
 
+// Tokenizes the input data into sentences.
 async function tokenizeFile() {
     var file = annotate.textFile;
     var tokenizer = new Tokenizer(file.text);
     return tokenizer.splitIntoSentences();
 }
 
+// Prepares internal data for beginning a new annotation process.
 async function startAnnotation() {
     sentenceNumber = 0;
     //console.log(annotate);
@@ -95,6 +202,7 @@ async function startAnnotation() {
     displayClusters(sentenceNumber);
 }
 
+// Prepares internal data for annotating another sentence
 async function newSentenceAnnotation() {
     var file = annotate.textFile;
     console.log(file);
@@ -109,12 +217,17 @@ async function newSentenceAnnotation() {
     displayClusters(sentenceNumber)
 }
 
+
+// ----- CLuster & Triple & Word Functionalities
+
+// Changes the type and the optional variables for a Word object.
 function changeWordType(index, type, optional) {
     var word = sentence.words[index];
     word.type = type;
     word.optional = optional;
 }
 
+// Adds a Triple object to a Cluster object.
 function addTripleToCluster() {
     initClusterNumber(sentenceNumber);
     var triple = getSelectionAsTriple();
@@ -124,6 +237,7 @@ function addTripleToCluster() {
     //console.log(annotate.clusters);
 }
 
+// Adds a Triple object to the Cluster with the specified Cluster number.
 function addTripleToClusterNumber() {
     var clNumber = document.getElementById('add-to-cluster-number').value;
     var triple = getSelectionAsTriple();
@@ -141,6 +255,8 @@ function addTripleToClusterNumber() {
 
 }
 
+// Finds the last used cluster for the current sentence. 
+// If there is no cluster for the current sentence yet, it creates a new one.
 function findCluster() {
     var clusters = annotate.clusters;
     for (var i = 0; i < clusters.length; i++) {
@@ -153,6 +269,7 @@ function findCluster() {
     return createNewCluster()
 }
 
+// Finds the cluster with the specified cluster-number. Otherwise returns null.
 function findSpecificCluster(clNumber) {
     var clusters = annotate.clusters;
     for (var i = 0; i < clusters.length; i++) {
@@ -165,6 +282,7 @@ function findSpecificCluster(clNumber) {
     return null;
 }
 
+// Generates a new Cluster and ties it to the Annotation object
 function createNewCluster() {
     clusterNumber += 1;
     console.log(clusterNumber);
@@ -173,6 +291,7 @@ function createNewCluster() {
     return cl;
 }
 
+// Deletes the Triple with the specified identifier-value (tripleID).
 function deleteTriple(identifier) {
     var array = identifier.split('-');
     var clNumber = parseInt(array[1]);
@@ -183,6 +302,7 @@ function deleteTriple(identifier) {
     //console.log('Removed Triple');
 }
 
+// Removes the Triple object with the given TripleID from the cluster given by its cluster-number.
 function removeTriple(clNumber, tripleID) {
     var clusters = annotate.clusters;
     var activeTriples = null;
@@ -207,6 +327,7 @@ function removeTriple(clNumber, tripleID) {
     }
 }
 
+// Deletes the cluster specified by its identifier.
 async function deleteCluster(identifier) {
     var array = identifier.split('-');
     var sentNumber = parseInt(array[1]);
@@ -217,6 +338,7 @@ async function deleteCluster(identifier) {
     console.log('Removed Cluster');
 }
 
+// Removes the cluster with the specified cluster-number.
 function removeCluster(clNumber) {
     var clusters = annotate.clusters;
     for (var i = 0; i < clusters.length; i++) {
@@ -241,6 +363,7 @@ function removeCluster(clNumber) {
     return true;
 }
 
+// Initializes the cluster-number variable.
 function initClusterNumber(sentenceNumber) {
     var clusters = annotate.clusters;
     var counter = 0;
@@ -253,26 +376,66 @@ function initClusterNumber(sentenceNumber) {
     clusterNumber = counter;
 }
 
-function saveAnnotationProgress() {
-    var output = createOutputPreview();
-    document.getElementById('current-output').innerText = output;
+// Sorts Word objects by their index number.
+function sortWords(firstEl, secondEl) {
+    if (firstEl.index <= secondEl.index) {
+        return -1;
+    }
+    else {
+        return 1
+    }
 }
 
-function getClusters() {
+// Sorts Triple objects by their ID.
+function sortTriples(firstEl, secondEl) {
+    if (firstEl.tripleID <= secondEl.tripleID) {
+        return -1;
+    }
+    else {
+        return 1;
+    }
+}
+
+// Sorts Cluster objects by their associated sentence-number and in one sentence by the cluster-number.
+function sortClusters() {
     var clusters = annotate.clusters;
-
-    return clusters;
+    clusters.sort((first, second) => {
+        if (first.sentenceNumber == second.sentenceNumber) {
+            if (first.clusterNumber == second.clusterNumber) {
+                return 0;
+            }
+            if (first.clusterNumber < second.clusterNumber) {
+                return -1;
+            }
+            if (first.clusterNumber > second.clusterNumber) {
+                return 1;
+            }
+        }
+        else {
+            if (first.sentenceNumber < second.sentenceNumber) {
+                return -1;
+            }
+            else {
+                return 1;
+            }
+        }
+    })
 }
 
-function getAnnotation() {
-    return annotate;
+// Clears all current annotation progress data for the sentence.
+function clear() {
+    var words = sentence.words
+    words.forEach(word => { word.type = '' });
+    clearSelection();
+    createTaggedContent(sentence.words);
+    addHighlighters();
+    addFastHighlighting();
 }
 
-function getFile() {
-    return file;
-}
 
-// Reads in the next phrase
+// ----- NAVIGATION FUNCTIONS
+
+// Reads in the previous phrase
 function previousSentence() {
     if (sentenceNumber > 0) {
         sentenceNumber -= 1;
@@ -286,7 +449,7 @@ function previousSentence() {
     }
 }
 
-// Reads in the last Phrase
+// Reads in the next Phrase
 function nextSentence() {
     var file = annotate.textFile;
     if (sentenceNumber < file.sentences.length - 1) {
@@ -332,7 +495,6 @@ function goToPhraseX() {
     var file = annotate.textFile;
     var number = parseInt(document.getElementById('current-sentence').value);
     if (number > 0 && number <= file.sentences.length) {
-        console.log('here2')
         sentenceNumber = number - 1;
         newSentenceAnnotation();
     }
@@ -344,122 +506,7 @@ function goToPhraseX() {
     }
 }
 
-async function loadFileFlask() {
-    var fileName = 'last';
-    load(url, fileName).then(response => {
-        annotate = response;
-        console.log(annotate);
-    })
-}
-
-async function loadFileDirect() {
-    await loadFile(inputLoad.files[0]).then(response => {
-        annotate = response;
-        console.log(annotate);
-    })
-}
-
-function sortWords(firstEl, secondEl) {
-    if (firstEl.index <= secondEl.index) {
-        return -1;
-    }
-    else {
-        return 1
-    }
-}
-
-function sortTriples(firstEl, secondEl) {
-    if (firstEl.tripleID <= secondEl.tripleID) {
-        return -1;
-    }
-    else {
-        return 1;
-    }
-}
-
-function sortClusters() {
-    var clusters = annotate.clusters;
-    clusters.sort((first, second) => {
-        if (first.sentenceNumber == second.sentenceNumber) {
-            if (first.clusterNumber == second.clusterNumber) {
-                return 0;
-            }
-            if (first.clusterNumber < second.clusterNumber) {
-                return -1;
-            }
-            if (first.clusterNumber > second.clusterNumber) {
-                return 1;
-            }
-        }
-        else {
-            if (first.sentenceNumber < second.sentenceNumber) {
-                return -1;
-            }
-            else {
-                return 1;
-            }
-        }
-    })
-}
-
-function clear() {
-    var words = sentence.words
-    words.forEach(word => { word.type = '' });
-    clearSelection();
-    createTaggedContent(sentence.words);
-    addHighlighters();
-    addFastHighlighting();
-}
-
-async function getConfigData() {
-    var endpoint = url + 'config';
-    try {
-        await fetch(endpoint, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => response.json())
-            .then((data) => {
-                console.log(data);
-                var posLabel = false;
-                if (data['POSLabels'] == 'true') {
-                    posLabel = true;
-                }
-                if (data['Word-sort'] == 'true') {
-                    enableWordSort = true;
-                }
-                initConfigurations(posLabel, data['Coloring'], enableWordSort);
-            });
-    }
-    catch (error) {
-        console.error(error);
-    }
-}
-
-async function requestLastUsedFiles() {
-    var endpoint = url + 'files';
-    var result = {};
-    try {
-        await fetch(endpoint, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => response.json())
-            .then((data) => {
-                console.log(data);
-                displayFilesTable(data);
-            });
-    }
-    catch (error) {
-        console.error(error);
-    }
-    return result;
-}
-
+// Expands the 'last-used savadata files'-table.
 function expandTable() {
     var ele = document.getElementById('files-tbody');
     if (ele.hasAttribute('hidden')) {
@@ -472,17 +519,11 @@ function expandTable() {
     }
 }
 
-function loadFileByID(identifier) {
-    var fileName = identifier.substring(5);
-    console.log(fileName);
-    load(url, fileName).then(response => {
-        annotate = response;
-        //console.log(annotate);
-    })
-}
+
+// ----- Initialize Button Event Listeners
 
 window.onload = () => { getConfigData(); requestLastUsedFiles() };
-startInputFile.addEventListener("click", function () { startAnnotation(); });
+startInputFileBtn.addEventListener("click", function () { startAnnotation(); });
 inputUpload.addEventListener("input", function () { fileUpload(); });
 addActiveClusterBtn.addEventListener('click', function () { addTripleToCluster(); displayClusters(sentenceNumber); });
 addNewCLusterBtn.addEventListener("click", function () { createNewCluster(); addTripleToCluster(); displayClusters(sentenceNumber); });
@@ -496,14 +537,9 @@ lastBtn.addEventListener("click", function () { jumpLast() });
 goToBtn.addEventListener("click", function () { goToPhraseX() });
 downloadBtn.addEventListener("click", function () { downloadOutput() });
 //settingsBtn.addEventListener("click", function () { showSettings() });
-
-//document.getElementById('test-save-btn').addEventListener("click", function () { save(url) });
 document.getElementById('load-selected-btn').addEventListener("click", function () { loadFileDirect() });
 document.getElementById('load-last-btn').addEventListener("click", function () { loadFileFlask() });
-
 filesTableIcon.addEventListener("click", function () { expandTable() })
-
-
 
 
 export { changeWordType, getClusters, getAnnotation, deleteCluster, deleteTriple, getFile, sortClusters, loadFileByID };

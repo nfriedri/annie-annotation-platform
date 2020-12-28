@@ -1,3 +1,6 @@
+/* Special appearances for buttons and separator elements */
+
+/*Subject Button Appearance*/
 .btn-subject {
   color: white;
   background-color: #0ab60a;
@@ -10,6 +13,7 @@
   border-color: #03a003cc;
 }
 
+/*Predicate Button Appearance*/
 .btn-predicate {
   color: white;
   background-color: #ffbf00;
@@ -21,6 +25,7 @@
   border-color: #b88a00;
 }
 
+/*Object Button Appearance*/
 .btn-object {
   color: white;
   background-color: #0101df;
@@ -32,6 +37,7 @@
   border-color: #00009c;
 }
 
+/*Optional Button Appearance*/
 .btn-optional {
   color: white;
   background-color: rgb(0, 219, 219);
@@ -43,6 +49,7 @@
   border-color: rgb(0, 177, 177);
 }
 
+/*Noun Button Appearance*/
 .btn-noun {
   color: white;
   background-color: #00b0e6;
@@ -56,6 +63,7 @@
   border-color: #0085ad;
 }
 
+/*Verb Button Appearance*/
 .btn-verb {
   color: white;
   background-color: #fe2e9a;
@@ -69,6 +77,7 @@
   border-color: #aa0259;
 }
 
+/*Adjective Button Appearance*/
 .btn-adjective {
   color: white;
   background-color: #01df01;
@@ -82,20 +91,21 @@
   border-color: #008800;
 }
 
+/*POS-Label element appearance*/
 pos {
   font-size: x-small;
   text-decoration: none;
 }
 
+/*Separator element appearance*/
 sep {
   color: white;
 }
-
 sep:hover,
 sep:focus {
   color: black;
 }
-
+/*Separator subclasses appearances*/
 .sep-start {
   color: #00b0e6;
 }
@@ -103,17 +113,7 @@ sep:focus {
   color: #fe2e9a;
 }
 
-/* #button-group .up {
-  color: white;
-  background-color: #fe2e9a;
-  border-color: #fe2e9a;
-}
-#button-group .up:hover {
-  color: white;
-  background-color: #b4206c;
-  border-color: #b4206c;
-} */
-
+/*Code block appearance */
 pre {
   font-family: Arial, Helvetica, sans-serif;
 }

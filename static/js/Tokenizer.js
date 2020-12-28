@@ -1,12 +1,16 @@
+// --- Class Tokenizer ---
+// Splits the input data into sentences and then sentence-wise into tokens 
+
 import { Sentence, Word } from './DataStructures.js';
 
-//SPLIT INTO TOKENS, POS-TAGGING
-
 export class Tokenizer {
+
+    //Tokenizer - Constructor: "text" is the string input from a text file
     constructor(text) {
         this.text = text;
     }
 
+    // Splits the text of an Tokenizer instance into separate sentences by line-breaks. Removes tabs from text.
     splitIntoSentences() {
         var lines = [];
         var result = [];
@@ -34,6 +38,7 @@ export class Tokenizer {
         return result;
     }
 
+    // Back-end request for tokenizing and pos-labeling the sentence data
     async requestPOStagging(url) {
         var endpoint = url + 'pos-tagger';
         var content = JSON.stringify({ data: this.text });
@@ -50,20 +55,22 @@ export class Tokenizer {
                     return res.json();
                 })
                 .then((data) => {
-                    console.log(data);
+                    //console.log(data);
                     result = data;
                 })
         } catch (error) {
+            // TODO: Add error catch ==> Print alert that requested resource is not available
             console.error(error);
         }
         return result;
     }
 
+    // Sends reqeust for tokenization and labeling, returns the response data as an array of datatype Words.
     async getPOStaggedWords(url) {
         var content = await this.requestPOStagging(url);
         var arrayOfWords = [];
         for (var i = 0; i < Object.keys(content).length; i++) {
-            console.log(content[i])
+            //console.log(content[i])
             var label = content[i].split(' ');
             var word = new Word(label[0], i + 1);
             word.posLabel = label[1];
@@ -71,35 +78,4 @@ export class Tokenizer {
         }
         return arrayOfWords
     }
-}
-
-
-// Initializes text data by starting tokenization process
-async function initializeText() {
-    //console.log(inputData);
-    phrases = splitInputToPhrases(inputData)
-    numberOfPhrases.innerText = '/ ' + phrases.length;
-    currentSentenceDisplay.setAttribute('placeholder', currentPhrase + 1);
-    var phraseOne = phrases[0];
-    var tokens = tokenizePhrase(phraseOne);
-    createClickableText(tokens);
-}
-
-
-// Creates a multidimensional array, ordered by phrases with tokens
-function splitInputToPhrases(inputData) {
-    var cleanedInput = inputData.replace(/(\r\n|\n|\r|\t|"|,)/gm, " ");
-    try {
-        phrases = cleanedInput.split(/(\?|\!|\.)/);
-    }
-    catch (err) {
-        console.log('TypeError - No sentences inserted')
-    }
-    var output = [];
-    for (var i = 0; i < phrases.length - 1; i++) {
-        if (phrases[i] !== "." && phrases[i] !== "?" && phrases[i] !== "!") {
-            output.push(phrases[i]);
-        }
-    }
-    return output;
 }

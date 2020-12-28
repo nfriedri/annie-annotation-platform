@@ -1,40 +1,29 @@
-// GUI Methods
+// --- Graphic Interface scripts ---
+// Functions steering the GUI and its appearance.
+
 import { changeWordType, getClusters, deleteCluster, deleteTriple, loadFileByID } from './App.js';
 import { TextFile, Sentence, Triple, Word, Separator } from './DataStructures.js';
 
-//Global Variables ==> INIT BY CONFIG FILE
-var showTag = false;    // true, false
-var coloring = 'verbs'; // full, verbs, none
-var enableWordSort = false // true, false
+// Configuration data -- read-in by app.js script
+var showTag = false;            // true, false          --default-value: false.
+var coloring = 'verbs';         // full, verbs, none    --default-value: 'verbs'.
+var enableWordSort = false      // true, false          --default-value: false.
 
-var separatorCounter = 0;
+// HTML area elements:
+var contentInsert = document.getElementById("content-insert");          // Field showing content (words, index and posLabel) of current, tokenized sentence.
+var selectionInsert = document.getElementById("selection-insert");      // Field containing the currently selected elements(words) from contentInsert object.
+var clusterInsert = document.getElementById("cluster-insert");          // Area displaying all clusters and its contained triples for the selected sentence.
+var tableBody = document.getElementById('files-tbody')                  // Table displaying the five last used files out of the folder '/data'.
 
-// Elements
-var numberOfPhrases = document.getElementById('number-of-phrases');
-var inputTextArea = document.getElementById('input-text');
-var inputUpload = document.getElementById('input-file');
-var inputFileLabel = document.getElementById('input-file-label');
-var contentInsert = document.getElementById("content-insert");
-var selectionInsert = document.getElementById("selection-insert");
-var clusterInsert = document.getElementById("cluster-insert");
-var currentSentenceDisplay = document.getElementById('current-sentence');
-var currentOutput = document.getElementById('current-output');
-var tableBody = document.getElementById('files-tbody')
-
-
-// Containers
-var inputArea = document.getElementById('input-area');
-var contentMainArea = document.getElementById('content-area');
-var downloadArea = document.getElementById('download-area');
-var tableContainer = document.getElementById('table-container');
-
-
+// Updates the displayed sentence number to the number of the currently displayed sentence. 
+// The variable sentence number is the index of the current sentence, totalNumber is the number of all sentences in the text file.
 function updateSentenceNumber(sentenceNumber, totalNumber) {
     var number = sentenceNumber + 1;
     console.log(number)
     document.getElementById('sentence-number').innerHTML = 'Sentence # ' + number + ' / ' + totalNumber + ':';
 }
 
+// Sets configuration variables to the values read in from the config-file.
 function initConfigurations(showTagContent, coloringContent, enableWordSortation) {
     showTag = showTagContent;
     coloring = coloringContent;
@@ -44,7 +33,7 @@ function initConfigurations(showTagContent, coloringContent, enableWordSortation
     console.log(enableWordSort);
 }
 
-
+// Adds classnames for different colored buttons for each type of word, based on the word's POS-label.
 function fullColoring(labelText, labelPos, index) {
     let output = '';
     switch (labelPos) {
@@ -70,6 +59,7 @@ function fullColoring(labelText, labelPos, index) {
     return output;
 }
 
+// Adds classnames only for different colored buttons of the word-type 'VERB', based on the word's POS-label.
 function verbColoring(labelText, labelPos, index) {
     let output = '';
     switch (labelPos) {
@@ -89,6 +79,7 @@ function verbColoring(labelText, labelPos, index) {
     return output;
 }
 
+// Adds simple 'secondary'-buttonclasses for each word.
 function noneColoring(labelText, labelPos, index) {
     let output = '';
     output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${index}">`;
@@ -101,7 +92,7 @@ function noneColoring(labelText, labelPos, index) {
     return output;
 }
 
-
+// Creates Button elements for each word-token of a sentence, considering the config-variables.
 function createTaggedContent(words) {
     var output = "";
     for (var i = 0; i < words.length; i++) {
@@ -152,6 +143,7 @@ function createTaggedContent(words) {
     contentInsert.innerHTML = output;
 }
 
+// Fired on click of a word-button, either upgrades a button to a selected element or downgrades it by unselecting it (second click on the button).
 function highlightTriples(identifier) {
     //console.log(identifier);
     var targetElement = document.getElementById(identifier);
@@ -168,6 +160,7 @@ function highlightTriples(identifier) {
     }
 }
 
+// Enables fast button up- and downgrades by pressing the CTRL-key while hovering over the word-buttons
 function highlightTriplesFast(ev, identifier) {
     //console.log(identifier);
     if (ev.ctrlKey) {
@@ -185,9 +178,9 @@ function highlightTriplesFast(ev, identifier) {
             copyToSelection();
         }
     }
-
 }
 
+// Adds markers to the selected buttons-classname, changes its appearance and copies the element to the selection section.
 function upgrade(targetElement, tripleType) {
     switch (tripleType) {
         case 'subject-btn':
@@ -207,6 +200,7 @@ function upgrade(targetElement, tripleType) {
     addToSelection(targetElement);
 }
 
+// Removes markers from a selected element and changes its appearance to its originating style.
 function downgrade(targetElement) {
     var posLabel = targetElement.getElementsByTagName('pos')[0].innerHTML;
     if (targetElement.className.includes('marked-optional') || isOptionalActive()) {
@@ -276,6 +270,7 @@ function downgrade(targetElement) {
     }
 }
 
+// Returns the ID of the activated triple button (either 'subject-btn', 'predicate-btn', 'object-btn', or if no button is active 'no').
 function getActiveTripleBtnID() {
     var btnGroup = document.getElementById('button-group');
     var activeBtn = btnGroup.getElementsByClassName('up')[0];
@@ -285,6 +280,7 @@ function getActiveTripleBtnID() {
     return 'no'
 }
 
+// Returns true, if the optional-button is enabled, otherwise false.
 function isOptionalActive() {
     var optBtn = document.getElementById('optional-btn');
     if (optBtn.className.includes('up')) {
@@ -297,6 +293,7 @@ function isOptionalActive() {
     }
 }
 
+// Adds the highligting Eventlisteners to the button elements.
 function addHighlighters() {
     var elements = contentInsert.getElementsByClassName('btn');
     //console.log(elements);
@@ -305,6 +302,7 @@ function addHighlighters() {
     }
 }
 
+// Adds the highlighter Eventlisteners for fasthighliting with the CTRL-key to the button elements.
 function addFastHighlighting() {
     var buttonElements = contentInsert.getElementsByClassName('btn');
     for (var i = 0; i < buttonElements.length; i++) {
@@ -312,7 +310,7 @@ function addFastHighlighting() {
     }
 }
 
-
+// Returns the currently selected elements sorted by their types and returns them as a 'Triple'-object.
 function getSelectionAsTriple() {
     var subjectElements = selectionInsert.getElementsByClassName('marked-subject')
     var predicateElements = selectionInsert.getElementsByClassName('marked-predicate');
@@ -325,11 +323,11 @@ function getSelectionAsTriple() {
     var startSeparators = addSeparatorList(startSeparatorEles, 'sep-start');
     var endSeparators = addSeparatorList(endSeparatorEles, 'sep-end');
     var triple = new Triple(subjects, predicates, objects, startSeparators, endSeparators);
-    console.log(triple);
+    //console.log(triple);
     return triple;
 }
 
-
+// Copies the selected buttons into the selection field and obtains always their order. This method is used if the config-variable word-sort is set true.
 function copyToSelection() {
     selectionInsert.innerHTML = '';
     var elements = contentInsert.getElementsByClassName('mk');
@@ -346,6 +344,7 @@ function copyToSelection() {
     }
 }
 
+// Copies a selected button to the selection field. No order is followed. This method is used if the config-variable word-sort is set false (=default).
 function addToSelection(targetElement) {
     if (!enableWordSort) {
         if (selectionInsert.childNodes.length == 0) {
@@ -364,6 +363,7 @@ function addToSelection(targetElement) {
     }
 }
 
+// Creates a separator element for setting manual brackets.
 function createSeparator(index) {
     separatorCounter += 1;
     var ele = document.createElement("sep");
@@ -373,6 +373,7 @@ function createSeparator(index) {
     selectionInsert.appendChild(ele);
 }
 
+// Creates Word-Objects out of a list of word-buttons and returns them as an array.
 function elementsToWords(elements, type) {
     var array = []
     for (var i = 0; i < elements.length; i++) {
@@ -392,9 +393,9 @@ function elementsToWords(elements, type) {
     return array;
 }
 
+// Creates Separator-objects out of the sep-class elements and returns them as an array.
 function addSeparatorList(elements, type) {
     var array = []
-    //var numberOfSeparators = elements.length;
     for (var i = 0; i < elements.length; i++) {
         var label = elements[i].id.replaceAll("separator", '');
         var index = parseInt(label);
@@ -405,6 +406,7 @@ function addSeparatorList(elements, type) {
     return array;
 }
 
+// Displays the Clusters and their contained Triples of already annotated for the selected sentence.
 function displayClusters(sentenceNumber) {
     var clusters = getClusters();
     let output = '';
@@ -426,7 +428,6 @@ function displayClusters(sentenceNumber) {
                         <i class="fas fa-times-circle mr-3 triple" type="button" id="tripleID-${clusters[i].clusterNumber}-${triples[j].tripleID}"></i>
                         <a>Triple ${j + 1}</a></br>
                 `
-                //var counter = 0;
                 var startSeparators = triples[j].startSeparators;
                 var endSeparators = triples[j].endSeparators;
                 var subjects = triples[j].subjects;
@@ -470,7 +471,6 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${subjects[k].index}</span><br/>
                         <pos>${subjects[k].posLabel}</pos></button>
                         `;
-                        //counter += 1;
                     }
                     for (var k = 0; k < predicates.length; k++) {
                         for (var l = 0; l < startSeparators.length; l++) {
@@ -511,7 +511,6 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${predicates[k].index}</span><br/>
                         <pos>${predicates[k].posLabel}</pos></button>
                         `;
-                        //counter += 1;
                     }
                     for (var k = 0; k < objects.length; k++) {
                         for (var l = 0; l < startSeparators.length; l++) {
@@ -549,11 +548,9 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${objects[k].index}</span><br/>
                         <pos>${objects[k].posLabel}</pos></button>
                         `;
-                        //counter += 1;
                     }
                 }
                 else {
-
                     for (var k = 0; k < subjects.length; k++) {
                         for (var l = 0; l < startSeparators.length; l++) {
                             if (startSeparators[l].index2 == subjects[k].index) {
@@ -628,7 +625,6 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${predicates[k].index}</span>
                         <pos hidden>${predicates[k].posLabel}</pos></button>
                         `;
-                        //counter += 1;
                     }
                     for (var k = 0; k < objects.length; k++) {
                         for (var l = 0; l < startSeparators.length; l++) {
@@ -666,24 +662,21 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${objects[k].index}</span>
                         <pos hidden>${objects[k].posLabel}</pos></button>
                         `;
-                        //counter += 1;
                     }
                 }
-
                 output += `
                     </div>
                 </div>
                 `;
             }
             output += '</div></div>';
-
         }
     }
-
     clusterInsert.innerHTML = output;
     addRemoveListenersCluster();
 }
 
+// Adds EventListeners to delete Clusters and Triples.
 function addRemoveListenersCluster() {
     var clusterEle = clusterInsert.getElementsByClassName('cluster');
     //console.log(elements);
@@ -698,6 +691,7 @@ function addRemoveListenersCluster() {
 
 }
 
+// Removes a button from the list of selected buttons.
 function removeButton(identifier) {
     //console.log('removed Button')
     var element = document.getElementById(identifier);
@@ -711,11 +705,13 @@ function removeButton(identifier) {
     selectionInsert.removeChild(separ);
 }
 
+// Resets the selection field and all selected buttons.
 function clearSelection() {
     selectionInsert.innerHTML = '';
     separatorCounter = 0;
 }
 
+// Creates a table containing last used save-files.
 function displayFilesTable(data) {
     //console.log(data);
     let output = '';
@@ -733,12 +729,12 @@ function displayFilesTable(data) {
     var elements = tableBody.getElementsByClassName('btn');
     //console.log(elements);
     for (var i = 0; i < elements.length; i++) {
-        console.log(elements[i].id);
+        //console.log(elements[i].id);
         elements[i].addEventListener("click", function () { loadFileByID(this.id) })
     }
 }
 
-
+// Activates/Deactivates a separator by manipulating the separator's classname.
 function activateSeparator(identifier) {
     var ele = document.getElementById(identifier);
     if (ele.className.includes('sep')) {
@@ -752,7 +748,7 @@ function activateSeparator(identifier) {
     else {
         ele.className += (' sep-start');
     }
-    console.log(ele);
+    //console.log(ele);
 }
 
 export { updateSentenceNumber }
