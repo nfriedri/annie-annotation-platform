@@ -15,6 +15,8 @@ var selectionInsert = document.getElementById("selection-insert");      // Field
 var clusterInsert = document.getElementById("cluster-insert");          // Area displaying all clusters and its contained triples for the selected sentence.
 var tableBody = document.getElementById('files-tbody')                  // Table displaying the five last used files out of the folder '/data'.
 
+var separatorCounter = 0;
+
 // Updates the displayed sentence number to the number of the currently displayed sentence. 
 // The variable sentence number is the index of the current sentence, totalNumber is the number of all sentences in the text file.
 function updateSentenceNumber(sentenceNumber, totalNumber) {

@@ -111,7 +111,7 @@ venv.bak/
 
 # file uploads
 uploads/
-data/
+#data/
 
 # stanford data
 stanford-corenlp-full-2018/
