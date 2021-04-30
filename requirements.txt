@@ -1,7 +1,7 @@
-numpy>=1.15.4
-flask>=1.1.2
-flask-cors>=3.0.8
-flaskwebgui>=0.1.13
-spacy>=2.3.2
+Flask==1.1.2
+Flask-Cors==3.0.8
+numpy==1.15.4
+spacy==3.0.6
 
-#python -m spacy download en_core_web_sm
+# gunicorn
+# python -m spacy download en_core_web_sm

@@ -1,5 +1,6 @@
 import json
 import spacy
+import os
 
 
 # Creates indices values for an array
@@ -17,7 +18,7 @@ def new_counter(array):
 class Tagger:
 
     def __init__(self):
-        self.nlp = spacy.load("en_core_web_sm")
+        self.nlp = None
         self.compound_words = False
         self.quotation_marks = False
         self.read_config_file()
@@ -31,6 +32,23 @@ class Tagger:
             self.compound_words = True
         if configs['Quotation-marks'] == 'true':
             self.quotation_marks = True
+
+        if configs["Language"] == "English":
+            os.system('python -m spacy download en_core_web_sm')
+            self.nlp = spacy.load("en_core_web_sm")
+            print("Successfully loaded language: ENGLISH")
+        if configs["Language"] == "German":
+            os.system('python -m spacy download de_core_news_sm')
+            self.nlp = spacy.load("de_core_news_sm")
+            print("Successfully loaded language: GERMAN")
+        if configs["Language"] == "French":
+            os.system('python -m spacy download fr_core_news_sm')
+            self.nlp = spacy.load("fr_core_news_sm")
+            print("Successfully loaded language: FRENCH")
+        if configs["Language"] == "Chinese":
+            os.system('python -m spacy download zh_core_web_sm')
+            self.nlp = spacy.load("zh_core_web_sm")
+            print("Successfully loaded language: CHINESE")
 
     # Creates an TaggedWord object for each token and collects its POS-Label, returns an array of TaggedWord objects.
     def tag_input(self, text):
@@ -58,7 +76,7 @@ class Tagger:
                 number = ele.get_index()
                 if number < len(result) and number != 0:
                     if ele.word == '`':
-                        if result[number+1] == '`':
+                        if result[number + 1] == '`':
                             result[number].word += result[number + 1].word
                             result.pop(number + 1)
                             changed = True

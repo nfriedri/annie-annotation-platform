@@ -1,14 +1,15 @@
 import glob
 import json
 import os
+import subprocess
+import sys
 from datetime import datetime
 
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
-from flaskwebgui import FlaskUI
 
-# from POS_Tagger import Tagger, TaggedWord
-import spacy
+from POS_Tagger import Tagger, TaggedWord
+# import spacy
 
 """Start App"""
 print("\033[96m")
@@ -36,32 +37,8 @@ config_file = "config.json"
 
 app = Flask(__name__)
 CORS(app)
-ui = FlaskUI(app, port=5789, maximized=False, width=1920, height=1080)
 
-'''Start POS-Tagger SpaCy'''
-nlp = None
-file = open(config_file, "r")
-data = json.load(file)
-language = data["Language"]
-
-if language == "English":
-    os.system('python -m spacy download en_core_web_sm')
-    nlp = spacy.load("en_core_web_sm")
-    print("Successfully loaded language: ENGLISH")
-if language == "German":
-    os.system('python -m spacy download de_core_news_sm')
-    nlp = spacy.load("de_core_news_sm")
-    print("Successfully loaded language: GERMAN")
-if language == "French":
-    os.system('python -m spacy download fr_core_news_sm')
-    nlp = spacy.load("fr_core_news_sm")
-    print("Successfully loaded language: FRENCH")
-if language == "Chinese":
-    os.system('python -m spacy download zh_core_web_sm')
-    nlp = spacy.load("zh_core_web_sm")
-    print("Successfully loaded language: CHINESE")
-
-# spacy = Tagger()
+spacy = Tagger()
 
 '''API Endpoints'''
 
@@ -69,7 +46,7 @@ if language == "Chinese":
 # Test-Endpoint
 @app.route('/', methods=['GET'])
 def index():
-    print('APP IS RUNNING')
+    # print('APP IS RUNNING')
     return render_template('index.html')
 
 
@@ -77,17 +54,10 @@ def index():
 @app.route('/pos-tagger', methods=['POST'])
 def input_tagger():
     content = request.get_json()
-    print(content['data'])
+    # print(content['data'])
     text = content['data']
-    tagged_tokens = nlp(text)
-    # print(tagged_tokens)
-    output = {}
-    counter = 0
-    for token in tagged_tokens:
-        output[counter] = token.text + " " + token.pos_
-        counter += 1
-    # tagged_tokens = spacy.tag_input(text)
-    # output = spacy.serialize_json(tagged_tokens)
+    tagged_tokens = spacy.tag_input(text)
+    output = spacy.serialize_json(tagged_tokens)
     # print(output)
     return output
 
@@ -167,7 +137,17 @@ def list_latest_files(number_of_files):
 
 
 '''Execute application and start GUI'''
+url = 'http://127.0.0.1:5789/'
+
+if sys.platform == 'win32':
+    os.startfile(url)
+elif sys.platform == 'darwin':
+    subprocess.Popen(['open', url])
+else:
+    try:
+        subprocess.Popen(['xdg-open', url])
+    except OSError:
+        print('Please open a browser on: ' + url)
 
 if __name__ == '__main__':
-    #   app.run()
-    ui.run()
+    app.run(port=5789)
