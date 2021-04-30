@@ -109,3 +109,7 @@ if configs["Language"] == "DESIRED_LANGUAGE":
 ```
 With DESIRED_LANGUAGE as name of the added language and SPACY_MODEL_LANGUAGE as model name, like e.g., "en_core_web_sm".
 To get the POS-labels displayed of the new language, adjust the config.json respectively.
+
+### Acknowledgements
+Developed by Niklas Friedrich, sponsored by Minying Yu, Kiril Gashteovski and Goran Glavas.
+This tool has been developed at the Data and Web Science Group, University of Mannheim.
