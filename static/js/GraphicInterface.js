@@ -48,6 +48,17 @@ function fullColoring(labelText, labelPos, index) {
         case 'ADJ':
             output += `<button class="btn btn-adjective ml-1 mb-1" id="posLabel-${index}">`;
             break;
+        case 'ORG': 
+        case 'GPE':
+        case 'MONEY':
+        case 'PERSON':
+        case 'NORP':
+        case 'DATE':
+        case 'ORDINAL':
+        case 'DATE':
+        case 'CARDINAL':
+            output += `<button class="btn btn-namedEntity ml-1 mb-1" id="posLabel-${index}">`;
+            break;
         default:
             output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${index}">`;
             break;

@@ -1,8 +1,9 @@
 {
 	"Language": "English",
-	"POSLabels": "false",
-	"Coloring": "verbs",
+	"POSLabels": "true",
+	"Coloring": "full",
 	"Word-sort": "true",
 	"Compound-words": "true",
-	"Quotation-marks": "true"
+	"Quotation-marks": "true",
+	"Named-Entities": "true"
 }

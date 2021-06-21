@@ -21,6 +21,7 @@ class Tagger:
         self.nlp = None
         self.compound_words = False
         self.quotation_marks = False
+        self.named_entites = False
         self.read_config_file()
         print('Spacy POS-Tagger started')
 
@@ -32,6 +33,8 @@ class Tagger:
             self.compound_words = True
         if configs['Quotation-marks'] == 'true':
             self.quotation_marks = True
+        if configs['Named-Entities'] == 'true':
+            self.named_entites = True
 
         if configs["Language"] == "English":
             os.system('python -m spacy download en_core_web_sm')
@@ -59,6 +62,14 @@ class Tagger:
             tagged_word = TaggedWord(word=str(token.text), index=counter, label=str(token.pos_))
             result.append(tagged_word)
             counter += 1
+
+        if self.named_entites:
+            for ele in result:
+                for i in range(len(doc.ents)):
+                    if doc.ents[i].text == ele.word:
+                        ele.label = str(doc.ents[i].label_)
+                        print(ele.word)
+                        print(ele.label)
 
         # Filters for special quotation marks and compound words
         changed = False
@@ -92,6 +103,7 @@ class Tagger:
         for element in tagged_words:
             output[element.index] = element.word + ' ' + element.label
         return output
+
 
 
 '''TaggedWord Class'''
