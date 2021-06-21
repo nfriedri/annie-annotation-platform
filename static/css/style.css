@@ -49,6 +49,17 @@
   border-color: rgb(0, 177, 177);
 }
 
+.btn-markedEntity {
+  color: white;
+  background-color: #FF0000;
+  border-color: #FF0000;
+}
+.btn-markedEntity:hover {
+  color: white;
+  background-color: #B40404;
+  border-color: #B40404;
+}
+
 /*Noun Button Appearance*/
 .btn-noun {
   color: white;

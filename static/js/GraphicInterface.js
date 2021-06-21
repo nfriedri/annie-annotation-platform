@@ -162,7 +162,7 @@ function highlightTriples(identifier) {
     var targetElement = document.getElementById(identifier);
     var tripleType = getActiveTripleBtnID();
     var elementType = targetElement.className;
-    if (elementType.includes('noun') || elementType.includes('verb') || elementType.includes('adjective') || elementType.includes('secondary')) {
+    if (elementType.includes('noun') || elementType.includes('verb') || elementType.includes('adjective') || elementType.includes('secondary') || elementType.includes('namedEntity')) {
         upgrade(targetElement, tripleType);
     }
     else {
@@ -180,7 +180,7 @@ function highlightTriplesFast(ev, identifier) {
         var targetElement = document.getElementById(identifier);
         var tripleType = getActiveTripleBtnID();
         var elementType = targetElement.className;
-        if (elementType.includes('noun') || elementType.includes('verb') || elementType.includes('adjective') || elementType.includes('secondary')) {
+        if (elementType.includes('noun') || elementType.includes('verb') || elementType.includes('adjective') || elementType.includes('secondary') || elementType.includes('namedEntity')) {
             upgrade(targetElement, tripleType);
         }
         else {
@@ -205,6 +205,8 @@ function upgrade(targetElement, tripleType) {
         case 'object-btn':
             targetElement.className = 'btn btn-object mk ml-1 mb-1 marked-object';
             break;
+        case 'markedEntity-btn':
+            targetElement.className = 'btn btn-markedEntity mk ml-1 mb-1 markedEntity'
     }
     if (isOptionalActive() && tripleType != 'no') {
         targetElement.className += ' marked-optional';
@@ -215,6 +217,7 @@ function upgrade(targetElement, tripleType) {
 
 // Removes markers from a selected element and changes its appearance to its originating style.
 function downgrade(targetElement) {
+    console.log('downgrade');
     var posLabel = targetElement.getElementsByTagName('pos')[0].innerHTML;
     if (targetElement.className.includes('marked-optional') || isOptionalActive()) {
         var copyID = targetElement.id + '-copy';
@@ -247,6 +250,17 @@ function downgrade(targetElement) {
                 default:
                     targetElement.className = "btn btn-secondary ml-1 mb-1";
                     break;
+                case 'ORG': 
+                case 'GPE':
+                case 'MONEY':
+                case 'PERSON':
+                case 'NORP':
+                case 'DATE':
+                case 'ORDINAL':
+                case 'DATE':
+                case 'CARDINAL':
+                    targetElement.className = "btn btn-namedEntity ml-1 mb-1";
+                    break;
             }
         }
         if (coloring == 'verbs') {
@@ -259,7 +273,7 @@ function downgrade(targetElement) {
                     break;
             }
         }
-        else {
+        if (coloring == 'none') {
             targetElement.className = "btn btn-secondary ml-1 mb-1";
         }
 
@@ -289,6 +303,9 @@ function getActiveTripleBtnID() {
     var activeBtn = btnGroup.getElementsByClassName('up')[0];
     if (activeBtn != undefined) {
         return activeBtn.id;
+    }
+    if (document.getElementById('markedEntity-btn').className.includes('up')){
+        return 'markedEntity-btn';
     }
     return 'no'
 }

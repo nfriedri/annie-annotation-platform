@@ -15,7 +15,7 @@
         <!-- Icons -->
         <script src="https://kit.fontawesome.com/1269d23fc6.js" crossorigin="anonymous"></script>
 
-        <!--<link rel="stylesheet" href="css/style.css">-->
+        <!--<link rel="stylesheet" href="../static/css/style.css">-->
         <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
         
 
@@ -171,6 +171,7 @@
                     <a class="btn btn-secondary down" id="object-btn" onclick="tripleButton(this.id)"> Select object(s) </a>
                 </div>
                
+                <button class="btn btn-secondary down ml-3" id="markedEntity-btn" onclick="markedEntityButton()">Named Entity</button>
                 <button class="btn btn-secondary down ml-3" id="optional-btn" onclick="optionalButton()">Optional</button>
                 <button class="btn btn-light ml-2" id="clear-btn">Clear</button>
                 
@@ -284,8 +285,8 @@
         </script>-->
         <script type="module" src="{{url_for('static', filename='js/App.js')}}"></script>
         <script src="{{url_for('static', filename='js/Visual.js')}}"></script>
-        <!--<script type="module" src="js/App.js"></script>-->
-        <!--<script src="js/Visual.js"></script>-->
+        <!--<script type="module" src="../static/js/App.js"></script>-->
+        <!--<script src="../static/js/Visual.js"></script>-->
     
     </body>
 </html>
