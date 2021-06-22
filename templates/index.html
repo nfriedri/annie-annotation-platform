@@ -171,7 +171,7 @@
                     <a class="btn btn-secondary down" id="object-btn" onclick="tripleButton(this.id)"> Select object(s) </a>
                 </div>
                
-                <button class="btn btn-secondary down ml-3" id="markedEntity-btn" onclick="markedEntityButton()">Named Entity</button>
+                <button class="btn btn-secondary down ml-3" id="markedEntity-btn" onclick="markedEntityButton()" hidden>Named Entity</button>
                 <button class="btn btn-secondary down ml-3" id="optional-btn" onclick="optionalButton()">Optional</button>
                 <button class="btn btn-light ml-2" id="clear-btn">Clear</button>
                 
@@ -194,6 +194,8 @@
                         </div>
                     </div>
                 </div>
+
+                <button class="btn btn-info mb-2 mr-2" id="add-NE-btn" hidden>Add Named Entity</button>
             </div>
 
             <div id="alert-div-cluster"></div>

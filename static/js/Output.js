@@ -8,12 +8,24 @@ function createOutputPreview() {
     var annotation = getAnnotation();
     var textFile = annotation.textFile;
     var clusters = annotation.clusters;
+    var entityList = annotation.entityList;
 
     let output = '';
     //console.log(clusters);
     sortClusters();
     var sentence_memory = -1;
 
+    // Go through all current Named Entity data
+    for (var i = 0; i < entityList.length; i++) {
+        var sentence = textFile.sentences[entityList[i].sentenceNumber];
+        var entities = entityList[i].entities;
+        
+        for (var j = 0; j < entities.length; j++) {
+            output += `${entities[j].text} [${entities[j].posLabel}] `
+        }
+        output += '\n'
+    }
+    
     //Go through all current cluster data 
     for (var i = 0; i < clusters.length; i++) {
         var sentence = textFile.sentences[clusters[i].sentenceNumber];

@@ -11,6 +11,7 @@ export class Annotation {
         this.name = "";                             // Name of the annotation (String).  
         this.clusters = [];                         // Array of annotated clusters.
         this.textFile = null;                       // Input text file data of class TextFile
+        this.entityList = [];
     }
 }
 
@@ -41,6 +42,7 @@ export class Cluster {
         this.sentenceNumber = sentenceNumber;       // Number of Sentence the cluster is generated from
         this.clusterNumber = clusterNumber;         // Number of the cluster within a sentence
         this.triples = [];                          // Array of class Triple
+        this.namedEntity = null;
     }
 }
 
@@ -55,6 +57,13 @@ export class Triple {
         this.objects = objects;                     // Array of class Word
         this.startSeparators = startSeparators;     // Array of class Separator
         this.endSeparators = endSeparators;         // Array of class Separator
+    }
+}
+
+export class NamedEntity {
+    constructor(entities, sentenceNumber) {
+        this.entities = entities;
+        this.sentenceNumber = sentenceNumber;
     }
 }
 

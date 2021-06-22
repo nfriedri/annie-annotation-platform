@@ -3,6 +3,7 @@ import json
 import os
 import subprocess
 import sys
+import mimetypes
 from datetime import datetime
 
 from flask import Flask, request, render_template, jsonify
@@ -11,8 +12,20 @@ from flask_cors import CORS
 from POS_Tagger import Tagger, TaggedWord
 # import spacy
 
+mimetypes.add_type('text/css', '.css')
+mimetypes.add_type('text/javascript', '.js')
+
+'''Config File'''
+PORT = 5789
+config_file = "config.json"
+
+file = open(config_file, "r")
+data = json.load(file)
+if data["PORT"] is not None:
+    PORT = data["PORT"]
+
 """Start App"""
-# print("\033[96m")
+print("\033[96m")
 print("""
 ___________________________________________________________________________________________________________________
   ____                   _____ ______                              _        _   _               _______          _ 
@@ -26,12 +39,8 @@ ________________________________________________________________________________
 ___________________________________________________________________________________________________________________
 
 """)
-# print("\033[0m")
+print("\033[0m")
 
-
-'''Config File'''
-
-config_file = "config.json"
 
 '''Initialize GUI'''
 
@@ -135,7 +144,7 @@ def list_latest_files(number_of_files):
         list_of_files.remove(latest_file)
     return data
 
-
+"""
 '''Execute application and start GUI'''
 url = 'http://127.0.0.1:5789/'
 
@@ -148,6 +157,6 @@ else:
         subprocess.Popen(['xdg-open', url])
     except OSError:
         print('Please open a browser on: ' + url)
-
+"""
 if __name__ == '__main__':
-    app.run(port=5789)
+    app.run(port=PORT)

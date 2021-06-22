@@ -2,6 +2,8 @@ import json
 import spacy
 import os
 
+# Accepted named entities
+entities = ['GPE', 'PERSON', 'LOC', 'ORG']
 
 # Creates indices values for an array
 def new_counter(array):
@@ -37,19 +39,19 @@ class Tagger:
             self.named_entites = True
 
         if configs["Language"] == "English":
-            os.system('python -m spacy download en_core_web_sm')
+            # os.system('python -m spacy download en_core_web_sm')
             self.nlp = spacy.load("en_core_web_sm")
             print("Successfully loaded language: ENGLISH")
         if configs["Language"] == "German":
-            os.system('python -m spacy download de_core_news_sm')
+            # os.system('python -m spacy download de_core_news_sm')
             self.nlp = spacy.load("de_core_news_sm")
             print("Successfully loaded language: GERMAN")
         if configs["Language"] == "French":
-            os.system('python -m spacy download fr_core_news_sm')
+            # os.system('python -m spacy download fr_core_news_sm')
             self.nlp = spacy.load("fr_core_news_sm")
             print("Successfully loaded language: FRENCH")
         if configs["Language"] == "Chinese":
-            os.system('python -m spacy download zh_core_web_sm')
+            # os.system('python -m spacy download zh_core_web_sm')
             self.nlp = spacy.load("zh_core_web_sm")
             print("Successfully loaded language: CHINESE")
 
@@ -66,10 +68,10 @@ class Tagger:
         if self.named_entites:
             for ele in result:
                 for i in range(len(doc.ents)):
-                    if doc.ents[i].text == ele.word:
-                        ele.label = str(doc.ents[i].label_)
-                        print(ele.word)
-                        print(ele.label)
+                    if doc.ents[i].label_ in entities:
+                        if doc.ents[i].text == ele.word:
+                            ele.label = str(doc.ents[i].label_)
+
 
         # Filters for special quotation marks and compound words
         changed = False
