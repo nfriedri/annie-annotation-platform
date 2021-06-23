@@ -4,7 +4,8 @@
 //IMPORTS
 import { Tokenizer } from './Tokenizer.js';
 import { TextFile, Annotation, Sentence, Triple, Word, Cluster } from './DataStructures.js';
-import { updateSentenceNumber, createTaggedContent, addHighlighters, getSelectionAsTriple, displayClusters, clearSelection, initConfigurations, displayFilesTable, addFastHighlighting } from './GraphicInterface.js';
+import { updateSentenceNumber, createTaggedContent, addHighlighters, getSelectionAsTriple, 
+    displayClusters, clearSelection, initConfigurations, displayFilesTable, addFastHighlighting } from './GraphicInterface.js';
 import { createOutputPreview, downloadOutput } from './Output.js'
 import { save, load, loadFile } from './LoadSave.js';
 
@@ -19,7 +20,10 @@ var annotate = new Annotation();                                                
 var enableWordSort = false;                                                             // Enabel automatic word sort, value set via config-file.
 var sentenceNumber = 0;                                                                 // Pointer, pointing to currently used sentence number.
 var clusterNumber = 0;                                                                  // Pointer, pointing to currently last given clusternumber for current sentence.
-var sentence = null                                                                     // Pointer, pointing to currently used sentence element.
+var sentence = null;                                                                    // Pointer, pointing to currently used sentence element.
+var namedEntities = false;                                                              // Enable NER
+var showIndices = false;                                                                // Shows Indices in Output file
+
 
 // Input Elements
 var inputUpload = document.getElementById('input-file');                                // File-upload field
@@ -62,6 +66,11 @@ function getFile() {
     return file;
 }
 
+// Return value of ShowIndices
+function getShowIndices() {
+    return showIndices;
+}
+
 // ----- Initialize Configuration
 
 // Requests the configuration data from the back-end.
@@ -84,7 +93,13 @@ async function getConfigData() {
                 if (data['Word-sort'] == 'true') {
                     enableWordSort = true;
                 }
-                initConfigurations(posLabel, data['Coloring'], enableWordSort);
+                if (data['Named-Entities'] == 'true') {
+                    namedEntities = true;
+                }
+                if (data['Show-Indices'] == 'true') {
+                    showIndices = true;
+                }
+                initConfigurations(posLabel, data['Coloring'], enableWordSort, namedEntities);
             });
     }
     catch (error) {
@@ -252,7 +267,6 @@ function addTripleToClusterNumber() {
                                     </div>`;
         setTimeout(function () { document.getElementById('cluster-alert').remove() }, 3000);
     }
-
 }
 
 // Finds the last used cluster for the current sentence. 
@@ -290,6 +304,7 @@ function createNewCluster() {
     annotate.clusters.push(cl);
     return cl;
 }
+
 
 // Deletes the Triple with the specified identifier-value (tripleID).
 function deleteTriple(identifier) {
@@ -527,7 +542,7 @@ startInputFileBtn.addEventListener("click", function () { startAnnotation(); });
 inputUpload.addEventListener("input", function () { fileUpload(); });
 addActiveClusterBtn.addEventListener('click', function () { addTripleToCluster(); displayClusters(sentenceNumber); });
 addNewCLusterBtn.addEventListener("click", function () { createNewCluster(); addTripleToCluster(); displayClusters(sentenceNumber); });
-addToButton.addEventListener("click", function () { addTripleToClusterNumber(); displayClusters(sentenceNumber); })
+addToButton.addEventListener("click", function () { addTripleToClusterNumber(); displayClusters(sentenceNumber); });
 saveButton.addEventListener("click", function () { saveAnnotationProgress(); save(url) });
 clearBtn.addEventListener("click", function () { clear() })
 nextBtn.addEventListener("click", function () { nextSentence() });
@@ -542,4 +557,4 @@ document.getElementById('load-last-btn').addEventListener("click", function () {
 filesTableIcon.addEventListener("click", function () { expandTable() })
 
 
-export { changeWordType, getClusters, getAnnotation, deleteCluster, deleteTriple, getFile, sortClusters, loadFileByID };
+export { changeWordType, getClusters, getAnnotation, deleteCluster, deleteTriple, getFile, sortClusters, loadFileByID, getShowIndices };

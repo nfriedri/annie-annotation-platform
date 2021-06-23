@@ -6,8 +6,9 @@ import { TextFile, Sentence, Triple, Word, Separator } from './DataStructures.js
 
 // Configuration data -- read-in by app.js script
 var showTag = false;            // true, false          --default-value: false.
-var coloring = 'verbs';         // full, verbs, none    --default-value: 'verbs'.
+var coloring = 'verbs';         // full, verbs, named-entities, none    --default-value: 'verbs'.
 var enableWordSort = false      // true, false          --default-value: false.
+var namedEntities = false       // true, false          --default-value: false
 
 // HTML area elements:
 var contentInsert = document.getElementById("content-insert");          // Field showing content (words, index and posLabel) of current, tokenized sentence.
@@ -26,13 +27,15 @@ function updateSentenceNumber(sentenceNumber, totalNumber) {
 }
 
 // Sets configuration variables to the values read in from the config-file.
-function initConfigurations(showTagContent, coloringContent, enableWordSortation) {
+function initConfigurations(showTagContent, coloringContent, enableWordSortation, namedEntities) {
     showTag = showTagContent;
     coloring = coloringContent;
     enableWordSort = enableWordSortation;
+    namedEntities = namedEntities;
     console.log(showTag);
     console.log(coloring);
     console.log(enableWordSort);
+    console.log(namedEntities)
 }
 
 // Adds classnames for different colored buttons for each type of word, based on the word's POS-label.
@@ -47,6 +50,12 @@ function fullColoring(labelText, labelPos, index) {
             break;
         case 'ADJ':
             output += `<button class="btn btn-adjective ml-1 mb-1" id="posLabel-${index}">`;
+            break;
+        case 'ORG': 
+        case 'GPE':
+        case 'LOC':
+        case 'PERSON':
+            output += `<button class="btn btn-namedEntity ml-1 mb-1" id="posLabel-${index}">`;
             break;
         default:
             output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${index}">`;
@@ -67,6 +76,35 @@ function verbColoring(labelText, labelPos, index) {
     switch (labelPos) {
         case 'VERB':
             output += `<button class="btn btn-verb ml-1 mb-1" id="posLabel-${index}">`;
+            break;
+        case 'ORG': 
+        case 'GPE':
+        case 'LOC':
+        case 'PERSON':
+            output += `<button class="btn btn-namedEntity ml-1 mb-1" id="posLabel-${index}">`;
+            break;
+        default:
+            output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${index}">`;
+            break;
+    }
+    if (showTag) {
+        output += `<text>${labelText}</text> <span class="badge badge-secondary">${index}</span><br/><pos>${labelPos}</pos></button>`;
+    }
+    else {
+        output += `<text>${labelText}</text> <span class="badge badge-secondary">${index}</span><pos hidden>${labelPos}</pos></button>`;
+    }
+    return output;
+}
+
+// Adds classnames only for different colored buttons of the NE word-types 'ORG', 'LOC', 'GPE', 'PERSON'
+function namedEntitiesColoring(labelText, labelPos, index) {
+    let output = '';
+    switch (labelPos) {
+        case 'ORG': 
+        case 'GPE':
+        case 'LOC':
+        case 'PERSON':
+            output += `<button class="btn btn-namedEntity ml-1 mb-1" id="posLabel-${index}">`;
             break;
         default:
             output += `<button class="btn btn-secondary ml-1 mb-1" id="posLabel-${index}">`;
@@ -111,6 +149,8 @@ function createTaggedContent(words) {
                 case 'verbs':
                     output += verbColoring(labelText, labelPos, index);
                     break;
+                case 'named-entities':
+                    output += namedEntitiesColoring(labelText, labelPos, index);
                 case 'none':
                     output += noneColoring(labelText, labelPos, index);
                     break;
@@ -151,7 +191,7 @@ function highlightTriples(identifier) {
     var targetElement = document.getElementById(identifier);
     var tripleType = getActiveTripleBtnID();
     var elementType = targetElement.className;
-    if (elementType.includes('noun') || elementType.includes('verb') || elementType.includes('adjective') || elementType.includes('secondary')) {
+    if (elementType.includes('noun') || elementType.includes('verb') || elementType.includes('adjective') || elementType.includes('secondary') || elementType.includes('namedEntity')) {
         upgrade(targetElement, tripleType);
     }
     else {
@@ -169,7 +209,7 @@ function highlightTriplesFast(ev, identifier) {
         var targetElement = document.getElementById(identifier);
         var tripleType = getActiveTripleBtnID();
         var elementType = targetElement.className;
-        if (elementType.includes('noun') || elementType.includes('verb') || elementType.includes('adjective') || elementType.includes('secondary')) {
+        if (elementType.includes('noun') || elementType.includes('verb') || elementType.includes('adjective') || elementType.includes('secondary') || elementType.includes('namedEntity')) {
             upgrade(targetElement, tripleType);
         }
         else {
@@ -204,6 +244,7 @@ function upgrade(targetElement, tripleType) {
 
 // Removes markers from a selected element and changes its appearance to its originating style.
 function downgrade(targetElement) {
+    console.log('downgrade');
     var posLabel = targetElement.getElementsByTagName('pos')[0].innerHTML;
     if (targetElement.className.includes('marked-optional') || isOptionalActive()) {
         var copyID = targetElement.id + '-copy';
@@ -233,6 +274,12 @@ function downgrade(targetElement) {
                 case 'ADJ':
                     targetElement.className = "btn btn-adjective ml-1 mb-1";
                     break;
+                case 'ORG':
+                case 'LOC':
+                case 'PERSON':
+                case 'GPE':
+                    targetElement.className = "btn btn-namedEntity ml-1 mb-1";
+                    break;
                 default:
                     targetElement.className = "btn btn-secondary ml-1 mb-1";
                     break;
@@ -243,12 +290,31 @@ function downgrade(targetElement) {
                 case 'VERB':
                     targetElement.className = "btn btn-verb ml-1 mb-1";
                     break;
+                case 'ORG':
+                case 'LOC':
+                case 'PERSON':
+                case 'GPE':
+                    targetElement.className = "btn btn-namedEntity ml-1 mb-1";
+                    break;
                 default:
                     targetElement.className = "btn btn-secondary ml-1 mb-1";
                     break;
             }
         }
-        else {
+        if (coloring == 'named-entities') {
+            switch (posLabel) {
+                case 'ORG':
+                case 'LOC':
+                case 'PERSON':
+                case 'GPE':
+                    targetElement.className = "btn btn-namedEntity ml-1 mb-1";
+                    break;
+                default:
+                    targetElement.className = "btn btn-secondary ml-1 mb-1";
+                    break;
+            }
+        }
+        if (coloring == 'none') {
             targetElement.className = "btn btn-secondary ml-1 mb-1";
         }
 
@@ -268,7 +334,6 @@ function downgrade(targetElement) {
                 }
             }
         }
-
     }
 }
 
@@ -278,6 +343,9 @@ function getActiveTripleBtnID() {
     var activeBtn = btnGroup.getElementsByClassName('up')[0];
     if (activeBtn != undefined) {
         return activeBtn.id;
+    }
+    if (document.getElementById('markedEntity-btn').className.includes('up')){
+        return 'markedEntity-btn';
     }
     return 'no'
 }
@@ -412,6 +480,7 @@ function addSeparatorList(elements, type) {
 function displayClusters(sentenceNumber) {
     var clusters = getClusters();
     let output = '';
+    
     for (var i = 0; i < clusters.length; i++) {
         if (clusters[i].sentenceNumber == sentenceNumber) {
             output += `
@@ -678,6 +747,7 @@ function displayClusters(sentenceNumber) {
     addRemoveListenersCluster();
 }
 
+
 // Adds EventListeners to delete Clusters and Triples.
 function addRemoveListenersCluster() {
     var clusterEle = clusterInsert.getElementsByClassName('cluster');
@@ -752,6 +822,7 @@ function activateSeparator(identifier) {
     }
     //console.log(ele);
 }
+
 
 export { updateSentenceNumber }
 export { createTaggedContent }

@@ -49,6 +49,17 @@
   border-color: rgb(0, 177, 177);
 }
 
+.btn-markedEntity {
+  color: white;
+  background-color: #FF0000;
+  border-color: #FF0000;
+}
+.btn-markedEntity:hover {
+  color: white;
+  background-color: #B40404;
+  border-color: #B40404;
+}
+
 /*Noun Button Appearance*/
 .btn-noun {
   color: white;
@@ -89,6 +100,20 @@
   color: white;
   background-color: #008800;
   border-color: #008800;
+}
+
+/*Named Entity Button Appearance*/
+.btn-namedEntity {
+  color: white;
+  background-color: #8904B1;
+  border-color: #8904B1;
+  opacity: 0.5;
+}
+.btn-namedEntity:hover
+.btn-namedEntity:focus {
+  color: white;
+  background-color: #6A0888;
+  border-color: #6A0888;
 }
 
 /*POS-Label element appearance*/

@@ -15,7 +15,7 @@
         <!-- Icons -->
         <script src="https://kit.fontawesome.com/1269d23fc6.js" crossorigin="anonymous"></script>
 
-        <!--<link rel="stylesheet" href="css/style.css">-->
+        <!--<link rel="stylesheet" href="../static/css/style.css">-->
         <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
         
 
@@ -78,7 +78,12 @@
         </div>
 
         <!--Input Selections-->
+        <!--
+        <div class="jumbotron mt-4 py-2 rounded" style="background-image: url({{url_for('static', filename='img/background_blank.jpg')}}); background-position:center; background-repeat: no-repeat; background-size: cover;" hidden>
+            <h1>Open Inforation Extraction Annotation Tool</h1>
 
+        </div>
+        -->
         <div class="container-fluid mt-4 bg-dark text-light py-2 rounded" id="input-area">
             <div class="container">
                 <p class="lead text-white">Upload a new document here:</p>
@@ -279,8 +284,8 @@
         </script>-->
         <script type="module" src="{{url_for('static', filename='js/App.js')}}"></script>
         <script src="{{url_for('static', filename='js/Visual.js')}}"></script>
-        <!--<script type="module" src="js/App.js"></script>-->
-        <!--<script src="js/Visual.js"></script>-->
+        <!--<script type="module" src="../static/js/App.js"></script>-->
+        <!--<script src="../static/js/Visual.js"></script>-->
     
     </body>
 </html>

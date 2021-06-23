@@ -43,6 +43,7 @@ function optionalButton() {
     }
 }
 
+
 // Appends the class 'down' to a button, later used for identifying selected content.
 function btnDown(identifier) {
     document.getElementById(identifier).className = document.getElementById(identifier).className.replace(identifier.substring(0, identifier.length - 4), 'secondary');

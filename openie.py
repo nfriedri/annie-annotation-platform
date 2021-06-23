@@ -3,6 +3,7 @@ import json
 import os
 import subprocess
 import sys
+import mimetypes
 from datetime import datetime
 
 from flask import Flask, request, render_template, jsonify
@@ -10,6 +11,18 @@ from flask_cors import CORS
 
 from POS_Tagger import Tagger, TaggedWord
 # import spacy
+
+mimetypes.add_type('text/css', '.css')
+mimetypes.add_type('text/javascript', '.js')
+
+'''Config File'''
+PORT = 5789
+config_file = "config.json"
+
+file = open(config_file, "r")
+data = json.load(file)
+if data["PORT"] is not None:
+    PORT = data["PORT"]
 
 """Start App"""
 print("\033[96m")
@@ -29,18 +42,28 @@ ________________________________________________________________________________
 print("\033[0m")
 
 
-'''Config File'''
-
-config_file = "config.json"
-
 '''Initialize GUI'''
+
+# Hide Development Server Warning
+cli = sys.modules['flask.cli']
+cli.show_server_banner = lambda *x: None
 
 app = Flask(__name__)
 CORS(app)
 
 spacy = Tagger()
 
+# app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
+
 '''API Endpoints'''
+
+
+# Try to force browser to reload files from app not from cache
+@app.after_request
+def add_header(response):
+    response.cache_control.max_age = 10
+    response.cache_control.public = True
+    return response
 
 
 # Test-Endpoint
@@ -150,4 +173,4 @@ else:
         print('Please open a browser on: ' + url)
 
 if __name__ == '__main__':
-    app.run(port=5789)
+    app.run(port=PORT)

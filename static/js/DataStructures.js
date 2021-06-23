@@ -41,6 +41,7 @@ export class Cluster {
         this.sentenceNumber = sentenceNumber;       // Number of Sentence the cluster is generated from
         this.clusterNumber = clusterNumber;         // Number of the cluster within a sentence
         this.triples = [];                          // Array of class Triple
+        this.namedEntity = null;
     }
 }
 

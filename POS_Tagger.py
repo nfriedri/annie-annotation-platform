@@ -2,6 +2,8 @@ import json
 import spacy
 import os
 
+# Accepted named entities
+entities = ['GPE', 'PERSON', 'LOC', 'ORG']
 
 # Creates indices values for an array
 def new_counter(array):
@@ -21,6 +23,7 @@ class Tagger:
         self.nlp = None
         self.compound_words = False
         self.quotation_marks = False
+        self.named_entites = False
         self.read_config_file()
         print('Spacy POS-Tagger started')
 
@@ -32,22 +35,36 @@ class Tagger:
             self.compound_words = True
         if configs['Quotation-marks'] == 'true':
             self.quotation_marks = True
+        if configs['Named-Entities'] == 'true':
+            self.named_entites = True
 
         if configs["Language"] == "English":
-            os.system('python -m spacy download en_core_web_sm')
-            self.nlp = spacy.load("en_core_web_sm")
+            try:
+                self.nlp = spacy.load("en_core_web_sm")
+            except:
+                os.system('python -m spacy download en_core_web_sm')
+                self.nlp = spacy.load("en_core_web_sm")
             print("Successfully loaded language: ENGLISH")
         if configs["Language"] == "German":
-            os.system('python -m spacy download de_core_news_sm')
-            self.nlp = spacy.load("de_core_news_sm")
+            try:
+                self.nlp = spacy.load("de_core_news_sm")
+            except:
+                os.system('python -m spacy download de_core_news_sm')
+                self.nlp = spacy.load("de_core_news_sm")
             print("Successfully loaded language: GERMAN")
         if configs["Language"] == "French":
-            os.system('python -m spacy download fr_core_news_sm')
-            self.nlp = spacy.load("fr_core_news_sm")
+            try:
+                self.nlp = spacy.load("fr_core_news_sm")
+            except:
+                os.system('python -m spacy download fr_core_news_sm')
+                self.nlp = spacy.load("fr_core_news_sm")
             print("Successfully loaded language: FRENCH")
         if configs["Language"] == "Chinese":
-            os.system('python -m spacy download zh_core_web_sm')
-            self.nlp = spacy.load("zh_core_web_sm")
+            try:
+                self.nlp = spacy.load("zh_core_web_sm")
+            except:
+                os.system('python -m spacy download zh_core_web_sm')
+                self.nlp = spacy.load("zh_core_web_sm")
             print("Successfully loaded language: CHINESE")
 
     # Creates an TaggedWord object for each token and collects its POS-Label, returns an array of TaggedWord objects.
@@ -59,6 +76,14 @@ class Tagger:
             tagged_word = TaggedWord(word=str(token.text), index=counter, label=str(token.pos_))
             result.append(tagged_word)
             counter += 1
+
+        if self.named_entites:
+            for ele in result:
+                for i in range(len(doc.ents)):
+                    if doc.ents[i].label_ in entities:
+                        if doc.ents[i].text == ele.word:
+                            ele.label = str(doc.ents[i].label_)
+
 
         # Filters for special quotation marks and compound words
         changed = False
@@ -92,6 +117,7 @@ class Tagger:
         for element in tagged_words:
             output[element.index] = element.word + ' ' + element.label
         return output
+
 
 
 '''TaggedWord Class'''

@@ -205,7 +205,7 @@ function loadData(content) {
         sentencesArray.push(sentence);
     }
     textFile.sentences = sentencesArray;
-
+ 
     var jsonClusters = content["clusters"];
     var clusters = []
 
