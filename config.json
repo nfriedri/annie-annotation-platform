@@ -1,10 +1,11 @@
 {
 	"Language": "English",
 	"POSLabels": "true",
-	"Coloring": "full",
+	"Coloring": "verbs",
 	"Word-sort": "true",
 	"Compound-words": "true",
 	"Quotation-marks": "true",
 	"Named-Entities": "true",
+	"Show-Indices": "true",
 	"PORT": 5789
 }

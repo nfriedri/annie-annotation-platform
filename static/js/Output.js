@@ -1,31 +1,23 @@
 // --- Output script ---
 // Creates the text representation of the selected Triples and Clusters.
 
-import { getAnnotation, sortClusters } from './App.js';
+import { getAnnotation, sortClusters, getShowIndices } from './App.js';
+
 
 // Analyzes the selected Clusters and its contained Triples and creates a text representation of it.
+
 function createOutputPreview() {
     var annotation = getAnnotation();
     var textFile = annotation.textFile;
     var clusters = annotation.clusters;
-    var entityList = annotation.entityList;
+    var indices = getShowIndices();
+    //console.log('Indices are set to:' + indices);
 
     let output = '';
     //console.log(clusters);
     sortClusters();
     var sentence_memory = -1;
 
-    // Go through all current Named Entity data
-    for (var i = 0; i < entityList.length; i++) {
-        var sentence = textFile.sentences[entityList[i].sentenceNumber];
-        var entities = entityList[i].entities;
-        
-        for (var j = 0; j < entities.length; j++) {
-            output += `${entities[j].text} [${entities[j].posLabel}] `
-        }
-        output += '\n'
-    }
-    
     //Go through all current cluster data 
     for (var i = 0; i < clusters.length; i++) {
         var sentence = textFile.sentences[clusters[i].sentenceNumber];
@@ -89,10 +81,20 @@ function createOutputPreview() {
                     }
                 }
                 if (!subjects[k].optional) {
-                    output += subjects[k].text + '(' + subjects[k].index + ') ';
+                    if (indices) {
+                        output += subjects[k].text + '(' + subjects[k].index + ') ';
+                    }
+                    else {
+                        output += subjects[k].text + ' ';
+                    }
                 }
                 else {
-                    output += '[' + subjects[k].text + '(' + subjects[k].index + ')] ';
+                    if(indices) {
+                        output += '[' + subjects[k].text + '(' + subjects[k].index + ')] ';
+                    }
+                    else {
+                        output += '[' + subjects[k].text + '] ';
+                    }
                 }
             }
             output += '--> ';
@@ -134,10 +136,22 @@ function createOutputPreview() {
                     }
                 }
                 if (!predicates[k].optional) {
-                    output += predicates[k].text + '(' + predicates[k].index + ') ';
+                    if (indices) {
+                        output += predicates[k].text + '(' + predicates[k].index + ') ';
+                    }
+                    else {
+                        output += predicates[k].text + ' ';
+                    }
+
                 }
                 else {
-                    output += '[' + predicates[k].text + '(' + predicates[k].index + ')] ';
+                    if (indices) {
+                        output += '[' + predicates[k].text + '(' + predicates[k].index + ')] ';
+                    }
+                    else {
+                        output += '[' + predicates[k].text + '] ';
+                    }
+                    
                 }
             }
             output += '--> ';
@@ -179,10 +193,20 @@ function createOutputPreview() {
                     }
                 }
                 if (!objects[k].optional) {
-                    output += objects[k].text + '(' + objects[k].index + ') ';
+                    if (indices) {
+                        output += objects[k].text + '(' + objects[k].index + ') ';
+                    }
+                    else {
+                        output += objects[k].text + ' ';
+                    }
                 }
                 else {
-                    output += '[' + objects[k].text + '(' + objects[k].index + ')] ';
+                    if (indices) {
+                        output += '[' + objects[k].text + '(' + objects[k].index + ')] ';
+                    }
+                    else {
+                        output += '[' + objects[k].text + '] ';
+                    }
                 }
             }
             output += '\n';

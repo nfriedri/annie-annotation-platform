@@ -1,12 +1,12 @@
 // --- Graphic Interface scripts ---
 // Functions steering the GUI and its appearance.
 
-import { changeWordType, getClusters, getEntities, deleteCluster, deleteTriple, deleteEntity, loadFileByID } from './App.js';
-import { TextFile, Sentence, Triple, Word, Separator, NamedEntity } from './DataStructures.js';
+import { changeWordType, getClusters, deleteCluster, deleteTriple, loadFileByID } from './App.js';
+import { TextFile, Sentence, Triple, Word, Separator } from './DataStructures.js';
 
 // Configuration data -- read-in by app.js script
 var showTag = false;            // true, false          --default-value: false.
-var coloring = 'verbs';         // full, verbs, namedentities, none    --default-value: 'verbs'.
+var coloring = 'verbs';         // full, verbs, named-entities, none    --default-value: 'verbs'.
 var enableWordSort = false      // true, false          --default-value: false.
 var namedEntities = false       // true, false          --default-value: false
 
@@ -149,7 +149,7 @@ function createTaggedContent(words) {
                 case 'verbs':
                     output += verbColoring(labelText, labelPos, index);
                     break;
-                case 'namedentities':
+                case 'named-entities':
                     output += namedEntitiesColoring(labelText, labelPos, index);
                 case 'none':
                     output += noneColoring(labelText, labelPos, index);
@@ -234,8 +234,6 @@ function upgrade(targetElement, tripleType) {
         case 'object-btn':
             targetElement.className = 'btn btn-object mk ml-1 mb-1 marked-object';
             break;
-        case 'markedEntity-btn':
-            targetElement.className = 'btn btn-markedEntity mk ml-1 mb-1 marked-entity'
     }
     if (isOptionalActive() && tripleType != 'no') {
         targetElement.className += ' marked-optional';
@@ -399,12 +397,6 @@ function getSelectionAsTriple() {
     return triple;
 }
 
-function getSelectedNamedEntities() {
-    var entityElements = selectionInsert.getElementsByClassName('marked-entity');
-    var entity = elementsToWords(entityElements, 'namedEntity')
-    return entity;
-}
-
 // Copies the selected buttons into the selection field and obtains always their order. This method is used if the config-variable word-sort is set true.
 function copyToSelection() {
     selectionInsert.innerHTML = '';
@@ -487,31 +479,8 @@ function addSeparatorList(elements, type) {
 // Displays the Clusters and their contained Triples of already annotated for the selected sentence.
 function displayClusters(sentenceNumber) {
     var clusters = getClusters();
-    var entities = getEntities();
     let output = '';
-    for (var i = 0; i < entities.length; i++) {
-        if (entities[i].sentenceNumber == sentenceNumber) {
-            output += `
-            <div class="container-fluid bg-dark py-3 mt-2 rounded">
-                <div class="d-flex" >
-                    <i class="fas fa-times-circle mr-3 entity" type="button" id="cluster-${entities[i].sentenceNumber}-1"></i>
-                    <h6 class="card-title">Named Entities</h6>
-                </div>
-                <div class="card bg-secondary text-light">
-                    <div class="card-body">
-                
-            `;
-            var entity = entities[i].entities
-            for (var k = 0; k < entity.length; k++) {
-                output += `
-                <button class="btn btn-namedEntity ml-1 mb-1">${entity[k].text}
-                <span class="badge badge-secondary">${entity[k].index}</span><br/>
-                <pos>${entity[k].posLabel}</pos></button>
-                `;
-            }
-            output += '</div></div></div>';
-        }
-    }
+    
     for (var i = 0; i < clusters.length; i++) {
         if (clusters[i].sentenceNumber == sentenceNumber) {
             output += `
@@ -775,16 +744,9 @@ function displayClusters(sentenceNumber) {
         }
     }
     clusterInsert.innerHTML = output;
-    addRemoveListenersEntities();
     addRemoveListenersCluster();
 }
 
-function addRemoveListenersEntities() {
-    var entityEle = clusterInsert.getElementsByClassName('entity');
-    for (var i = 0; i < entityEle.length; i++) {
-        entityEle[i].addEventListener("click", function () { deleteEntity() })
-    }
-}
 
 // Adds EventListeners to delete Clusters and Triples.
 function addRemoveListenersCluster() {
@@ -861,11 +823,6 @@ function activateSeparator(identifier) {
     //console.log(ele);
 }
 
-// Displays the selection button for NER
-function displayNamedEntityButton() {
-    document.getElementById('markedEntity-btn').removeAttribute('hidden');
-    document.getElementById('add-NE-btn').removeAttribute('hidden');
-}
 
 export { updateSentenceNumber }
 export { createTaggedContent }
@@ -877,5 +834,3 @@ export { displayClusters }
 export { clearSelection }
 export { initConfigurations }
 export { displayFilesTable }
-export { displayNamedEntityButton }
-export { getSelectedNamedEntities }

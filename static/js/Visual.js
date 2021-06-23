@@ -43,20 +43,6 @@ function optionalButton() {
     }
 }
 
-function markedEntityButton() {
-    var element = document.getElementById('markedEntity-btn');
-    //console.log(element.className)
-    if (element.className.includes('secondary')) {
-        btnUp('markedEntity-btn');
-        btnDown('subject-btn');
-        btnDown('predicate-btn');
-        btnDown('object-btn');
-        btnDown('optional-btn');
-    }
-    else {
-        btnDown('markedEntity-btn');
-    }
-}
 
 // Appends the class 'down' to a button, later used for identifying selected content.
 function btnDown(identifier) {

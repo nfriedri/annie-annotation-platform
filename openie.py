@@ -44,12 +44,26 @@ print("\033[0m")
 
 '''Initialize GUI'''
 
+# Hide Development Server Warning
+cli = sys.modules['flask.cli']
+cli.show_server_banner = lambda *x: None
+
 app = Flask(__name__)
 CORS(app)
 
 spacy = Tagger()
 
+# app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
+
 '''API Endpoints'''
+
+
+# Try to force browser to reload files from app not from cache
+@app.after_request
+def add_header(response):
+    response.cache_control.max_age = 10
+    response.cache_control.public = True
+    return response
 
 
 # Test-Endpoint
@@ -144,7 +158,7 @@ def list_latest_files(number_of_files):
         list_of_files.remove(latest_file)
     return data
 
-"""
+
 '''Execute application and start GUI'''
 url = 'http://127.0.0.1:5789/'
 
@@ -157,6 +171,6 @@ else:
         subprocess.Popen(['xdg-open', url])
     except OSError:
         print('Please open a browser on: ' + url)
-"""
+
 if __name__ == '__main__':
     app.run(port=PORT)

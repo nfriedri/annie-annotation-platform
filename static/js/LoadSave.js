@@ -2,14 +2,13 @@
 // Functions required for serializing content into a JSON-file and deseriealizing from JSON into the tool.
 
 import { getAnnotation } from './App.js'
-import { TextFile, Annotation, Sentence, Triple, Word, Cluster, Separator, NamedEntity } from './DataStructures.js';
+import { TextFile, Annotation, Sentence, Triple, Word, Cluster, Separator } from './DataStructures.js';
 
 // Function creating a dictionary containing current process & data.
 function saveData() {
     var data = {};
     var annotations = getAnnotation();
     var clusters = annotations.clusters;
-    var entityList = annotations.entityList;
     var file = annotations.textFile;
 
     // Save input text data
@@ -37,26 +36,6 @@ function saveData() {
     fileData['name'] = file.name;
     fileData['text'] = file.text;
     fileData['sentences'] = sentenceArray;
-
-    // Save Named Entity data
-    var entityListData = []
-    for (var i=0; i < entityList; i++ ) {
-        var entitiesData = {};
-        var entities = entityList[i].entities;
-        var entitiesArray = []
-        for (var j=0; j < entities.length; j++) {
-            var entityData = {}
-            entityData['text'] = entities[j].text;
-            entityData['posLabel'] = entities[j].posLabel;
-            entityData['index'] = entities[j].index;
-            entityData['type'] = entities[j].type;
-            entityData['optional'] = entities[j].optional;
-            entitiesArray.push(entityData);
-        }
-        entitiesData['sentenceNumber'] = entities.sentenceNumber;
-        entitiesData['entities'] = entitiesArray;
-        entityListData.push(entitiesData);
-    }
 
     // Save Cluster data
     var clusterArray = [];
@@ -134,7 +113,6 @@ function saveData() {
     data['name'] = Date.now().toString();
     data['textFile'] = fileData;
     data['clusters'] = clusterArray;
-    data['entityList'] = entityListData;
 
     return data;
 }
@@ -227,25 +205,6 @@ function loadData(content) {
         sentencesArray.push(sentence);
     }
     textFile.sentences = sentencesArray;
-
-    // Deserialize Named Entity
-    
-    var jsonEntityList = content["entityList"]
-    var entityList = []
-    for (var i=0; i < jsonEntityList; i++ ) {
-        var activeEntity = jsonEntityList[i];
-        var entities = [];
-        for (var k = 0; k < activeEntity.length; k++) {
-            var activeJsonWord = activeEntity[k];
-            var word = new Word(activeEntity["text"], activeEntity["index"]);
-            word.posLabel = activeEntity["posLabel"];
-            word.type = activeEntity["type"];
-            word.optional = activeEntity["optional"];
-            entities.push(word);
-        }
-        var entity = new NamedEntity(entities, activeEntity["sentenceNumber"]);
-        entityList.push(entity);    
-    } 
  
     var jsonClusters = content["clusters"];
     var clusters = []
@@ -315,7 +274,6 @@ function loadData(content) {
     annotate.name = textFile.name;
     annotate.textFile = textFile;
     annotate.clusters = clusters;
-    annotate.entityList = entityList;
     //console.log(annotate);
     return annotate
 }

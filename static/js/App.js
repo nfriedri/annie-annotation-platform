@@ -3,10 +3,9 @@
 
 //IMPORTS
 import { Tokenizer } from './Tokenizer.js';
-import { TextFile, Annotation, Sentence, Triple, Word, Cluster, NamedEntity } from './DataStructures.js';
+import { TextFile, Annotation, Sentence, Triple, Word, Cluster } from './DataStructures.js';
 import { updateSentenceNumber, createTaggedContent, addHighlighters, getSelectionAsTriple, 
-    displayClusters, clearSelection, initConfigurations, displayFilesTable, addFastHighlighting, 
-    displayNamedEntityButton, getSelectedNamedEntities } from './GraphicInterface.js';
+    displayClusters, clearSelection, initConfigurations, displayFilesTable, addFastHighlighting } from './GraphicInterface.js';
 import { createOutputPreview, downloadOutput } from './Output.js'
 import { save, load, loadFile } from './LoadSave.js';
 
@@ -21,8 +20,10 @@ var annotate = new Annotation();                                                
 var enableWordSort = false;                                                             // Enabel automatic word sort, value set via config-file.
 var sentenceNumber = 0;                                                                 // Pointer, pointing to currently used sentence number.
 var clusterNumber = 0;                                                                  // Pointer, pointing to currently last given clusternumber for current sentence.
-var sentence = null;
-var namedEntities = false;                                                                   // Pointer, pointing to currently used sentence element.
+var sentence = null;                                                                    // Pointer, pointing to currently used sentence element.
+var namedEntities = false;                                                              // Enable NER
+var showIndices = false;                                                                // Shows Indices in Output file
+
 
 // Input Elements
 var inputUpload = document.getElementById('input-file');                                // File-upload field
@@ -35,7 +36,6 @@ var startInputFileBtn = document.getElementById('start-input-file');            
 var clearBtn = document.getElementById('clear-btn');                                    // "Clear"-button
 var addNewCLusterBtn = document.getElementById('new-cluster-btn');                      // "Add to new cluster"-button
 var addActiveClusterBtn = document.getElementById('active-cluster-btn');                // "Add to active cluster"-button
-var addNEButton = document.getElementById('add-NE-btn');
 var addToButton = document.getElementById('add-to-btn');                                // "Add to X"-button
 var saveButton = document.getElementById('save-button');                                // "Save"-button
 var nextBtn = document.getElementById('next-btn');                                      // "Next"-button
@@ -56,11 +56,6 @@ function getClusters() {
     return clusters;
 }
 
-function getEntities() {
-    var entities = annotate.entityList;
-    return entities;
-}
-
 // Returns the current Annotation object.
 function getAnnotation() {
     return annotate;
@@ -69,6 +64,11 @@ function getAnnotation() {
 // Returns the current TextFile object.
 function getFile() {
     return file;
+}
+
+// Return value of ShowIndices
+function getShowIndices() {
+    return showIndices;
 }
 
 // ----- Initialize Configuration
@@ -95,7 +95,9 @@ async function getConfigData() {
                 }
                 if (data['Named-Entities'] == 'true') {
                     namedEntities = true;
-                    displayNamedEntityButton();
+                }
+                if (data['Show-Indices'] == 'true') {
+                    showIndices = true;
                 }
                 initConfigurations(posLabel, data['Coloring'], enableWordSort, namedEntities);
             });
@@ -267,24 +269,6 @@ function addTripleToClusterNumber() {
     }
 }
 
-function addEntity() {
-    var entityList = annotate.entityList;
-    var entityOfSentence = getSelectedNamedEntities();
-    var appended = false; 
-    for (var i=0; i<entityList.length; i++) {
-        if (entityList[i].sentenceNumber == sentenceNumber) {
-            entityList[i].entities = entityList[i].entities.concat(entityOfSentence);
-            appended = true;
-        }
-    }
-    if (!appended) {
-        var entity = new NamedEntity(entityOfSentence, sentenceNumber);
-        entityList.push(entity); 
-    }
-    console.log('ADDED ENTITY')
-    console.log(entityList);
-}
-
 // Finds the last used cluster for the current sentence. 
 // If there is no cluster for the current sentence yet, it creates a new one.
 function findCluster() {
@@ -319,19 +303,6 @@ function createNewCluster() {
     var cl = new Cluster(sentenceNumber, clusterNumber);
     annotate.clusters.push(cl);
     return cl;
-}
-
-function deleteEntity() {
-    var entities = annotate.entityList
-    for (var i = 0; i < entities.length; i++) {
-        if (entities[i].sentenceNumber == sentenceNumber) {
-            entities.splice(i, 1);
-            console.log('removed ele');
-        }
-    }
-    displayClusters(sentenceNumber);
-    console.log('DELETED ENTITY')
-    console.log(entityList);
 }
 
 
@@ -572,7 +543,6 @@ inputUpload.addEventListener("input", function () { fileUpload(); });
 addActiveClusterBtn.addEventListener('click', function () { addTripleToCluster(); displayClusters(sentenceNumber); });
 addNewCLusterBtn.addEventListener("click", function () { createNewCluster(); addTripleToCluster(); displayClusters(sentenceNumber); });
 addToButton.addEventListener("click", function () { addTripleToClusterNumber(); displayClusters(sentenceNumber); });
-addNEButton.addEventListener("click", function () { addEntity(); displayClusters(sentenceNumber) });
 saveButton.addEventListener("click", function () { saveAnnotationProgress(); save(url) });
 clearBtn.addEventListener("click", function () { clear() })
 nextBtn.addEventListener("click", function () { nextSentence() });
@@ -587,4 +557,4 @@ document.getElementById('load-last-btn').addEventListener("click", function () {
 filesTableIcon.addEventListener("click", function () { expandTable() })
 
 
-export { changeWordType, getClusters, getAnnotation, deleteCluster, deleteTriple, deleteEntity, getFile, sortClusters, loadFileByID, getEntities };
+export { changeWordType, getClusters, getAnnotation, deleteCluster, deleteTriple, getFile, sortClusters, loadFileByID, getShowIndices };
