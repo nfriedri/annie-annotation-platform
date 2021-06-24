@@ -505,31 +505,12 @@ function displayClusters(sentenceNumber) {
                 var predicates = triples[j].predicates;
                 var objects = triples[j].objects;
                 if (showTag) {
-                    for (var k = 0; k < subjects.length; k++) {
-                        for (var l = 0; l < startSeparators.length; l++) {
-                            if (startSeparators[l].index2 == subjects[k].index) {
-                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
-                            }
-                            else {
-                                if (k > 0) {
-                                    if (startSeparators[l].index1 == subjects[k - 1].index) {
-                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
-                                    }
-                                }
-                            }
+                    for (var l = 0; l < startSeparators.length; l++) {
+                        if (startSeparators[l].index1 == 0) {
+                            output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>';
                         }
-                        for (var l = 0; l < endSeparators.length; l++) {
-                            if (endSeparators[l].index2 == subjects[k].index) {
-                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
-                            }
-                            else {
-                                if (k > 0) {
-                                    if (endSeparators[l].index1 == subjects[k - 1].index) {
-                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
-                                    }
-                                }
-                            }
-                        }
+                    }
+                    for (var k = 0; k < subjects.length; k++) {                        
                         if (subjects[k].optional) {
                             output += `<button class="btn btn-subject ml-1 mb-1" style="text-decoration: underline;">`
                         }
@@ -542,32 +523,18 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${subjects[k].index}</span><br/>
                         <pos>${subjects[k].posLabel}</pos></button>
                         `;
-                    }
-                    for (var k = 0; k < predicates.length; k++) {
                         for (var l = 0; l < startSeparators.length; l++) {
-                            if (startSeparators[l].index2 == predicates[k].index) {
-                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
-                            }
-                            else {
-                                if (k > 0) {
-                                    if (startSeparators[l].index1 == predicates[k - 1].index) {
-                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
-                                    }
-                                }
+                            if (startSeparators[l].index1 == subjects[k].index) {
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>';
                             }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
-                            if (endSeparators[l].index2 == predicates[k].index) {
-                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
-                            }
-                            else {
-                                if (k > 0) {
-                                    if (endSeparators[l].index1 == predicates[k - 1].index) {
-                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
-                                    }
-                                }
+                            if (endSeparators[l].index1 == subjects[k].index) {
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>';
                             }
                         }
+                    }
+                    for (var k = 0; k < predicates.length; k++) {
                         if (predicates[k].setSep) {
                             output += '';
                         }
@@ -582,32 +549,18 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${predicates[k].index}</span><br/>
                         <pos>${predicates[k].posLabel}</pos></button>
                         `;
-                    }
-                    for (var k = 0; k < objects.length; k++) {
                         for (var l = 0; l < startSeparators.length; l++) {
-                            if (startSeparators[l].index2 == objects[k].index) {
-                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
-                            }
-                            else {
-                                if (k > 0) {
-                                    if (startSeparators[l].index1 == objects[k - 1].index) {
-                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
-                                    }
-                                }
+                            if (startSeparators[l].index1 == predicates[k].index) {
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>';
                             }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
-                            if (endSeparators[l].index2 == objects[k].index) {
-                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
-                            }
-                            else {
-                                if (k > 0) {
-                                    if (endSeparators[l].index1 == objects[k - 1].index) {
-                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
-                                    }
-                                }
+                            if (endSeparators[l].index1 == predicates[k].index) {
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>';
                             }
                         }
+                    }
+                    for (var k = 0; k < objects.length; k++) {
                         if (objects[k].optional) {
                             output += `<button class="btn btn-object ml-1 mb-1" style="text-decoration: underline;">`
                         }
@@ -619,34 +572,25 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${objects[k].index}</span><br/>
                         <pos>${objects[k].posLabel}</pos></button>
                         `;
-                    }
-                }
-                else {
-                    for (var k = 0; k < subjects.length; k++) {
                         for (var l = 0; l < startSeparators.length; l++) {
-                            if (startSeparators[l].index2 == subjects[k].index) {
-                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
-                            }
-                            else {
-                                if (k > 0) {
-                                    if (startSeparators[l].index1 == subjects[k - 1].index) {
-                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
-                                    }
-                                }
+                            if (startSeparators[l].index1 == objects[k].index) {
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>';
                             }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
-                            if (endSeparators[l].index2 == subjects[k].index) {
-                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
-                            }
-                            else {
-                                if (k > 0) {
-                                    if (endSeparators[l].index1 == subjects[k - 1].index) {
-                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
-                                    }
-                                }
+                            if (endSeparators[l].index1 == objects[k].index) {
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>';
                             }
                         }
+                    }
+                }
+                else {
+                    for (var l = 0; l < startSeparators.length; l++) {
+                        if (startSeparators[l].index1 == 0) {
+                            output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>';
+                        }
+                    }
+                    for (var k = 0; k < subjects.length; k++) {
                         if (subjects[k].optional) {
                             output += `<button class="btn btn-subject ml-1 mb-1" style="text-decoration: underline;">`
                         }
@@ -658,33 +602,18 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${subjects[k].index}</span>
                         <pos hidden>${subjects[k].posLabel}</pos></button>
                         `;
-                        //counter += 1;
-                    }
-                    for (var k = 0; k < predicates.length; k++) {
                         for (var l = 0; l < startSeparators.length; l++) {
-                            if (startSeparators[l].index2 == predicates[k].index) {
-                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
-                            }
-                            else {
-                                if (k > 0) {
-                                    if (startSeparators[l].index1 == predicates[k - 1].index) {
-                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
-                                    }
-                                }
+                            if (startSeparators[l].index1 == subjects[k].index) {
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>';
                             }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
-                            if (endSeparators[l].index2 == predicates[k].index) {
-                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
-                            }
-                            else {
-                                if (k > 0) {
-                                    if (endSeparators[l].index1 == predicates[k - 1].index) {
-                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
-                                    }
-                                }
+                            if (endSeparators[l].index1 == subjects[k].index) {
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>';
                             }
                         }
+                    }
+                    for (var k = 0; k < predicates.length; k++) {
                         if (predicates[k].optional) {
                             output += `<button class="btn btn-predicate ml-1 mb-1" style="text-decoration: underline;">`
                         }
@@ -696,32 +625,18 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${predicates[k].index}</span>
                         <pos hidden>${predicates[k].posLabel}</pos></button>
                         `;
-                    }
-                    for (var k = 0; k < objects.length; k++) {
                         for (var l = 0; l < startSeparators.length; l++) {
-                            if (startSeparators[l].index2 == objects[k].index) {
-                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
-                            }
-                            else {
-                                if (k > 0) {
-                                    if (startSeparators[l].index1 == objects[k - 1].index) {
-                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>'
-                                    }
-                                }
+                            if (startSeparators[l].index1 == predicates[k].index) {
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>';
                             }
                         }
                         for (var l = 0; l < endSeparators.length; l++) {
-                            if (endSeparators[l].index2 == objects[k].index) {
-                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
-                            }
-                            else {
-                                if (k > 0) {
-                                    if (endSeparators[l].index1 == objects[k - 1].index) {
-                                        output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>'
-                                    }
-                                }
+                            if (endSeparators[l].index1 == predicates[k].index) {
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>';
                             }
                         }
+                    }
+                    for (var k = 0; k < objects.length; k++) {
                         if (objects[k].optional) {
                             output += `<button class="btn btn-object ml-1 mb-1" style="text-decoration: underline;">`
                         }
@@ -733,6 +648,16 @@ function displayClusters(sentenceNumber) {
                         <span class="badge badge-secondary">${objects[k].index}</span>
                         <pos hidden>${objects[k].posLabel}</pos></button>
                         `;
+                        for (var l = 0; l < startSeparators.length; l++) {
+                            if (startSeparators[l].index1 == objects[k].index) {
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-start"></i>';
+                            }
+                        }
+                        for (var l = 0; l < endSeparators.length; l++) {
+                            if (endSeparators[l].index1 == objects[k].index) {
+                                output += '<i class="fas fa-grip-lines-vertical fa-lg sep-end"></i>';
+                            }
+                        }
                     }
                 }
                 output += `

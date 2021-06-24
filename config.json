@@ -6,6 +6,6 @@
 	"Compound-words": "true",
 	"Quotation-marks": "true",
 	"Named-Entities": "true",
-	"Show-Indices": "true",
+	"Show-Indices": "false",
 	"PORT": 5789
 }

@@ -61,8 +61,11 @@ spacy = Tagger()
 # Try to force browser to reload files from app not from cache
 @app.after_request
 def add_header(response):
-    response.cache_control.max_age = 10
-    response.cache_control.public = True
+    # response.cache_control.max_age = 10
+    # response.cache_control.public = True
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
     return response
 
 

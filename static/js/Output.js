@@ -40,46 +40,16 @@ function createOutputPreview() {
             var startSeparators = triples[j].startSeparators;
             var endSeparators = triples[j].endSeparators;
             var separateActive = false;
+            var separatorCross = false;
 
-            console.log(startSeparators);
-            console.log(endSeparators);
-
+            for (var l = 0; l < startSeparators.length; l++) {
+                if (startSeparators[l].index1 == 0) {
+                    output += '[';
+                    separateActive = true;
+                }
+            } 
             // Go through all subjects of the current Triple
             for (var k = 0; k < subjects.length; k++) {
-                for (var l = 0; l < startSeparators.length; l++) {
-                    if (startSeparators[l].index2 == subjects[k].index) {
-                        if (separateActive) {
-                            output += '] '
-                        }
-                        output += '[';
-                        separateActive = true;
-                    }
-                    else {
-                        if (k > 0) {
-                            if (startSeparators[l].index1 == subjects[k - 1].index) {
-                                if (separateActive) {
-                                    output += '] '
-                                }
-                                output += '[';
-                                separateActive = true;
-                            }
-                        }
-                    }
-                }
-                for (var l = 0; l < endSeparators.length; l++) {
-                    if (endSeparators[l].index2 == subjects[k].index) {
-                        output += '] ';
-                        separateActive = false;
-                    }
-                    else {
-                        if (k > 0) {
-                            if (endSeparators[l].index1 == subjects[k - 1].index) {
-                                output += '] ';
-                                separateActive = false;
-                            }
-                        }
-                    }
-                }
                 if (!subjects[k].optional) {
                     if (indices) {
                         output += subjects[k].text + '(' + subjects[k].index + ') ';
@@ -96,45 +66,36 @@ function createOutputPreview() {
                         output += '[' + subjects[k].text + '] ';
                     }
                 }
-            }
-            output += '--> ';
-
-            // Go through all predicates of the current Triple
-            for (var k = 0; k < predicates.length; k++) {
                 for (var l = 0; l < startSeparators.length; l++) {
-                    if (startSeparators[l].index2 == predicates[k].index) {
+                    if (startSeparators[l].index1 == subjects[k].index) {
+                        separatorCross = false;
                         if (separateActive) {
                             output += '] '
                         }
-                        output += '[';
-                        separateActive = true;
-                    }
-                    else {
-                        if (k > 0) {
-                            if (startSeparators[l].index1 == predicates[k - 1].index) {
-                                if (separateActive) {
-                                    output += '] '
-                                }
-                                output += '[';
-                                separateActive = true;
-                            }
+                        if (k == subjects.length-1) {
+                            separatorCross = true;
+                            output += '--> [';
                         }
+                        else {
+                            output += '[';
+                        }
+                        separateActive = true;
                     }
                 }
                 for (var l = 0; l < endSeparators.length; l++) {
-                    if (endSeparators[l].index2 == predicates[k].index) {
+                    if (endSeparators[l].index1 == subjects[k].index) {
                         output += '] ';
                         separateActive = false;
                     }
-                    else {
-                        if (k > 0) {
-                            if (endSeparators[l].index1 == predicates[k - 1].index) {
-                                output += '] ';
-                                separateActive = false;
-                            }
-                        }
-                    }
                 }
+            }
+            
+            if (!separatorCross){
+                output += '--> ';
+            }
+            
+            // Go through all predicates of the current Triple
+            for (var k = 0; k < predicates.length; k++) {
                 if (!predicates[k].optional) {
                     if (indices) {
                         output += predicates[k].text + '(' + predicates[k].index + ') ';
@@ -150,48 +111,36 @@ function createOutputPreview() {
                     }
                     else {
                         output += '[' + predicates[k].text + '] ';
-                    }
-                    
+                    } 
                 }
-            }
-            output += '--> ';
-
-            // Go through all objects of the current Triple
-            for (var k = 0; k < objects.length; k++) {
                 for (var l = 0; l < startSeparators.length; l++) {
-                    if (startSeparators[l].index2 == objects[k].index) {
+                    if (startSeparators[l].index1 == predicates[k].index) {
+                        separatorCross = false;
                         if (separateActive) {
                             output += '] '
                         }
-                        output += '[';
-                        separateActive = true;
-                    }
-                    else {
-                        if (k > 0) {
-                            if (startSeparators[l].index1 == objects[k - 1].index) {
-                                if (separateActive) {
-                                    output += '] '
-                                }
-                                output += '[';
-                                separateActive = true;
-                            }
+                        if (k == predicates.length-1) {
+                            separatorCross = true;
+                            output += '--> [';
                         }
+                        else {
+                            output += '[';
+                        }
+                        separateActive = true;
                     }
                 }
                 for (var l = 0; l < endSeparators.length; l++) {
-                    if (endSeparators[l].index2 == objects[k].index) {
+                    if (endSeparators[l].index1 == predicates[k].index) {
                         output += '] ';
                         separateActive = false;
                     }
-                    else {
-                        if (k > 0) {
-                            if (endSeparators[l].index1 == objects[k - 1].index) {
-                                output += '] ';
-                                separateActive = false;
-                            }
-                        }
-                    }
                 }
+            }
+            if (!separatorCross) {
+                output += '--> ';
+            }
+            // Go through all objects of the current Triple
+            for (var k = 0; k < objects.length; k++) {
                 if (!objects[k].optional) {
                     if (indices) {
                         output += objects[k].text + '(' + objects[k].index + ') ';
@@ -206,6 +155,22 @@ function createOutputPreview() {
                     }
                     else {
                         output += '[' + objects[k].text + '] ';
+                    }
+                }
+                for (var l = 0; l < startSeparators.length; l++) {
+                    if (startSeparators[l].index1 == objects[k].index) {
+                        separatorCross = false;
+                        if (separateActive) {
+                            output += '] '
+                        }
+                        output += '[';
+                        separateActive = true;
+                    }
+                }
+                for (var l = 0; l < endSeparators.length; l++) {
+                    if (endSeparators[l].index1 == objects[k].index) {
+                        output += '] ';
+                        separateActive = false;
                     }
                 }
             }
