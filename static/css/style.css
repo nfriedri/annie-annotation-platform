@@ -3,26 +3,26 @@
 /*Subject Button Appearance*/
 .btn-subject {
   color: white;
-  background-color: #0ab60a;
-  border-color: #0ab60a;
+  background-color: #DF0D0D;
+  border-color: #DF0D0D;
   touch-action: manipulation;
 }
 .btn-subject:hover {
   color: white;
-  background-color: #03a003cc;
-  border-color: #03a003cc;
+  background-color: #B40A0A;
+  border-color: #B40A0A;
 }
 
 /*Predicate Button Appearance*/
 .btn-predicate {
   color: white;
-  background-color: #ffbf00;
-  border-color: #ffbf00;
+  background-color: #8904B1;
+  border-color: #8904B1;
 }
 .btn-predicate:hover {
   color: white;
-  background-color: #b88a00;
-  border-color: #b88a00;
+  background-color: #6A0888;
+  border-color: #6A0888;
 }
 
 /*Object Button Appearance*/
@@ -47,17 +47,6 @@
   color: white;
   background-color: rgb(0, 177, 177);
   border-color: rgb(0, 177, 177);
-}
-
-.btn-markedEntity {
-  color: white;
-  background-color: #FF0000;
-  border-color: #FF0000;
-}
-.btn-markedEntity:hover {
-  color: white;
-  background-color: #B40404;
-  border-color: #B40404;
 }
 
 /*Noun Button Appearance*/
@@ -105,15 +94,15 @@
 /*Named Entity Button Appearance*/
 .btn-namedEntity {
   color: white;
-  background-color: #8904B1;
-  border-color: #8904B1;
-  opacity: 0.5;
+  background-color: #FE9A2E;
+  border-color: #FE9A2E;
+  opacity: 0.7;
 }
 .btn-namedEntity:hover
 .btn-namedEntity:focus {
   color: white;
-  background-color: #6A0888;
-  border-color: #6A0888;
+  background-color: #df8729;
+  border-color: #df8729;
 }
 
 /*POS-Label element appearance*/
