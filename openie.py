@@ -9,7 +9,7 @@ from datetime import datetime
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
 
-from POS_Tagger import Tagger, TaggedWord
+from tokenizer import Tagger, TaggedWord
 # import spacy
 
 mimetypes.add_type('text/css', '.css')
