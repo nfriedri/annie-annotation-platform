@@ -145,6 +145,55 @@ function save(url) {
     }
 }
 
+// Download savedata
+function downloadSaveData(filename) {
+    var data = saveData();
+    var content = JSON.stringify(data);
+    console.log('function download savedata with ' + filename);
+    var element = document.createElement('a');
+    element.style.display = 'none';
+    element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('download', filename);
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    console.log('Download successful')
+}
+
+function downloadSaveDataControl() {
+    if (document.getElementById('current-output').innerHTML != "") {
+        var textFile = getAnnotation().textFile
+        var filename = textFile.name + '-progress.json';
+        if (filename.includes('.txt')) {
+            filename = filename.replace('.txt', '');
+        }
+        downloadSaveData(filename);
+    }
+    else {
+        document.getElementById('download-area').innerHTML += `<div class="alert alert-danger mt-3" role="alert" id="download-alert">
+                                    Nothing there yet to download :)
+                                    </div>`;
+        setTimeout(function () { document.getElementById('download-alert').remove() }, 4000);
+    }
+}
+
+// Create File-element for download
+function download(filename) {
+    console.log('function download with ' + filename);
+    var element = document.createElement('a');
+    var content = document.getElementById('current-output').innerHTML;
+    content = content.replaceAll('<br>', '\r\n');
+    content = content.replaceAll('&gt;', '>');
+    element.style.display = 'none';
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('download', filename + '-annotated.tsv');
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    console.log('Download successful')
+}
+
+
 // Sends request to get saved data by its filename.
 async function requestLoad(url, fileName) {
     var endpoint = url + 'load?name=' + fileName;
@@ -319,4 +368,4 @@ async function loadFile(file) {
     return results;
 }
 
-export { save, load, loadFile }
+export { save, downloadSaveDataControl, load, loadFile }

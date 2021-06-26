@@ -7,7 +7,7 @@ import { TextFile, Annotation, Sentence, Triple, Word, Cluster } from './DataStr
 import { updateSentenceNumber, createTaggedContent, addHighlighters, getSelectionAsTriple, 
     displayClusters, clearSelection, initConfigurations, displayFilesTable, addFastHighlighting } from './GraphicInterface.js';
 import { createOutputPreview, downloadOutput } from './Output.js'
-import { save, load, loadFile } from './LoadSave.js';
+import { save, downloadSaveDataControl, load, loadFile } from './LoadSave.js';
 
 // Back-end URL (Localhost)
 const url = 'http://127.0.0.1:5789/';
@@ -44,6 +44,7 @@ var firstBtn = document.getElementById('jump-first-btn');                       
 var lastBtn = document.getElementById('jump-last-btn');                                 // "Last"-button
 var goToBtn = document.getElementById('go-to-btn');                                     // "Go to X"-button
 var downloadBtn = document.getElementById('download-btn')                               // "Download"-button
+var downloadProgressBtn = document.getElementById('download-progress-btn');             // "Download-Progress"-button
 var filesTableIcon = document.getElementById('files-table-icon');                       // "Table-Icon"-button
 //var settingsBtn = document.getElementById('settings-btn');
 
@@ -551,6 +552,7 @@ firstBtn.addEventListener("click", function () { jumpFirst() });
 lastBtn.addEventListener("click", function () { jumpLast() });
 goToBtn.addEventListener("click", function () { goToPhraseX() });
 downloadBtn.addEventListener("click", function () { downloadOutput() });
+downloadProgressBtn.addEventListener("click", function () { downloadSaveDataControl() });
 //settingsBtn.addEventListener("click", function () { showSettings() });
 document.getElementById('load-selected-btn').addEventListener("click", function () { loadFileDirect() });
 document.getElementById('load-last-btn').addEventListener("click", function () { loadFileFlask() });

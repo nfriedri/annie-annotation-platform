@@ -92,7 +92,8 @@ def input_tagger():
 @app.route('/save', methods=['POST'])
 def save_file():
     data = request.get_json()
-    new_file = open('data/' + data['name'] + '.json', 'w')
+    filename = data['textFile']['name'].replace(".txt", "") + '-' + data['name'] + '.json'
+    new_file = open('data/' + filename, 'w')
     new_file.write(json.dumps(data))
     new_file.close()
     return json.dumps({'success': True}), 200, {'Content-Type': 'application/json'}
