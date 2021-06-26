@@ -1,6 +1,10 @@
 // --- APP Scripts ---
 // Steering of the complete application.
 
+// Back-end URL (Localhost)
+const port = 5789;
+const url = `http://127.0.0.1:${port}/`;
+
 //IMPORTS
 import { Tokenizer } from './Tokenizer.js';
 import { TextFile, Annotation, Sentence, Triple, Word, Cluster } from './DataStructures.js';
@@ -8,9 +12,6 @@ import { updateSentenceNumber, createTaggedContent, addHighlighters, getSelectio
     displayClusters, clearSelection, initConfigurations, displayFilesTable, addFastHighlighting } from './GraphicInterface.js';
 import { createOutputPreview, downloadOutput } from './Output.js'
 import { save, downloadSaveDataControl, load, loadFile } from './LoadSave.js';
-
-// Back-end URL (Localhost)
-const url = 'http://127.0.0.1:5789/';
 
 
 // --- Initialization ---
