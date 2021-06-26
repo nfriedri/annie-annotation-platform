@@ -72,17 +72,35 @@ class Tagger:
         result = []
         counter = 0
         doc = self.nlp(text)
+        print(text)
+        print(doc.ents)
+
+
+
+
         for token in doc:
+            # print(token.text)
             tagged_word = TaggedWord(word=str(token.text), index=counter, label=str(token.pos_))
             result.append(tagged_word)
             counter += 1
 
         if self.named_entites:
-            for ele in result:
-                for i in range(len(doc.ents)):
-                    if doc.ents[i].label_ in entities:
-                        if doc.ents[i].text == ele.word:
-                            ele.label = str(doc.ents[i].label_)
+            for i in range(len(doc.ents)):
+                # print(doc.ents[i].text)
+                if doc.ents[i].text in text:
+                    # print(doc.ents[i].text + " ---- TRUE")
+                    entity = doc.ents[i].text
+                    ent_label = doc.ents[i].label_
+                    if ' ' in entity:
+                        entity = entity.rsplit(' ')
+                        for ele in result:
+                            for ent in entity:
+                                if ent == ele.word:
+                                    ele.label = str(ent_label)
+                    else:
+                        for ele in result:
+                            if entity == ele.word:
+                                ele.label = str(ent_label)
 
 
         # Filters for special quotation marks and compound words

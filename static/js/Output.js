@@ -84,6 +84,9 @@ function createOutputPreview() {
                 }
                 for (var l = 0; l < endSeparators.length; l++) {
                     if (endSeparators[l].index1 == subjects[k].index) {
+                        if (output.charAt(output.length-1) == ' ') {
+                            output = output.slice(0, -1);
+                        }
                         output += '] ';
                         separateActive = false;
                     }
@@ -131,6 +134,9 @@ function createOutputPreview() {
                 }
                 for (var l = 0; l < endSeparators.length; l++) {
                     if (endSeparators[l].index1 == predicates[k].index) {
+                        if (output.charAt(output.length-1) == ' ') {
+                            output = output.slice(0, -1);
+                        }
                         output += '] ';
                         separateActive = false;
                     }
@@ -169,6 +175,9 @@ function createOutputPreview() {
                 }
                 for (var l = 0; l < endSeparators.length; l++) {
                     if (endSeparators[l].index1 == objects[k].index) {
+                        if (output.charAt(output.length-1) == ' ') {
+                            output = output.slice(0, -1);
+                        }
                         output += '] ';
                         separateActive = false;
                     }
