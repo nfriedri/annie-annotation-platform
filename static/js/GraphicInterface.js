@@ -151,6 +151,7 @@ function createTaggedContent(words) {
                     break;
                 case 'named-entities':
                     output += namedEntitiesColoring(labelText, labelPos, index);
+                    break;
                 case 'none':
                     output += noneColoring(labelText, labelPos, index);
                     break;
