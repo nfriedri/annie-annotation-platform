@@ -212,7 +212,7 @@ async function startAnnotation() {
     sentence.words = await getPOStagging();
     console.log(sentence);
     clearSelection();
-    updateSentenceNumber(sentenceNumber, file.sentences.length);
+    updateSentenceNumber(sentenceNumber, file.sentences.length, sentence.text);
     createTaggedContent(sentence.words);
     addHighlighters();
     addFastHighlighting();
@@ -225,7 +225,7 @@ async function newSentenceAnnotation() {
     console.log(file);
     sentence = file.sentences[sentenceNumber];
     sentence.words = await getPOStagging();
-    updateSentenceNumber(sentenceNumber, file.sentences.length)
+    updateSentenceNumber(sentenceNumber, file.sentences.length, sentence.text)
     initClusterNumber(sentenceNumber);
     clearSelection();
     createTaggedContent(sentence.words);

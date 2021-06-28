@@ -3,9 +3,9 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>OpenIE - Annotation Tool</title>
+        <title>AnnIE - Annotation Tool</title>
         <!--<link rel="icon" href="{{url_for('static', filename='img/favicon.png')}}">-->
-        <link rel="icon" href="{{url_for('static', filename='img/favicon.png')}}">
+        <link rel="icon" href="{{url_for('static', filename='img/AnnIE_favicon.png')}}">
         <!--<link rel="icon" href="img/favicon.png">-->
 
         <!--Bootstrap-->
@@ -24,8 +24,8 @@
 
         <!--Navigation bar on top-->
         <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top mx-4">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="index.html"> <img src="{{url_for('static', filename='img/logo.jpg')}}" width="30" height="30"> OpenIE Annotation Tool </a>
+            <div class="container-fluid rounded">
+                <a class="navbar-brand" href="index.html"> <img class="mr-2" src="{{url_for('static', filename='img/AnnIE_logo.png')}}" width="120" height="40">- Annotation Tool </a>
                 <!--<a class="navbar-brand" href="index.html"> <img src="img/logo.jpg" width="30" height="30"> OpenIE Annotator Platform </a>-->
                 <!--<button class="btn btn-danger ml-auto" style="float:right;" id="exit-button">EXIT</button>-->
                <!--<i class="fas fa-sliders-h text-light" type="button" id="settings-btn"></i>-->
@@ -158,7 +158,7 @@
                 </div>
             </div>
 
-            <p class="lead text-white" id="sentence-number">Sentence #:</p>
+            <p><a class="lead text-white mr-5" id="sentence-number">Sentence #:</a><a id="sentence-text"></a></p>
             <div class="card mt-2 mb-3">
                 <div class="card-body text-dark" id="content-insert">
                    
@@ -246,12 +246,11 @@
         <footer class="bg-light text-dark">
             <hr class="mb-5" style="border-color: black;">
             <div class="row">
-            <div class="col-12 col-md">
-                    <img src="{{url_for('static', filename='img/logo.png')}}" width="40%">
-                    <!--<img src="img/logo.png" width="40%">-->
-                <li class="list-unstyled text-small"><a class="text-muted ml-4" target="_blank" href="https://www.uni-mannheim.de">University of Mannheim</a></li>
-                <small class="d-block mb-3 ml-4 text-muted">&copy; 2020</small>
-            </div>
+                <div class="col-12 col-md ml-auto">
+                    <li class="list-unstyled ml-4"><img src="{{url_for('static', filename='img/AnnIE_logo.png')}}" width="30%"></li>
+                    <li class="list-unstyled text-small ml-4">An Interactive Annotation Framework for Open Information Extraction</li>
+                    <small class="d-block mb-3 ml-4 text-muted">&copy; 2021</small>
+                </div>
             <!--
             <div class="col-6 col-md">
                 <h5 class="text-primary">About</h5>
@@ -273,8 +272,8 @@
             <div class="col-6 col-md ml-auto">
                 <h5 class="text-primary">Impressum</h5>
                 <ul class="list-unstyled text-small">
-                    <li><a class="text-muted" target="_blank" href="https://www.uni-mannheim.de/dws/">Data and Web Science Group</a></li>
-                    <li><a class="text-muted" target="_blank" href="https://www.uni-mannheim.de">University of Mannheim</a></li>
+                    <li><a class="text-muted">Submitted to</a></li>
+                    <li><a class="text-muted">EMNLP 2021</a></li>
                 </ul>
             </div>
         </footer>

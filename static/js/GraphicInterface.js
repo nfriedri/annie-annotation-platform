@@ -20,10 +20,11 @@ var separatorCounter = 0;
 
 // Updates the displayed sentence number to the number of the currently displayed sentence. 
 // The variable sentence number is the index of the current sentence, totalNumber is the number of all sentences in the text file.
-function updateSentenceNumber(sentenceNumber, totalNumber) {
+function updateSentenceNumber(sentenceNumber, totalNumber, sentenceText) {
     var number = sentenceNumber + 1;
     console.log(number)
     document.getElementById('sentence-number').innerHTML = 'Sentence # ' + number + ' / ' + totalNumber + ':';
+    document.getElementById('sentence-text').innerHTML = sentenceText;
 }
 
 // Sets configuration variables to the values read in from the config-file.
