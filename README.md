@@ -66,21 +66,24 @@ Disabling "Show-Indices" will display the output without any indices after the t
 
 ### Special Features
 As long as the "CTRL"-button is pressed, you can hover over words to select them faster 
-then by clicking on every word separately.
+than by clicking on every word separately.
 
 ### Adding languages
-For adding languages to the tool, search fo the spacy language model name here: https://spacy.io/models
+For adding languages to the tool, search fo the spacy language model name here: https://spacy.io/models.
 Then add to the POS_Tagger.py file into the last row of the definition "read_config_file(self)" (currently line 52)
 following lines:
 ```python
 if configs["Language"] == "DESIRED_LANGUAGE":
-    os.system('python -m spacy download SPACY_MODEL_NAME')
-    self.nlp = spacy.load("SPACY_MODEL_NAME")
-            print("Successfully loaded language: DESIRED_LANGUAGE")
+    try:
+        self.nlp = spacy.load("SPACYY_MODEL_NAME")
+    except:
+        os.system('python -m spacy download SPACY_MODEL_NAME')
+        self.nlp = spacy.load("SPACY_MODEL_NAME")
+    print("Successfully loaded language: DESIRED_LANGUAGE")
 ```
 With DESIRED_LANGUAGE as the name of the added language and SPACY_MODEL_LANGUAGE as model name, like e.g., "en_core_web_sm".
 To get the POS labels displayed of the new language, adjust the config.json respectively.
 
 ### Acknowledgements
 Developed by Niklas Friedrich, sponsored by Minying Yu, Kiril Gashteovski and Goran Glavas.
-This tool has been developed at the Data and Web Science Group, University of Mannheim.
+This tool has been developed at the Natural Language Processing and Information Retrieval Group at the University of Mannheim.
