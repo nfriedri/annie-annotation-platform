@@ -1,4 +1,4 @@
-# OpenIE - Annotation Tool
+# AnnIE - Annotation Platform
 
 Tool for open information extraction annotations using text files.
 The output is delivered in .tsv-files
