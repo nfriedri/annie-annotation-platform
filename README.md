@@ -75,7 +75,7 @@ following lines:
 ```python
 if configs["Language"] == "DESIRED_LANGUAGE":
     try:
-        self.nlp = spacy.load("SPACYY_MODEL_NAME")
+        self.nlp = spacy.load("SPACY_MODEL_NAME")
     except:
         os.system('python -m spacy download SPACY_MODEL_NAME')
         self.nlp = spacy.load("SPACY_MODEL_NAME")
