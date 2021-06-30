@@ -39,7 +39,7 @@ python openie.py
 By executing, the CMD should show something like 'Running on http://127.0.0.1:5789/ '. 
 A browser window of your standard browser should be opened automatically. 
 If not, open a browser and go to http://127.0.0.1:5789/.
-In case the port differs to 5789, the port value in the URL inside the index.html has to be adjusted coherently.
+In case the port differs to 5789, the port variable in line 5 of the App.js file has to be adjusted coherently.
 
 ### Settings
 The settings of the tool can be adjusted in the config.json file.
