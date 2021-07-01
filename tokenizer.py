@@ -1,4 +1,6 @@
 import json
+import platform
+
 import spacy
 import os
 
@@ -42,28 +44,40 @@ class Tagger:
             try:
                 self.nlp = spacy.load("en_core_web_sm")
             except:
-                os.system('python -m spacy download en_core_web_sm')
+                if platform.system() == "Windows":
+                    os.system('python -m spacy download en_core_web_sm')
+                else:
+                    os.system('python3 -m spacy download en_core_web_sm')
                 self.nlp = spacy.load("en_core_web_sm")
             print("Successfully loaded language: ENGLISH")
         if configs["Language"] == "German":
             try:
                 self.nlp = spacy.load("de_core_news_sm")
             except:
-                os.system('python -m spacy download de_core_news_sm')
+                if platform.system() == "Windows":
+                    os.system('python -m spacy download de_core_news_sm')
+                else:
+                    os.system('python3 -m spacy download de_core_news_sm')
                 self.nlp = spacy.load("de_core_news_sm")
             print("Successfully loaded language: GERMAN")
         if configs["Language"] == "French":
             try:
                 self.nlp = spacy.load("fr_core_news_sm")
             except:
-                os.system('python -m spacy download fr_core_news_sm')
+                if platform.system() == "Windows":
+                    os.system('python -m spacy download fr_core_news_sm')
+                else:
+                    os.system('python3 -m spacy download fr_core_news_sm')
                 self.nlp = spacy.load("fr_core_news_sm")
             print("Successfully loaded language: FRENCH")
         if configs["Language"] == "Chinese":
             try:
                 self.nlp = spacy.load("zh_core_web_sm")
             except:
-                os.system('python -m spacy download zh_core_web_sm')
+                if platform.system() == "Windows":
+                    os.system('python -m spacy download zh_core_web_sm')
+                else:
+                    os.system('python3 -m spacy download zh_core_web_sm')
                 self.nlp = spacy.load("zh_core_web_sm")
             print("Successfully loaded language: CHINESE")
 
