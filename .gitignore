@@ -113,8 +113,4 @@ venv.bak/
 #uploads/
 #data/
 
-# stanford data
-stanford-corenlp-full-2018/
-*.props
-*.tmp
-*.zip
+
