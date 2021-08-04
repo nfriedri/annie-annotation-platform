@@ -4,10 +4,17 @@ import platform
 import spacy
 import os
 
-# Accepted named entities
+# Labels of the accepted named entities
 entities = ['GPE', 'PERSON', 'LOC', 'ORG']
 
-# Creates indices values for an array
+
+"""Creates indices values for an array
+    Args:
+        array (list): Array of TaggedWord elements where the index value is adjusted to their order within the list.
+
+    Returns:
+        list: List of TaggedWord elements with corrected index values.
+"""
 def new_counter(array):
     counter = 0
     for i in range(len(array)):
@@ -16,10 +23,13 @@ def new_counter(array):
     return array
 
 
-'''Tagger Class'''
+'''Tagger Class:
+    Applies POS-Tagging and NER on the input token sequence (=e.g. sentence)
+'''
 
 
 class Tagger:
+    """Initialization of an emoyt Tagger object - required to start labeling"""
 
     def __init__(self):
         self.nlp = None
@@ -29,7 +39,7 @@ class Tagger:
         self.read_config_file()
         print('Spacy POS-Tagger started')
 
-    # Read configuration file
+    """Read configuration file to set options accordingly"""
     def read_config_file(self):
         configs = open('config.json', 'r')
         configs = json.load(configs)
@@ -81,28 +91,31 @@ class Tagger:
                 self.nlp = spacy.load("zh_core_web_sm")
             print("Successfully loaded language: CHINESE")
 
-    # Creates an TaggedWord object for each token and collects its POS-Label, returns an array of TaggedWord objects.
+    """Tags each input word with an according Label depending on the previous set configuration
+    
+    Args:
+        text (str): The text containing the words (=tokens) which will be tagged with labels
+
+    Returns:
+        list: A list of TaggedWord elements representing each word of the input text with additional information, 
+                of the tokens index and its label content.
+    """
+
     def tag_input(self, text):
         result = []
         counter = 0
         doc = self.nlp(text)
-        print(text)
-        print(doc.ents)
 
-
-
-
+        # Apply POS-Tagging as Labels to the tokens
         for token in doc:
-            # print(token.text)
             tagged_word = TaggedWord(word=str(token.text), index=counter, label=str(token.pos_))
             result.append(tagged_word)
             counter += 1
 
+        # Replace the previous set POS-Tags with NER-Tags if they are enabled in the configs
         if self.named_entites:
             for i in range(len(doc.ents)):
-                # print(doc.ents[i].text)
                 if doc.ents[i].text in text:
-                    # print(doc.ents[i].text + " ---- TRUE")
                     entity = doc.ents[i].text
                     ent_label = doc.ents[i].label_
                     if ' ' in entity:
@@ -116,8 +129,7 @@ class Tagger:
                             if entity == ele.word:
                                 ele.label = str(ent_label)
 
-
-        # Filters for special quotation marks and compound words
+        # Filters the input text for special cases like quotation marks and compound words
         changed = False
         if self.compound_words:
             for ele in result:
@@ -140,9 +152,19 @@ class Tagger:
         if changed:
             result = new_counter(result)
 
+        # Return the list of TaggedWord elements
         return result
 
-    # Serielize output dictionary to JSON-format
+    """Serialize list of TaggedWord elements to JSON-format
+
+        Args:
+            tagged_words (list): List of objects representing the tokens of a text with additional information.
+
+        Returns:
+            dictionary: A dictionary representation of the input list which can be deserialized by the Frontend.
+                        This representation is send as a JSON to the frontend.
+        """
+
     @staticmethod
     def serialize_json(tagged_words):
         output = {}
@@ -151,8 +173,10 @@ class Tagger:
         return output
 
 
+'''TaggedWord Class:
+    Representation of a text token with additional information of the token's index and its label
 
-'''TaggedWord Class'''
+'''
 
 
 class TaggedWord:

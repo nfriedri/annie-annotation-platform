@@ -24,7 +24,7 @@ Then start the tool, running:
 python openie.py
 ```
 
-By executing, the CMD should show something like 'Running on http://127.0.0.1:5789/ '.
+By executing, the CMD should show the line 'Running on http://127.0.0.1:5789/ '.
 A browser window of your standard browser should be opened automatically.
 If not, open a browser and go to http://127.0.0.1:5789/.
 In case the port differs to 5789, the port value in the URL inside the index.html has to be adjusted coherently.
@@ -101,37 +101,61 @@ To get the POS labels displayed in the new language, adjust the config.json resp
 ### Token Labeling
 
 To highlight additional parts of the text, the Tagger class within the tokenizer.py files needs to be adjusted in the first step.
-Within this class, the "tag_input" definition can be adjusted in a way that the input is tagged using other models. Each word of the input is saved as an own TaggedWord object which includes next to basic data the "labels" field in which the tag label needs to be stored.
-If additional labels, next to the existing ones, should be added, the easiest way is to copy the if-clause for named entity labeling (lines 101 to 117) and adjust it to overwrite the PoS-Labels with the new required labels for the relevant tokens. Now the new labels are simply shown within the tool underneath the token's text if "POSLabeling" is enabled in the configurations.
+Within this class, the "tag_input" definition can be adjusted in a way that the input is tagged using other models. 
+The input to this file is a string value containing for example a sentence. This sentence is then in the first step labeled by applying POS-Tagging on  each contained token using spacy.
+Each word of the input is saved as an own TaggedWord object which includes next to the text representation of the word the "labels" field in which the tag label needs to be stored and its index within the sentence.
+In the next step, the labels of tokens which are recognized as named-entities are overwritten to include the NER-Tags instead of the POS-Tags as labels, if this functionality is enabled in the config file.
+To further proceed, special cases like the appearance of quotation marks and compound words are further handled depending on the set values in the configurations. 
+If additional labels, next to the existing ones, should be added, the easiest way is to copy the if-clause for named entity labeling (lines 101 to 117) and adjust it to overwrite the PoS-Labels with the new required labels for the relevant tokens. 
+Now the new labels are simply shown within the tool underneath the token's text if "POSLabeling" is enabled in the configurations.
 
 ```python
-# Creates an TaggedWord object for each token and collects its POS-Label, returns an array of TaggedWord objects.
-def tag_input(self, text):
-    result = []
-    counter = 0
-    doc = self.nlp(text)
+    """Tags each input word with an according Label depending on the previous set configuration
+    
+    Args:
+        text (str): The text containing the words (=tokens) which will be tagged with labels
 
-    for token in doc:
-        tagged_word = TaggedWord(word=str(token.text), index=counter, label=str(token.pos_))
-        result.append(tagged_word)
-        counter += 1
+    Returns:
+        list: A list of TaggedWord elements representing each word of the input text with additional information, 
+                of the tokens index and its label content.
+    """
 
-    if self.named_entites:
-        for i in range(len(doc.ents)):
-            if doc.ents[i].text in text:
-                entity = doc.ents[i].text
-                ent_label = doc.ents[i].label_
-                if ' ' in entity:
-                    entity = entity.rsplit(' ')
-                    for ele in result:
-                        for ent in entity:
-                            if ent == ele.word:
+    def tag_input(self, text):
+        result = []
+        counter = 0
+        doc = self.nlp(text)
+
+        # Apply POS-Tagging as Labels to the tokens
+        for token in doc:
+            tagged_word = TaggedWord(word=str(token.text), index=counter, label=str(token.pos_))
+            result.append(tagged_word)
+            counter += 1
+
+        # Replace the previous set POS-Tags with NER-Tags if they are enabled in the configs
+        if self.named_entites:
+            for i in range(len(doc.ents)):
+                if doc.ents[i].text in text:
+                    entity = doc.ents[i].text
+                    ent_label = doc.ents[i].label_
+                    if ' ' in entity:
+                        entity = entity.rsplit(' ')
+                        for ele in result:
+                            for ent in entity:
+                                if ent == ele.word:
+                                    ele.label = str(ent_label)
+                    else:
+                        for ele in result:
+                            if entity == ele.word:
                                 ele.label = str(ent_label)
-                else:
-                    for ele in result:
-                        if entity == ele.word:
-                            ele.label = str(ent_label)
+
+        # Filters the input text for special cases like quotation marks and compound words
+        changed = False
+        if self.compound_words:
+            #....
 ```
+
+In case of complete customizations, the tagging functionalities can also be completely exchanged. In this case, it is important to ensure that the new definitions still
+output a list of TaggedWord elements to ensure the correct further processing and transmission to the application's frontend.
 
 ### Word Highlighting
 
@@ -285,7 +309,7 @@ In the following an example for annotating a sample sentence from the Guardian:
   <img src="documentation/annotation_example.png" width="700" title="hover text">
 </div>
 
-A short video going through AnnIE and showing its functionalities can be found here: https://drive.google.com/file/d/1E1gB_-zKE70jnw75LMYj1kkAMsMh37TA/view?usp=sharing
+A short video going through AnnIE showing its functionalities can be found here: https://drive.google.com/file/d/1E1gB_-zKE70jnw75LMYj1kkAMsMh37TA/view?usp=sharing
 
 ### Acknowledgements
 
