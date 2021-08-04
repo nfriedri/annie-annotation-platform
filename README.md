@@ -100,23 +100,24 @@ To get the POS labels displayed in the new language, adjust the config.json resp
 
 ### Token Labeling
 
-To highlight additional parts of the text, the Tagger class within the tokenizer.py files needs to be adjusted in the first step.
-Within this class, the "tag_input" definition can be adjusted in a way that the input is tagged using other models. 
-The input to this file is a string value containing for example a sentence. This sentence is then in the first step labeled by applying POS-Tagging on  each contained token using spacy.
+To highlight additional parts of the text and to attach different labels to tokens, the Tagger class within the tokenizer.py files needs to be adjusted in the first step.
+Within this Tagger class, the "tag_input" definition can be adjusted in a way so that the input text gets other labels or uses other models for POS-Tagging.
+This definition is called every time the application sends a sentence of the input text to its backend with the request to get this sentence back together with labels.
+The input to this definition is a string value containing for example a sentence. This sentence is then in the first step labeled by applying POS-Tagging on each contained token using spacy.
 Each word of the input is saved as an own TaggedWord object which includes next to the text representation of the word the "labels" field in which the tag label needs to be stored and its index within the sentence.
 In the next step, the labels of tokens which are recognized as named-entities are overwritten to include the NER-Tags instead of the POS-Tags as labels, if this functionality is enabled in the config file.
-To further proceed, special cases like the appearance of quotation marks and compound words are further handled depending on the set values in the configurations. 
-If additional labels, next to the existing ones, should be added, the easiest way is to copy the if-clause for named entity labeling (lines 101 to 117) and adjust it to overwrite the PoS-Labels with the new required labels for the relevant tokens. 
+To further proceed, special cases like the appearance of quotation marks and compound words are further handled depending on the set values in the configurations.
+If additional labels, next to the existing ones, should be added, the easiest way is to copy the if-clause for named entity labeling (lines 101 to 117) and adjust it to overwrite the PoS-Labels with the new required labels for the relevant tokens.
 Now the new labels are simply shown within the tool underneath the token's text if "POSLabeling" is enabled in the configurations.
 
 ```python
     """Tags each input word with an according Label depending on the previous set configuration
-    
+
     Args:
         text (str): The text containing the words (=tokens) which will be tagged with labels
 
     Returns:
-        list: A list of TaggedWord elements representing each word of the input text with additional information, 
+        list: A list of TaggedWord elements representing each word of the input text with additional information,
                 of the tokens index and its label content.
     """
 
