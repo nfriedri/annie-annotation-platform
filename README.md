@@ -28,7 +28,7 @@ By executing, the CMD should show the line 'Running on http://127.0.0.1:5789/ '.
 A browser window of your standard browser should be opened automatically.
 If not, open a browser and go to http://127.0.0.1:5789/.
 In case the port differs to 5789, the port value in the URL inside the index.html has to be adjusted coherently.
-The UI of AnnIE should be displayed like follows:
+The UI of AnnIE should be displayed as follows:
 
 <div style="display: flex">
   <img src="documentation/ui-screenshot.jpg" width="900" title="hover text">
@@ -62,8 +62,8 @@ Accepted values are:
 - "Show-Indices": true, false
 
 By changing the value of "Language", the used spacy language model can be adjusted to the desired language.
-By enabling "POSLabels", all part-of-speech tags of the words are displayed in the word boxes.
-Changing the value of "Coloring", the color diversity for highlighting different POS-tags can be adjusted.
+By enabling "POSLabels", all applied labels to the tokens are shown inside the application in small boxes underneath the token's text.
+Changing the value of "Coloring", the color diversity for highlighting the different labels can be adjusted.
 If "Word-sort" is enabled, all selected words are put in the correct order of their appearance.
 If this is disabled, they are in the order of having been clicked on.
 By enabling "Compound-words", these type of words is not split by their "-".
@@ -74,13 +74,14 @@ Disabling "Show-Indices" will display the output without any indices after the t
 ### Special Features
 
 As long as the "CTRL"-button is pressed, you can hover over words to select them faster
-then by clicking on every word separately.
+then by clicking on every word explicitly.
 
 ### Adding languages
 
 For integrating additional languages to the tool, search for the spacy language model name of the required language here: https://spacy.io/models.
 Then add to the POS_Tagger.py file into the last row of the definition "read_config_file(self)"
-following lines:
+following lines by substituting the variables SPACY_MODEL_LANGUAGE with the spacy model name and DESIRED_LANGUAGE with the name of the added language
+(e.g.: SPACY_MODEL_NAME=en_core_web_sm ==> DESIRED_LANGUAGE=English ):
 
 ```python
 if configs["Language"] == "DESIRED_LANGUAGE":
@@ -95,8 +96,7 @@ if configs["Language"] == "DESIRED_LANGUAGE":
     print("Successfully loaded language: DESIRED_LANGUAGE")
 ```
 
-With DESIRED_LANGUAGE as the name of the added language and SPACY_MODEL_LANGUAGE as model name, like e.g., "en_core_web_sm".
-To get the POS labels displayed in the new language, adjust the config.json respectively.
+To get the application running with the labels in the new language, do not forget to set the required "Language"-field in the config.json file to the value of DESIRED_LANGUAGE.
 
 ### Token Labeling
 
@@ -281,8 +281,8 @@ function downgrade(targetElement) {
 AnnIE high-level architecture diagram & Data model
 
 <div>
-  <img src="documentation/annie_architecture.png" width="640" title="hover text">
-  <img src="documentation/data_model.png" width="500" title="hover text">
+  <img src="documentation/annie_architecture.png" width="600" title="hover text">
+  <img src="documentation/data_model.png" width="600" title="hover text">
 </div>
 
 In the following, a list is shown pointing out the relevant functionalities of each source code part:
