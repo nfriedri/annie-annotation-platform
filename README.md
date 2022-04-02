@@ -6,7 +6,10 @@
 # AnnIE - Annotation Platform
 
 Tool for open information extraction annotations using text files.
-The output is delivered in .tsv-files
+The output is delivered in .tsv-files. The applicaton is described in the following paper: https://arxiv.org/abs/2109.07464.
+
+A short video going through AnnIE showing its functionalities can be found here: https://www.youtube.com/watch?v=2wn75U8Lc5w
+
 
 ### Installation:
 
@@ -310,7 +313,6 @@ In the following an example for annotating a sample sentence from the Guardian:
   <img src="documentation/annotation_example.png" width="700" title="hover text">
 </div>
 
-A short video going through AnnIE showing its functionalities can be found here: https://drive.google.com/file/d/1E1gB_-zKE70jnw75LMYj1kkAMsMh37TA/view?usp=sharing
 
 ### Acknowledgements
 
